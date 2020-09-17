@@ -6,3 +6,6 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
 * [menu - sidebar menu application for selecting and closing open windows](https://github.com/lcarsde/menu)
 * [status-bar - status bar tool application for general information display and controls](https://github.com/lcarsde/status-bar)
 * [application-starter - application for opening installed programs](https://github.com/lcarsde/application-starter)
+
+## Architecture Decision Records (ARDs)
+[Follow this link to the ADRs](adr/adr-index.md)
