@@ -1,0 +1,54 @@
+@startuml
+
+skinparam ComponentStyle uml2
+
+Node Computer {
+    artifact startlcarswm
+    component lcarswm
+    component "status-bar" as status
+    component menu
+    component "other\napplication" as app
+    
+    file "/etc/\nlcarsde/\n<b>settings.xml</b>" as settings
+    file "/etc/\nlcarsde/\n<b>status-config.xml</b>" as statusconf
+    file "$HOME/\n.config/\nlcarsde/\n<b>settings.xml</b>" as userSettings
+    file "$HOME/\n.config/\nlcarsde/\n<b>status-config.xml</b>" as userStatusconf
+    file "$HOME/\n.cache/\nlcarsde/\n<b>lcarswm.log</b>" as log
+
+    queue "POSIX-MQ\nto client" as wm2cli
+    queue "POSIX-MQ\nto wm" as cli2wm
+
+    note left of menu
+    Identification property:
+    LCARSDE_APP_MENU
+    end note
+
+    note right of status
+    Identification property:
+    LCARSDE_STATUS_BAR
+    end note
+}
+
+startlcarswm .left.> lcarswm : prepare environment\nand start
+
+lcarswm ..> app : handle
+lcarswm ..> status : start\nand\nhandle
+lcarswm ..> menu : start\nand\nhandle
+
+lcarswm o--> wm2cli : send information\non current apps
+menu -up-> wm2cli : read\ninformation
+
+menu -up-> cli2wm : send select and\nclose commands
+lcarswm o--> cli2wm : read\ncommands
+
+lcarswm ..> settings : read
+lcarswm ..> userSettings : read
+lcarswm --> log : write
+
+status ..> statusconf : read
+status ..> userStatusconf : read
+
+userSettings ..> settings : override
+userStatusconf ..> statusconf : override
+
+@enduml
