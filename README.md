@@ -9,3 +9,27 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
 
 ## Architecture Decision Records (ARDs)
 [Follow this link to the ADRs](adr/adr-index.md)
+
+## To Do
+* lcarswm
+  * Associate child screens with their parents
+  * Identify and handle popups as popups
+  * Center popups and adjust the frame to their size
+  * Monitors
+    * Merge overlaying screens of same size
+    * If screens have different sizes, the higher one draws
+  * check for XDG-path variables and have a fallback
+  * toggle window list by latest used application
+  * basic configurable window tiling
+  * autostart for things
+* status-bar
+  * Content for the data bar (empty upper area in normal mode)
+    * Memory usage
+    * Data throughput of network interfaces
+    * ...
+* general
+  * Configuration for the colors
+  * Continuous Deployment
+    * Ubuntu
+    * Arch Linux
+  * GTK-Theme (if I can't find one)
