@@ -8,12 +8,17 @@ Node Computer {
     component "status-bar" as status
     component menu
     component "other\napplication" as app
+    component logout
+    component "application-\nstarter" as appstarter
     
     file "/etc/\nlcarsde/\n<b>settings.xml</b>" as settings
     file "/etc/\nlcarsde/\n<b>status-config.xml</b>" as statusconf
     file "$HOME/\n.config/\nlcarsde/\n<b>settings.xml</b>" as userSettings
     file "$HOME/\n.config/\nlcarsde/\n<b>status-config.xml</b>" as userStatusconf
     file "$HOME/\n.cache/\nlcarsde/\n<b>lcarswm.log</b>" as log
+    file "/usr/share/\nxsessions/\n<b>LCARSWM.desktop</b>" as lcarswmDesktop
+    file "/usr/share/\napplications/\n<b>lcarsde-logout\n<b>.desktop" as logoutDesktop
+    file "/usr/share/\napplications/\n<b>lcarsde-\n<b>application-\n<b>starter.desktop" as appStarterDesktop
 
     queue "POSIX-MQ\nto client" as wm2cli
     queue "POSIX-MQ\nto wm" as cli2wm
