@@ -35,3 +35,6 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
     * Ubuntu
     * Arch Linux
   * GTK-Theme (if I can't find one)
+  * Detailed documentation for communication between lcarsde applications
+    * Message pipes between lcarswm and application menu
+    * Special atoms for application menu and status bar
