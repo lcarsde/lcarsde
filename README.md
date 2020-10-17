@@ -22,6 +22,7 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
   * toggle window list by latest used application
   * basic configurable window tiling
   * autostart for things
+  * move windows via drag-and-drop on the title bar
 * status-bar
   * Content for the data bar (empty upper area in normal mode)
     * Memory usage
@@ -29,6 +30,7 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
     * ...
 * general
   * Configuration for the colors
+  * Pressed state coloring for the buttons
   * Continuous Deployment
     * Ubuntu
     * Arch Linux
