@@ -27,6 +27,7 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
   * Content for the data bar (empty upper area in normal mode)
     * Memory usage
     * Data throughput of network interfaces
+    * Bluetooth
     * ...
 * general
   * Configuration for the colors
@@ -38,3 +39,4 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
   * Detailed documentation for communication between lcarsde applications
     * Message pipes between lcarswm and application menu
     * Special atoms for application menu and status bar
+  * Settings application
