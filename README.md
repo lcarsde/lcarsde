@@ -19,9 +19,7 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
     * Merge overlaying screens of same size
     * If screens have different sizes, the higher one draws
   * check for XDG-path variables and have a fallback
-  * toggle window list by latest used application
   * basic configurable window tiling
-  * autostart for things
   * move windows via drag-and-drop on the title bar
 * status-bar
   * Content for the data bar (empty upper area in normal mode)
