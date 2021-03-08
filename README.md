@@ -37,4 +37,5 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
   * Detailed documentation for communication between lcarsde applications
     * Message pipes between lcarswm and application menu
     * Special atoms for application menu and status bar
-  * Settings application
+  * lcarsde settings application
+  * lcarsde file manager
