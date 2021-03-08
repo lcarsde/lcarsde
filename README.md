@@ -24,7 +24,6 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
   * move windows via drag-and-drop on the title bar
 * status-bar
   * Content for the data bar (empty upper area in normal mode)
-    * Memory usage
     * Data throughput of network interfaces
     * Bluetooth
     * ...
