@@ -21,7 +21,7 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
     * If screens have different sizes, the higher one draws
   * check for XDG-path variables and have a fallback
   * basic configurable window tiling
-  * move windows via drag-and-drop on the title bar
+  * autostart for things
 * status-bar
   * Content for the data bar (empty upper area in normal mode)
     * Data throughput of network interfaces
