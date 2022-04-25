@@ -22,6 +22,7 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
   * check for XDG-path variables and have a fallback
   * basic configurable window tiling
 * status-bar
+  * System tray widget
   * Content for the data bar (empty upper area in normal mode)
     * Data throughput of network interfaces
     * Bluetooth
@@ -36,3 +37,5 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
   * lcarsde settings application
   * lcarsde file manager
   * polkit agent
+  * lcarsde session manager
+    * setup which apps to autostart
