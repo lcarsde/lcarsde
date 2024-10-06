@@ -28,5 +28,8 @@ dependencyResolutionManagement {
     }
 }
 
+include(":lcarsde-common")
+include(":lcarsde-compose")
 include(":lcarswm")
 include(":status-bar")
+include(":app-selector")
