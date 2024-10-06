@@ -9,7 +9,7 @@ LCARS Desktop Environment, official project name lcarsde, or for logos also LCAR
 * [lcarsde.github.io - lcarsde website with news and instructions](https://github.com/lcarsde/lcarsde.github.io)
 
 ## Architecture Decision Records (ARDs)
-[Follow this link to the ADRs](adr/adr-index.md)
+[Follow this link to the ADRs](docs/adr/adr-index.md)
 
 ## To Do
 * lcarswm

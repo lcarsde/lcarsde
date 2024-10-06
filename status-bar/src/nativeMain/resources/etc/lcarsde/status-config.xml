@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<status-config>
+    <!--
+    A widget configuration entry consists of a widget tag that has a references a widget class.
+
+    In the widget entry there has to be one position tag with x, y, width and height of the widget in cells. Each cell
+    is 40px by 40px. If the widget spans over multiple cells then it also spans over 8px gaps between the cells.
+
+    If the widget needs certain properties than they can be set inside the properties tag in separate property tags.
+    Each property needs to have a key and a value. The properties are handed to the widget as dict, so keys need to be
+    unique.
+
+    Example entry below:
+    -->
+
+    <!--<widget name="MyWidget">
+        <position x="0" y="0" width="2" height="1" />
+        <properties>
+            <property key="key1" value="value1" />
+            <property key="key2" value="value2" />
+        </properties>
+    </widget>-->
+
+    <widget name="LcarsdeStatusTime">
+        <position x="0" y="0" width="4" height="1" />
+    </widget>
+    <widget name="LcarsdeStatusDate">
+        <position x="0" y="1" width="4" height="1" />
+    </widget>
+    <widget name="LcarsdeStatusStardate">
+        <position x="0" y="2" width="4" height="1" />
+    </widget>
+    <widget name="LcarsdeBatteryStatus">
+        <position x="4" y="0" width="1" height="1" />
+        <properties>
+            <!-- Device should correspond to a folder in /sys/class/power_supply that starts with "BAT" -->
+            <property key="device" value="BAT0" />
+        </properties>
+    </widget>
+    <widget name="LcarsdeWifiStatus">
+        <position x="4" y="2" width="1" height="1" />
+        <properties>
+            <!-- Device should correspond to a folder in /sys/class/net that starts with "w" -->
+            <property key="device" value="wlp2s0" />
+        </properties>
+    </widget>
+    <widget name="LcarsdeEthStatus">
+        <position x="4" y="1" width="1" height="1" />
+        <properties>
+            <!-- Device should correspond to a folder in /sys/class/net that starts with "e" -->
+            <property key="device" value="enp0s20f0u2u3i5" />
+        </properties>
+    </widget>
+    <widget name="LcarsdeStatusAudio">
+        <position x="5" y="0" width="4" height="1" />
+        <properties>
+            <!-- used to get the audio status -->
+            <!-- returns "volume;muted" -->
+            <property key="getData" value="/usr/share/lcarsde/tools/getaudio.sh" />
+            <property key="toggleMute" value="amixer -D pulse set Master toggle" />
+            <property key="raiseVolume" value="amixer -D pulse set Master 3%+" />
+            <property key="lowerVolume" value="amixer -D pulse set Master 3%-" />
+        </properties>
+    </widget>
+    <widget name="LcarsdeStatusButton">
+        <position x="5" y="1" width="4" height="1" />
+        <properties>
+            <property key="text" value="Programs" />
+            <property key="color" value="f90" />
+            <property key="command" value="lcarsde-application-starter.py" />
+        </properties>
+    </widget>
+    <widget name="LcarsdeStatusButton">
+        <position x="5" y="2" width="4" height="1" />
+        <properties>
+            <property key="text" value="Close" />
+            <property key="color" value="c66" />
+            <property key="command" value="lcarsde-logout.py" />
+        </properties>
+    </widget>
+    <widget name="LcarsdeStatusTemperature">
+        <position x="9" y="0" width="3" height="3" />
+    </widget>
+    <widget name="LcarsdeStatusCpuUsage">
+        <position x="12" y="0" width="3" height="3" />
+    </widget>
+    <widget name="LcarsdeStatusMemory">
+        <position x="15" y="0" width="1" height="3" />
+    </widget>
+</status-config>

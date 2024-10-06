@@ -1,0 +1,44 @@
+#!/bin/sh
+
+if [ -z "$XDG_CONFIG_HOME" ]; then
+	export XDG_CONFIG_HOME="$HOME/.config"
+fi
+
+if [ -z "$XDG_CACHE_HOME" ]; then
+	export XDG_CACHE_HOME="$HOME/.cache"
+fi
+
+if [ -z "$XDG_DATA_HOME" ]; then
+	export XDG_DATA_HOME="$HOME/.local/share"
+fi
+
+# create wm directories if they don't exist yet
+mkdir -p "$XDG_CONFIG_HOME/lcarsde"
+mkdir -p "$XDG_CACHE_HOME/lcarsde"
+
+# Ensure the existence of the user applications folder
+USER_APPS_DIR="$XDG_DATA_HOME/applications"
+mkdir -p "$USER_APPS_DIR"
+
+# Clean up after GDM (GDM sets the number of desktops to one)
+xprop -root -remove _NET_NUMBER_OF_DESKTOPS -remove _NET_DESKTOP_NAMES -remove _NET_CURRENT_DESKTOP 2> /dev/null
+
+# Enable GTK+2 integration for OpenOffice.org, if available.
+export SAL_USE_VCLPLUGIN=gtk
+
+# Launch DBus if needed
+if test -z "$DBUS_SESSION_BUS_ADDRESS"; then
+	if which dbus-launch >/dev/null; then
+		eval "$(dbus-launch --sh-syntax --exit-with-session)"
+	fi
+else
+	if which dbus-update-activation-environment >/dev/null; then
+		dbus-update-activation-environment --systemd --all
+	fi
+fi
+
+export XDG_MENU_PREFIX="lcarswm-"
+export XDG_CURRENT_DESKTOP="LCARSWM"
+
+# Start the lcarsde session
+exec /usr/bin/lcarswm.kexe

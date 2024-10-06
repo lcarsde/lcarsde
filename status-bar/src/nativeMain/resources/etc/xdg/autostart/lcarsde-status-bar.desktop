@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=LCARSDE status bar
+Exec=/usr/bin/status-bar.kexe
+OnlyShowIn=lcarsde;
