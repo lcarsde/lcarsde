@@ -39,12 +39,9 @@ fun App() {
                     ) {
                         apps.sortedBy { it.name }.forEach { app ->
                             TextButtonRound(
-                                text = app.name ?: "",
+                                text = checkNotNull(app.name),
                                 modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.buttonColors(
-                                    contentColor = Color.Black,
-                                    backgroundColor = app.color
-                                )
+                                color = app.color
                             ) {
                                 app.start()
                             }

@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
-group = "de.atennert.lcarsde.appSelector"
+group = "de.atennert"
 
 kotlin {
     jvm("desktop")
@@ -24,6 +24,8 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
 
+            implementation("net.java.dev.jna:jna-platform:5.14.0")
+
             implementation(project(":lcarsde-compose"))
         }
     }
@@ -31,11 +33,11 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "de.atennert.lcarsde.appSelector.MainKt"
+        mainClass = "de.atennert.lcarsde.logout.MainKt"
 
         nativeDistributions {
 //            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "appSelector"
+            packageName = "logout"
             packageVersion = project.version as String
         }
     }
