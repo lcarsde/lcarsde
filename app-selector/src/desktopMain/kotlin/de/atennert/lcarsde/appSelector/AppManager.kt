@@ -41,6 +41,7 @@ class AppManager {
         private val PATHS = arrayOf(
             "/usr/share/applications",
             "/var/lib/flatpak/exports/share/applications",
+            "/var/lib/snapd/desktop/applications",
             "${System.getenv("HOME")}/.local/share/applications"
         )
     }
