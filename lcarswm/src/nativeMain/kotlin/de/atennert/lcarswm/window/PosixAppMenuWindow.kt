@@ -89,6 +89,7 @@ class PosixAppMenuWindow(
                 .apply(combineLatestWith(windowMeasurementsObs.apply(filterNotNull())))
                 .apply(take(1))
                 .subscribe(NextObserver { (frameId, measurements) ->
+                    wrapXSetWindowBorderWidth(display, id, 0.convert())
                     wrapXReparentWindow(display, id, frameId, 0, 0)
                     wrapXResizeWindow(display, id, measurements.width.convert(), measurements.height.convert())
 

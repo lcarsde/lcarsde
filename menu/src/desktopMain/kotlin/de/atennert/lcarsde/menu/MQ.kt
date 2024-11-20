@@ -1,9 +1,11 @@
-package de.atennert.appSelector
+package de.atennert.lcarsde.menu
 
+import com.sun.jna.Callback
 import com.sun.jna.IntegerType
 import com.sun.jna.Library
 import com.sun.jna.Native
 import com.sun.jna.Structure
+import com.sun.jna.Union
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T
 import com.sun.jna.platform.win32.BaseTSD.SSIZE_T
 import com.sun.jna.ptr.PointerByReference
@@ -27,6 +29,34 @@ class MqAttributes : Structure() {
     var mq_curmsgs: Long = 0
 }
 
+class Sigval : Union() {
+    var __sival_int: Int = 0
+    var __sival_ptr: PointerByReference? = null
+}
+
+class SigevUn : Union() {
+    var _sigev_thread: PointerByReference? = null
+    var _tid: Int = 0
+    var _pad: PointerByReference? = null
+}
+
+fun interface SigevCallback : Callback {
+    fun exec(sv: Sigval)
+}
+
+@Structure.FieldOrder("_function", "_attribute")
+class SigevThread : Structure() {
+    var _function: SigevCallback? = null
+    var _attribute: PointerByReference? = null
+}
+
+@Structure.FieldOrder("sigev_value", "sigev_value", "sigev_notify")
+class SigEvent : Structure() {
+    var sigev_value: Sigval? = null
+    var sigev_signo: Int = 0
+    var sigev_notify: Int = 0
+}
+
 interface MessageQueue : Library {
     fun mq_open(__name: String?, __oflag: Int, permission: Uint32_t, attributes: MqAttributes): Int
     fun mq_open(__name: String?, __oflag: Int): Int
@@ -39,6 +69,8 @@ interface MessageQueue : Library {
 
     fun mq_unlink(__name: String): Int
 
+    fun mq_notify(__mqdes: Int, __notification: SigEvent): Int
+
     companion object {
         val INSTANCE: MessageQueue = Native.load("rt", MessageQueue::class.java)
 
@@ -46,6 +78,8 @@ interface MessageQueue : Library {
 
         const val O_NONBLOCK = 0x800
         const val O_CREAT = 0x40
+
+        const val SIGEV_THREAD = 2
     }
 }
 
@@ -73,7 +107,7 @@ class MQ(private val name: String, private val mode: Mode, private val isManagin
 
             mqDescriptor = mq.mq_open(name, oFlags, Uint32_t(MessageQueue.QUEUE_PERMISSIONS), attributes)
         } else {
-            mqDescriptor = mq.mq_open(name, mode.flag)
+            mqDescriptor = mq.mq_open(name, mode.flag or MessageQueue.O_NONBLOCK)
         }
     }
 
@@ -82,11 +116,17 @@ class MQ(private val name: String, private val mode: Mode, private val isManagin
         mq.mq_send(mqDescriptor, message, SIZE_T(message.length.toLong()), Uint32_t(0))
     }
 
-    fun receive(): String {
+    fun receive(): String? {
         check(mode != Mode.WRITE) { "Can not use MQ receive in write mode" }
         val pref = PointerByReference()
         val msgSize = mq.mq_receive(mqDescriptor, pref, SIZE_T(MESSAGE_BUFFER_SIZE), null)
-        return pref.pointer.getByteArray(0, msgSize.toInt()).decodeToString()
+        try {
+            if (msgSize.toInt() > 0) {
+                return pref.pointer.getString(0)
+            }
+        } catch (_: Exception) {
+        }
+        return null
     }
 
     fun close() {
