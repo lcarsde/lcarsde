@@ -33,7 +33,7 @@ class StatusBar {
     @ThreadLocal
     companion object {
         private val configuration = readConfiguration(settingsFilePath)
-        private val cssProvider = gtk_css_provider_get_default()!!
+        private val cssProvider = gtk_css_provider_new()!!
         private val grid = gtk_grid_new()!!
         private val widgetFactory = WidgetFactory(cssProvider)
 
