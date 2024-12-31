@@ -1,46 +1,45 @@
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlinJvm)
+    application
 }
 
-group = "de.atennert"
+group = "de.atennert.lcarsde"
 
-kotlin {
-    jvm("desktop")
+application {
+    mainClass = "de.atennert.lcarsde.menu.MenuKt"
+    applicationName = "lcarsde-menu"
+}
 
-    sourceSets {
-        val desktopMain by getting
+dependencies {
+    implementation("net.java.dev.jna:jna-platform:5.14.0")
 
-        desktopMain.dependencies {
-            implementation(compose.runtime)
-//            implementation(compose.foundation)
-//            implementation(compose.material)
-//            implementation(compose.ui)
-//            implementation(compose.components.resources)
-//            implementation(compose.components.uiToolingPreview)
-//
-//            implementation(compose.desktop.currentOs)
-//            implementation(libs.kotlinx.coroutines.swing)
-//
-//            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation(project(":lcarsde-jvm"))
+}
 
-            implementation("net.java.dev.jna:jna-platform:5.14.0")
-
-            implementation(project(":lcarsde-compose"))
+distributions {
+    main {
+        contents {
+            into("usr")
+            eachFile {
+                when (file.extension) {
+                    "jar" -> {
+                        path = path.replace("/lib/", "/lib/lcarsde/")
+                    }
+                    "" -> {
+                        filter { line -> line.replace("APP_HOME/lib/", "APP_HOME/lib/lcarsde/") }
+                    }
+                }
+            }
+            from("src/main/resources") {
+                into("..")
+            }
+            exclude("**/*.bat")
         }
     }
 }
 
-compose.desktop {
-    application {
-        mainClass = "de.atennert.lcarsde.menu.MainKt"
-
-        nativeDistributions {
-//            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "menu"
-            packageVersion = project.version as String
-        }
-    }
+tasks.named<Sync>("installDist") {
+    // don't use sub folder with application name
+    destinationDir = file("build/install")
 }

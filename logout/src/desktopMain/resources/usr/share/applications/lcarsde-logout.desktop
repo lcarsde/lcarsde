@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Logout
+Exec=lcarsde-logout
+Categories=System;
+Terminal=false
+NoDisplay=true

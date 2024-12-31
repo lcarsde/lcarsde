@@ -67,7 +67,7 @@
         <properties>
             <property key="text" value="Programs" />
             <property key="color" value="f90" />
-            <property key="command" value="lcarsde-application-starter.py" />
+            <property key="command" value="lcarsde-app-selector" />
         </properties>
     </widget>
     <widget name="LcarsdeStatusButton">
@@ -75,7 +75,7 @@
         <properties>
             <property key="text" value="Close" />
             <property key="color" value="c66" />
-            <property key="command" value="lcarsde-logout.py" />
+            <property key="command" value="lcarsde-logout" />
         </properties>
     </widget>
     <widget name="LcarsdeStatusTemperature">

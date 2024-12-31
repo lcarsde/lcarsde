@@ -17,7 +17,7 @@ class LogoutDefinition : LogoutOptionDefinition {
     override fun call() {
         val wmPID = Files.list(Paths.get("/proc"))
             .filter { it.name.matches(Regex("^[0-9]+$"))}
-            .filter { Files.readString(it.resolve("comm")).trim() == "status-bar.kexe" }
+            .filter { Files.readString(it.resolve("comm")).trim() == "lcarswm.kexe" }
             .map { it.name.toLong() }
             .findFirst()
             .getOrNull()

@@ -24,7 +24,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
 
-            implementation(project(":lcarsde-compose"))
+            implementation(project(":lcarsde-jvm"))
         }
     }
 }
@@ -35,7 +35,7 @@ compose.desktop {
 
         nativeDistributions {
 //            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "appSelector"
+            packageName = "lcarsde-app-selector"
             packageVersion = project.version as String
         }
     }

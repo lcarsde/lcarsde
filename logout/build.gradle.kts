@@ -26,7 +26,7 @@ kotlin {
 
             implementation("net.java.dev.jna:jna-platform:5.14.0")
 
-            implementation(project(":lcarsde-compose"))
+            implementation(project(":lcarsde-jvm"))
         }
     }
 }
@@ -37,7 +37,7 @@ compose.desktop {
 
         nativeDistributions {
 //            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "logout"
+            packageName = "lcarsde-logout"
             packageVersion = project.version as String
         }
     }
