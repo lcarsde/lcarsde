@@ -12,10 +12,10 @@ fun main() = gtkApplication {
     val sendQ = MQ("/lcarswm-app-menu-messages", MQ.Mode.WRITE, false)
 
     val window = GtkWindow()
-    val ui = Menu(window, sendQ)
+    val menu = Menu(window, sendQ)
     window.showAll()
 
-    val job = readWindowUpdates(windowListQ, ui)
+    val job = readWindowUpdates(windowListQ, menu)
 
     window.connect("destroy", ::mainQuit)
     main()
@@ -27,7 +27,7 @@ fun main() = gtkApplication {
 
 private fun CoroutineScope.readWindowUpdates(
     windowListQ: MQ,
-    ui: Menu
+    menu: Menu
 ) = launch {
     try {
         while (true) {
@@ -38,7 +38,7 @@ private fun CoroutineScope.readWindowUpdates(
                     { dataPointer ->
                         val message = dataPointer?.getString(0)
                         if (message != null) {
-                            updateWindowList(ui, it)
+                            menu.updateWindowList(it)
                         }
                         false
                     },
@@ -52,27 +52,13 @@ private fun CoroutineScope.readWindowUpdates(
     }
 }
 
-private fun updateWindowList(ui: Menu, message: String) {
-    val (type, windowData) = message.lines().run {
-        Pair(this[0], this.drop(1))
-    }
-    if (type != "list") {
-        return
-    }
-    ui.windowEntries = windowData.map { wd ->
-        val (windowId, className, isActive) = wd.split("\t")
-        WindowEntry(windowId, className, isActive == "active")
-    }
-    ui.update()
-}
-
 private val CSS_PROVIDER = GTK.INSTANCE.gtk_css_provider_new()
 
 class Menu(private val window: GtkWindow, private val sendQ: MQ) {
     private val scrollContainer = GtkScrollContainer()
     private val appContainer = GtkBox(GtkOrientation.VERTICAL, 8)
 
-    var windowEntries: List<WindowEntry> = emptyList()
+    private var windowEntries: List<WindowEntry> = emptyList()
         set(value) {
             updateWindows(value)
             field = value
@@ -96,7 +82,20 @@ class Menu(private val window: GtkWindow, private val sendQ: MQ) {
         window.connect("realize") { window.setUtf8Property(LCARSDE_APP_MENU, LCARSDE_APP_MENU) }
     }
 
-    fun update() = window.showAll()
+
+    fun updateWindowList(message: String) {
+        val (type, windowData) = message.lines().run {
+            Pair(this[0], this.drop(1))
+        }
+        if (type != "list") {
+            return
+        }
+        this.windowEntries = windowData.map { wd ->
+            val (windowId, className, isActive) = wd.split("\t")
+            WindowEntry(windowId, className, isActive == "active")
+        }
+        window.showAll()
+    }
 
     private fun updateWindows(newWindowEntries: List<WindowEntry>) {
         val windowsToRemove = windowEntries.filter { !newWindowEntries.contains(it) }
@@ -152,9 +151,9 @@ class Menu(private val window: GtkWindow, private val sendQ: MQ) {
 }
 
 class GtkWindowEntry(
-    private val id: String,
+    id: String,
     name: String,
-    var isActive: Boolean,
+    isActive: Boolean,
     onSelect: (String) -> Unit,
     onClose: (String) -> Unit
 ) : GtkBox(GtkOrientation.HORIZONTAL, Menu.GAP_SIZE) {

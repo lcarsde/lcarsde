@@ -8,10 +8,10 @@ import kotlinx.cinterop.cValue
 import kotlinx.cinterop.cValuesOf
 
 @ExperimentalForeignApi
-actual fun gtkInit(): Unit = gtk_init(cValuesOf(0), cValue())
+actual fun gtkInit() = gtk_init(cValuesOf(0), cValue())
 
 @ExperimentalForeignApi
-actual fun gtkMainIteration(): Int = gtk_main_iteration()
+actual fun gtkMainIteration() = gtk_main_iteration()
 
 @ExperimentalForeignApi
-actual fun gtkEventsPending(): Int = gtk_events_pending()
+actual fun gtkEventsPending() = gtk_events_pending()
