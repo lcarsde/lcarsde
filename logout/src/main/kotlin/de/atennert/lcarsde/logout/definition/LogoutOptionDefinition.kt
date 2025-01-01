@@ -1,10 +1,10 @@
 package de.atennert.lcarsde.logout.definition
 
-import androidx.compose.ui.graphics.Color
+import de.atennert.lcarsde.logout.LcarsColors
 
 interface LogoutOptionDefinition {
     val label: String
-    val color: Color
+    val color: LcarsColors
     val isAvailable: Boolean
 
     fun call()

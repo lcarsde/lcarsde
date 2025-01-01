@@ -1,6 +1,6 @@
 package de.atennert.lcarsde.logout.definition
 
-import de.atennert.lcarsde.LcarsColors
+import de.atennert.lcarsde.logout.LcarsColors
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.io.path.name

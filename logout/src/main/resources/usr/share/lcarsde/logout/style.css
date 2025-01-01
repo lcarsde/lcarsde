@@ -1,0 +1,58 @@
+
+.button {
+  font-family: 'Ubuntu Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: #000;
+  text-shadow: none;
+  outline-style: none;
+  border-radius: 20px;
+  border-width: 0;
+  box-shadow: none;
+  padding: 2px 13px 2px 25px;
+  margin: 0;
+}
+
+.button-f90 {
+  background-color: #f90;
+  background: #f90;
+}
+
+.button-c9c {
+  background-color: #c9c;
+  background: #c9c;
+}
+
+.button-99c {
+  background-color: #99c;
+  background: #99c;
+}
+
+.button-c66 {
+  background-color: #c66;
+  background: #c66;
+}
+
+.button-fc9 {
+  background-color: #fc9;
+  background: #fc9;
+}
+
+.button-99f {
+  background-color: #99f;
+  background: #99f;
+}
+
+.button-f96 {
+  background-color: #f96;
+  background: #f96;
+}
+
+.button-c69 {
+  background-color: #c69;
+  background: #c69;
+}
+
+.window {
+  background-color: #000;
+}

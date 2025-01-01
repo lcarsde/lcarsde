@@ -51,4 +51,17 @@ open class GtkWidget(val widget: Pointer) {
             Uint32_t(0)
         )
     }
+
+    fun setHAlign(hAlign: GtkAlignment) {
+        GTK.INSTANCE.gtk_widget_set_halign(widget, hAlign.value)
+    }
+
+    fun setVAlign(vAlign: GtkAlignment) {
+        GTK.INSTANCE.gtk_widget_set_valign(widget, vAlign.value)
+    }
+
+    fun setAlign(hAlign: GtkAlignment, vAlign: GtkAlignment) {
+        setHAlign(hAlign)
+        setVAlign(vAlign)
+    }
 }

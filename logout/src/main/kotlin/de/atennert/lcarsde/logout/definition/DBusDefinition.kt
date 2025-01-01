@@ -1,8 +1,8 @@
 package de.atennert.lcarsde.logout.definition
 
-import androidx.compose.ui.graphics.Color
 import com.sun.jna.Pointer
 import com.sun.jna.ptr.PointerByReference
+import de.atennert.lcarsde.logout.LcarsColors
 import de.atennert.lcarsde.logout.dbus.GBusType
 import de.atennert.lcarsde.logout.dbus.GDBusCallFlags
 import de.atennert.lcarsde.logout.dbus.GDBusProxyFlags
@@ -10,7 +10,7 @@ import de.atennert.lcarsde.logout.dbus.JnaDBus
 
 class DBusDefinition(
     override val label: String,
-    override val color: Color,
+    override val color: LcarsColors,
     consoleKitMethod: String?,
     systemdMethod: String
 ) : LogoutOptionDefinition {

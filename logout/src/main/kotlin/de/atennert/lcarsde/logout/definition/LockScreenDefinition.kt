@@ -1,6 +1,6 @@
 package de.atennert.lcarsde.logout.definition
 
-import de.atennert.lcarsde.LcarsColors
+import de.atennert.lcarsde.logout.LcarsColors
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths

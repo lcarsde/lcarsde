@@ -20,6 +20,8 @@ interface GTK: Library {
 
     fun gtk_window_new(type: Uint32_t): Pointer
 
+    fun gtk_window_set_title(window: Pointer, title: String)
+
     fun gtk_scrolled_window_new(hadjustment: Pointer?, vadjustment: Pointer?): Pointer
 
     fun gtk_scrolled_window_set_policy(
@@ -35,6 +37,10 @@ interface GTK: Library {
     fun gtk_box_pack_start(box: Pointer, child: Pointer, expand: Boolean, fill: Boolean, padding: Uint32_t)
 
     fun gtk_css_provider_new(): Pointer
+
+    fun gtk_widget_set_halign(widget: Pointer, halign: Int)
+
+    fun gtk_widget_set_valign(widget: Pointer, valign: Int)
 
     fun gtk_widget_get_style_context(widget: Pointer): Pointer
 
