@@ -3,7 +3,7 @@ package de.atennert.lcarsde.statusbar.widgets
 import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import de.atennert.lcarsde.statusbar.extensions.gSignalConnect
 import kotlinx.cinterop.*
-import statusbar.*
+import gtk.*
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.min

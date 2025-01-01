@@ -4,9 +4,9 @@ import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKString
-import statusbar.GtkCssProvider
-import statusbar.g_date_time_format
-import statusbar.g_date_time_new_now_local
+import gtk.GtkCssProvider
+import gtk.g_date_time_format
+import gtk.g_date_time_new_now_local
 
 /**
  * Displays the current time

@@ -1,59 +1,58 @@
 package de.atennert.lcarsde.menu
 
 import com.sun.jna.Memory
-import com.sun.jna.ptr.IntByReference
 import de.atennert.gtk.*
-import java.util.concurrent.Executors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class Menu
-
-fun main() {
-    val threadPool = Executors.newFixedThreadPool(1)
-
-    GTK.INSTANCE.gtk_init(IntByReference(0), null)
-
+fun main() = gtkApplication {
     val windowListQ = MQ("/lcarswm-active-window-list", MQ.Mode.READ, false)
     val sendQ = MQ("/lcarswm-app-menu-messages", MQ.Mode.WRITE, false)
 
     val window = GtkWindow()
-    val ui = GtkUI(window, sendQ)
+    val ui = Menu(window, sendQ)
     window.showAll()
 
-    threadPool.execute {
-        try {
-            while (true) {
-                windowListQ.receive()?.let {
-                    val data = Memory(it.length.toLong() + 1)
-                    data.setString(0, it)
-                    GLib.INSTANCE.g_idle_add(
-                        { dataPointer ->
-                            val message = dataPointer?.getString(0)
-                            if (message != null) {
-                                updateWindowList(ui, it)
-                            }
-                            false
-                        },
-                        data
-                    )
-                }
-                Thread.sleep(100)
-            }
-        } catch (e: InterruptedException) {
-            println("stopped listening")
-        }
-    }
+    val job = readWindowUpdates(windowListQ, ui)
 
-    window.connect("destroy") {
-        threadPool.shutdownNow()
-        GTK.INSTANCE.gtk_main_quit()
-    }
-    GTK.INSTANCE.gtk_main()
+    window.connect("destroy", ::mainQuit)
+    main()
 
+    job.cancelAndJoin()
     windowListQ.close()
     sendQ.close()
 }
 
-private fun updateWindowList(ui: GtkUI, message: String) {
+private fun CoroutineScope.readWindowUpdates(
+    windowListQ: MQ,
+    ui: Menu
+) = launch {
+    try {
+        while (true) {
+            windowListQ.receive()?.let {
+                val data = Memory(it.length.toLong() + 1)
+                data.setString(0, it)
+                GLib.INSTANCE.g_idle_add(
+                    { dataPointer ->
+                        val message = dataPointer?.getString(0)
+                        if (message != null) {
+                            updateWindowList(ui, it)
+                        }
+                        false
+                    },
+                    data
+                )
+            }
+            delay(100)
+        }
+    } catch (e: InterruptedException) {
+        println("stopped listening")
+    }
+}
+
+private fun updateWindowList(ui: Menu, message: String) {
     val (type, windowData) = message.lines().run {
         Pair(this[0], this.drop(1))
     }
@@ -69,7 +68,7 @@ private fun updateWindowList(ui: GtkUI, message: String) {
 
 private val CSS_PROVIDER = GTK.INSTANCE.gtk_css_provider_new()
 
-class GtkUI(private val window: GtkWindow, private val sendQ: MQ) {
+class Menu(private val window: GtkWindow, private val sendQ: MQ) {
     private val scrollContainer = GtkScrollContainer()
     private val appContainer = GtkBox(GtkOrientation.VERTICAL, 8)
 
@@ -107,8 +106,6 @@ class GtkUI(private val window: GtkWindow, private val sendQ: MQ) {
         windowsToRemove.forEach(::removeWindow)
         windowsToReplace.forEach(::replaceWindow)
         windowsToAdd.forEach(::addWindow)
-
-//        handleActivity(newWindowEntries)
     }
 
     private fun removeWindow(entry: WindowEntry) {
@@ -117,8 +114,8 @@ class GtkUI(private val window: GtkWindow, private val sendQ: MQ) {
     }
 
     /**
-     * Evil hack ... we should rather use handleActivity to adjust the styling of existing
-     * elements instead of creating new ones, but it's not working for some reason.
+     * Evil hack ... we should rather adjust the styling of existing elements instead of creating new ones
+     * by setting classes, but it's not working for some reason.
      */
     private fun replaceWindow(entry: WindowEntry) {
         gtkWindows[entry.id]?.let { appContainer.remove(it) }
@@ -136,16 +133,6 @@ class GtkUI(private val window: GtkWindow, private val sendQ: MQ) {
         appContainer.packStart(gtkWindow, false, false, 0u)
         gtkWindows[entry.id] = gtkWindow
         gtkWindow.showAll()
-    }
-
-    private fun handleActivity(entries: List<WindowEntry>) {
-        entries.forEach { (id, _, isActive) ->
-            gtkWindows[id]?.run {
-                if (this.isActive != isActive) {
-                    this.setActivity(isActive)
-                }
-            }
-        }
     }
 
     private fun selectWindow(id: String) {
@@ -170,14 +157,14 @@ class GtkWindowEntry(
     var isActive: Boolean,
     onSelect: (String) -> Unit,
     onClose: (String) -> Unit
-) : GtkBox(GtkOrientation.HORIZONTAL, 8) {
+) : GtkBox(GtkOrientation.HORIZONTAL, Menu.GAP_SIZE) {
     private val shortenedName = if (name.take(15) == name) name else "${name.take(15)}…"
 
     private val selectButton = GtkButton(shortenedName)
     private val closeButton = GtkButton()
 
     init {
-        selectButton.setSize(184, 40)
+        selectButton.setSize(184, Menu.CELL_SIZE)
         selectButton.setAlignment(1f, 1f)
         var selectButtonClasses = arrayOf("select_button")
         if (isActive) {
@@ -187,18 +174,9 @@ class GtkWindowEntry(
         selectButton.onClick { onSelect(id) }
         packStart(selectButton, false, false, 0u)
 
-        closeButton.setSize(32, 40)
+        closeButton.setSize(32, Menu.CELL_SIZE)
         closeButton.setStyling(CSS_PROVIDER, "close_button")
         closeButton.onClick { onClose(id) }
         packStart(closeButton, false, false, 0u)
-    }
-
-    fun setActivity(isActive: Boolean) {
-        this.isActive = isActive
-        if (isActive) {
-            this.addClass("selected")
-        } else {
-            this.removeClass("selected")
-        }
     }
 }

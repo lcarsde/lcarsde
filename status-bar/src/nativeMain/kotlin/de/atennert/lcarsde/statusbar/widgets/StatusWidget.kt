@@ -6,8 +6,8 @@ import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.*
-import statusbar.GtkCssProvider
-import statusbar.GtkWidget
+import gtk.GtkCssProvider
+import gtk.GtkWidget
 
 /**
  * Base class for all status widgets.

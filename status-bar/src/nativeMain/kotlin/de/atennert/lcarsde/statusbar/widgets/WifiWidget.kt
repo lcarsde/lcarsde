@@ -4,7 +4,7 @@ import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import de.atennert.lcarsde.statusbar.extensions.gSignalConnect
 import de.atennert.lcarsde.statusbar.readFile
 import kotlinx.cinterop.*
-import statusbar.*
+import gtk.*
 import kotlin.math.PI
 
 @ExperimentalForeignApi

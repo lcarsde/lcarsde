@@ -4,7 +4,7 @@ import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import de.atennert.lcarsde.statusbar.readFile
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
-import statusbar.GtkCssProvider
+import gtk.GtkCssProvider
 
 @ExperimentalForeignApi
 class CpuUsageWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointer<GtkCssProvider>) :

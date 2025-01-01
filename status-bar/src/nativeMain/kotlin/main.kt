@@ -1,37 +1,23 @@
+import de.atennert.gtk.GtkApplication
+import de.atennert.gtk.gtkApplication
 import de.atennert.lcarsde.statusbar.StatusBar
 import de.atennert.lcarsde.statusbar.extensions.gSignalConnect
-import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.cValue
-import kotlinx.cinterop.cValuesOf
-import kotlinx.cinterop.staticCFunction
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import statusbar.gtk_events_pending
-import statusbar.gtk_init
-import statusbar.gtk_main_iteration
-import statusbar.gtk_widget_show_all
-
-var stop = false
+import gtk.GtkWidget
+import gtk.gtk_widget_show_all
+import kotlinx.cinterop.*
 
 @ExperimentalForeignApi
-fun main() = runBlocking {
-    gtk_init(cValuesOf(0), cValue())
-
+fun main() = gtkApplication {
     val statusBar = StatusBar()
+    val ref = StableRef.create(this)
 
-    gSignalConnect(statusBar.window, "destroy", staticCFunction(::destroy))
+    gSignalConnect(
+        statusBar.window,
+        "destroy",
+        staticCFunction { _: CPointer<GtkWidget>, ref: COpaquePointer -> ref.asStableRef<GtkApplication>().get().mainQuit() },
+        ref.asCPointer())
     gtk_widget_show_all(statusBar.window)
 
-    while(!stop) {
-        while (gtk_events_pending() != 0) {
-            gtk_main_iteration()
-        }
-        delay(50)
-    }
-
+    main()
     StatusBar.stop()
-}
-
-fun destroy() {
-    stop = true
 }

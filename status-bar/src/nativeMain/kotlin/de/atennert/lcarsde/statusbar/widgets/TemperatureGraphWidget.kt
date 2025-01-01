@@ -9,7 +9,7 @@ import kotlinx.cinterop.toKString
 import platform.posix.closedir
 import platform.posix.opendir
 import platform.posix.readdir
-import statusbar.GtkCssProvider
+import gtk.GtkCssProvider
 import kotlin.collections.set
 
 @ExperimentalForeignApi

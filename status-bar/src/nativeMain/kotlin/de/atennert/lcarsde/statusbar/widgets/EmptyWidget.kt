@@ -4,9 +4,9 @@ import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import de.atennert.lcarsde.statusbar.extensions.setStyling
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
-import statusbar.GtkCssProvider
-import statusbar.gtk_label_new
-import statusbar.gtk_widget_set_size_request
+import gtk.GtkCssProvider
+import gtk.gtk_label_new
+import gtk.gtk_widget_set_size_request
 
 @ExperimentalForeignApi
 class EmptyWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointer<GtkCssProvider>)

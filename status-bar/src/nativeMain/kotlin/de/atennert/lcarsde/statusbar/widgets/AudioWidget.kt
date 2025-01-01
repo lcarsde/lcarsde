@@ -5,8 +5,8 @@ import de.atennert.lcarsde.statusbar.GAP_SIZE
 import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import de.atennert.lcarsde.statusbar.executeCommand
 import de.atennert.lcarsde.statusbar.extensions.gSignalConnect
+import gtk.*
 import kotlinx.cinterop.*
-import statusbar.*
 
 @ExperimentalForeignApi
 class AudioWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointer<GtkCssProvider>) :

@@ -56,9 +56,9 @@ interface GTK: Library {
 
     fun gtk_widget_get_window(widget: Pointer): Pointer
 
-    fun gtk_main()
+    fun gtk_events_pending(): Int
 
-    fun gtk_main_quit()
+    fun gtk_main_iteration(): Int
 
     fun gtk_label_new(str: String): Pointer
 

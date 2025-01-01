@@ -4,8 +4,8 @@ import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import de.atennert.lcarsde.statusbar.executeCommand
 import de.atennert.lcarsde.statusbar.extensions.gSignalConnect
 import de.atennert.lcarsde.statusbar.extensions.setStyling
+import gtk.*
 import kotlinx.cinterop.*
-import statusbar.*
 
 @ExperimentalForeignApi
 class ButtonWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointer<GtkCssProvider>)

@@ -12,9 +12,10 @@ application {
 }
 
 dependencies {
-    implementation("net.java.dev.jna:jna-platform:5.14.0")
+    implementation(libs.jna.platform)
+    implementation(libs.kotlinx.coroutines.core.jvm)
 
-    implementation(project(":lcarsde-jvm"))
+    implementation(project(":lcarsde-gtk"))
 }
 
 distributions {

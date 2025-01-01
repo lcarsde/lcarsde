@@ -3,8 +3,8 @@ package de.atennert.lcarsde.statusbar.widgets
 import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import de.atennert.lcarsde.statusbar.extensions.gSignalConnect
 import de.atennert.lcarsde.statusbar.readFile
+import gtk.*
 import kotlinx.cinterop.*
-import statusbar.*
 import kotlin.math.max
 
 @ExperimentalForeignApi

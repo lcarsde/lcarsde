@@ -3,7 +3,7 @@ package de.atennert.lcarsde.statusbar.widgets
 import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
-import statusbar.GtkCssProvider
+import gtk.GtkCssProvider
 
 /**
  * Used to create a widget based on a configuration entry.

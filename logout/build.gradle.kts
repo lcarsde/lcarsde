@@ -26,7 +26,7 @@ kotlin {
 
             implementation("net.java.dev.jna:jna-platform:5.14.0")
 
-            implementation(project(":lcarsde-jvm"))
+            implementation(project(":lcarsde-gtk"))
         }
     }
 }

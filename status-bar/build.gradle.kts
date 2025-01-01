@@ -46,7 +46,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(project(":lcarsde-gtk"))
             }
         }
         commonTest {
@@ -56,6 +57,12 @@ kotlin {
         }
         val nativeMain by getting
         val nativeTest by getting
+
+        nativeMain {
+            dependencies {
+                implementation(libs.kotlinx.coroutines.core.linux)
+            }
+        }
     }
 }
 

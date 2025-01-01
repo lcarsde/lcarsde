@@ -8,7 +8,7 @@ import de.atennert.lcarsde.statusbar.extensions.setStyling
 import de.atennert.lcarsde.statusbar.widgets.*
 import kotlin.native.concurrent.ThreadLocal
 import kotlinx.cinterop.*
-import statusbar.*
+import gtk.*
 
 @ExperimentalForeignApi
 class StatusBar {

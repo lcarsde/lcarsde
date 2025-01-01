@@ -1,7 +1,7 @@
 package de.atennert.lcarsde.statusbar.extensions
 
+import gtk.*
 import kotlinx.cinterop.*
-import statusbar.*
 
 @ExperimentalForeignApi
 fun <F : CFunction<*>> gSignalConnect(obj: CPointer<*>, actionName: String, action: CPointer<F>,
