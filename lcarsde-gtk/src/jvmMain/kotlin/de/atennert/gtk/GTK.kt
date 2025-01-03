@@ -77,6 +77,8 @@ interface GTK: Library {
 
     fun gtk_widget_set_size_request(widget: Pointer, width: Int, height: Int)
 
+    fun gtk_flow_box_new(): Pointer
+
     companion object {
         val INSTANCE: GTK = Native.load("gtk-3", GTK::class.java)
     }

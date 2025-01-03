@@ -17,6 +17,8 @@ actual typealias SignalInstanceRef = JvmReference
 actual typealias WindowRef = JvmReference
 actual typealias GdkWindowRef = JvmReference
 actual typealias BoxRef = JvmReference
+actual typealias FlowBoxRef = JvmReference
+
 
 actual fun WidgetRef.toSignalInstanceRef(): SignalInstanceRef = this
 actual fun CssProviderRef.toStyleProviderRef(): StyleProviderRef = this
@@ -25,6 +27,7 @@ actual fun ScrolledWindowRef.toContainerRef(): ContainerRef = this
 actual fun ButtonRef.toBWidgetRef(): WidgetRef = this
 actual fun WindowRef.toWContainerRef(): ContainerRef = this
 actual fun BoxRef.toBContainerRef(): ContainerRef = this
+actual fun FlowBoxRef.toFBContainerRef(): ContainerRef = this
 
 
 actual fun gtkInit() = GTK.INSTANCE.gtk_init(IntByReference(0), null)
@@ -126,3 +129,5 @@ actual fun gtkBoxPackStart(box: BoxRef, child: WidgetRef, expand: Boolean, fill:
 
 actual fun gtkBoxPackEnd(box: BoxRef, child: WidgetRef, expand: Boolean, fill: Boolean, padding: UInt) =
     GTK.INSTANCE.gtk_box_pack_end(box.pointer, child.pointer, expand, fill, Uint32_t(padding.toInt()))
+
+actual fun gtkFlowBoxNew() = JvmReference(GTK.INSTANCE.gtk_flow_box_new())

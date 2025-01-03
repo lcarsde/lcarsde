@@ -1,42 +1,45 @@
 
 plugins {
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlinJvm)
+    application
 }
 
-group = "de.atennert.lcarsde.appSelector"
+group = "de.atennert.lcarsde"
 
-kotlin {
-    jvm("desktop")
+application {
+    mainClass = "de.atennert.lcarsde.appSelector.AppSelectorKt"
+    applicationName = "lcarsde-app-selector"
+}
 
-    sourceSets {
-        val desktopMain by getting
+dependencies {
+    implementation(libs.kotlinx.coroutines.core.jvm)
 
-        desktopMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+    implementation(project(":lcarsde-gtk"))
+}
 
-            implementation(compose.desktop.currentOs)
-            implementation(libs.kotlinx.coroutines.swing)
-
-            implementation(project(":lcarsde-gtk"))
+distributions {
+    main {
+        contents {
+            into("usr")
+            eachFile {
+                when (file.extension) {
+                    "jar" -> {
+                        path = path.replace("/lib/", "/lib/lcarsde/")
+                    }
+                    "" -> {
+                        filter { line -> line.replace("APP_HOME/lib/", "APP_HOME/lib/lcarsde/") }
+                    }
+                }
+            }
+            from("src/main/resources") {
+                into("..")
+            }
+            exclude("**/*.bat")
         }
     }
 }
 
-compose.desktop {
-    application {
-        mainClass = "de.atennert.lcarsde.appSelector.MainKt"
-
-        nativeDistributions {
-//            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "lcarsde-app-selector"
-            packageVersion = project.version as String
-        }
-    }
+tasks.named<Sync>("installDist") {
+    // don't use sub folder with application name
+    destinationDir = file("build/install")
 }

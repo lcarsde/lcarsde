@@ -16,7 +16,7 @@ private val definitions = arrayOf(
 
 
 private val CSS_PROVIDER = gtkCssProviderNew()
-private val STYLE_PATH = "/usr/share/lcarsde/logout/style.css"
+private const val STYLE_PATH = "/usr/share/lcarsde/logout/style.css"
 
 class Logout(window: GtkWindow) {
     private val scrollContainer = GtkScrollContainer()

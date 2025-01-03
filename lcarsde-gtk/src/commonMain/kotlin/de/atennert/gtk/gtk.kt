@@ -11,6 +11,7 @@ expect class SignalInstanceRef
 expect class WindowRef
 expect class GdkWindowRef
 expect class BoxRef
+expect class FlowBoxRef
 
 expect fun WidgetRef.toSignalInstanceRef(): SignalInstanceRef
 expect fun CssProviderRef.toStyleProviderRef(): StyleProviderRef
@@ -19,6 +20,7 @@ expect fun ScrolledWindowRef.toContainerRef(): ContainerRef
 expect fun ButtonRef.toBWidgetRef(): WidgetRef
 expect fun WindowRef.toWContainerRef(): ContainerRef
 expect fun BoxRef.toBContainerRef(): ContainerRef
+expect fun FlowBoxRef.toFBContainerRef(): ContainerRef
 
 
 expect fun gtkInit()
@@ -80,3 +82,5 @@ expect fun gtkBoxNew(orientation: GtkOrientation, spacing: Int): BoxRef
 expect fun gtkBoxPackStart(box: BoxRef, child: WidgetRef, expand: Boolean, fill: Boolean, padding: UInt)
 
 expect fun gtkBoxPackEnd(box: BoxRef, child: WidgetRef, expand: Boolean, fill: Boolean, padding: UInt)
+
+expect fun gtkFlowBoxNew(): FlowBoxRef

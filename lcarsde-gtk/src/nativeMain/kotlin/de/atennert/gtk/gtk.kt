@@ -16,6 +16,7 @@ class NativeSignalInstanceRef(val pointer: CPointer<out CPointed>?)
 class NativeWindowRef(val pointer: CPointer<gtk.GtkWindow>?)
 class NativeGdkWindowRef(val pointer: CPointer<GdkWindow>?)
 class NativeBoxRef(val pointer: CPointer<gtk.GtkBox>?)
+class NativeFlowBoxRef(val pointer: CPointer<gtk.GtkFlowBox>?)
 
 actual typealias WidgetRef = NativeWidgetRef
 actual typealias ContainerRef = NativContainerRef
@@ -28,6 +29,7 @@ actual typealias SignalInstanceRef = NativeSignalInstanceRef
 actual typealias WindowRef = NativeWindowRef
 actual typealias GdkWindowRef = NativeGdkWindowRef
 actual typealias BoxRef = NativeBoxRef
+actual typealias FlowBoxRef = NativeFlowBoxRef
 
 
 @ExperimentalForeignApi
@@ -62,6 +64,11 @@ actual fun WindowRef.toWContainerRef(): ContainerRef {
 
 @ExperimentalForeignApi
 actual fun BoxRef.toBContainerRef(): ContainerRef {
+    return NativContainerRef(this.pointer?.reinterpret())
+}
+
+@ExperimentalForeignApi
+actual fun FlowBoxRef.toFBContainerRef(): ContainerRef {
     return NativContainerRef(this.pointer?.reinterpret())
 }
 
@@ -228,3 +235,6 @@ actual fun gtkBoxPackStart(box: BoxRef, child: WidgetRef, expand: Boolean, fill:
 @ExperimentalForeignApi
 actual fun gtkBoxPackEnd(box: BoxRef, child: WidgetRef, expand: Boolean, fill: Boolean, padding: UInt) =
     gtk_box_pack_end(box.pointer, child.pointer, expand.toInt(), fill.toInt(), padding)
+
+@ExperimentalForeignApi
+actual fun gtkFlowBoxNew() = NativeFlowBoxRef(gtk_flow_box_new()?.reinterpret())

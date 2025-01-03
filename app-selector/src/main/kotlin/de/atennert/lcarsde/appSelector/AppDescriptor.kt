@@ -1,6 +1,5 @@
 package de.atennert.lcarsde.appSelector
 
-import de.atennert.lcarsde.LcarsColors
 import java.io.File
 import kotlin.system.exitProcess
 

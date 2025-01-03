@@ -57,3 +57,26 @@
 .window {
   background-color: #000;
 }
+
+.category {
+  font-family: 'Ubuntu Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  color: #f90;
+}
+.line-end {
+  min-width: 20px;
+  background-color: #99F;
+  background: #99F; /* for Ubuntu */
+  outline-style: none;
+  border-width: 0;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+}
+.line-end--left {
+  border-radius: 20px 0 0 20px;
+}
+.line-end--right {
+  border-radius: 0 20px 20px 0;
+}
