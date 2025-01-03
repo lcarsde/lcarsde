@@ -52,7 +52,7 @@ private fun CoroutineScope.readWindowUpdates(
     }
 }
 
-private val CSS_PROVIDER = GTK.INSTANCE.gtk_css_provider_new()
+private val CSS_PROVIDER = gtkCssProviderNew()
 
 class Menu(private val window: GtkWindow, private val sendQ: MQ) {
     private val scrollContainer = GtkScrollContainer()
@@ -67,7 +67,7 @@ class Menu(private val window: GtkWindow, private val sendQ: MQ) {
     private val gtkWindows = mutableMapOf<String, GtkWindowEntry>()
 
     init {
-        GTK.INSTANCE.gtk_css_provider_load_from_path(CSS_PROVIDER, STYLE_PATH, null)
+        gtkCssProviderLoadFromPath(CSS_PROVIDER, STYLE_PATH)
         window.setStyling(CSS_PROVIDER, "window")
 
         scrollContainer.setPolicy(GtkPolicyType.NEVER, GtkPolicyType.AUTOMATIC)

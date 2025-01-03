@@ -14,7 +14,8 @@ private val definitions = arrayOf(
     LogoutDefinition(),
 ).filter { it.isAvailable }
 
-private val CSS_PROVIDER = GTK.INSTANCE.gtk_css_provider_new()
+
+private val CSS_PROVIDER = gtkCssProviderNew()
 private val STYLE_PATH = "/usr/share/lcarsde/logout/style.css"
 
 class Logout(window: GtkWindow) {
@@ -22,7 +23,7 @@ class Logout(window: GtkWindow) {
     private val appContainer = GtkBox(GtkOrientation.VERTICAL, 8)
 
     init {
-        GTK.INSTANCE.gtk_css_provider_load_from_path(CSS_PROVIDER, STYLE_PATH, null)
+        gtkCssProviderLoadFromPath(CSS_PROVIDER, STYLE_PATH)
         window.setStyling(CSS_PROVIDER, "window")
 
         scrollContainer.setPolicy(GtkPolicyType.NEVER, GtkPolicyType.AUTOMATIC)

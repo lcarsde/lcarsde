@@ -4,6 +4,7 @@ import com.sun.jna.Callback
 import com.sun.jna.Library
 import com.sun.jna.Native
 import com.sun.jna.Pointer
+import com.sun.jna.platform.win32.WinDef.ULONG
 import com.sun.jna.ptr.IntByReference
 import de.atennert.Uint32_t
 
@@ -16,7 +17,7 @@ interface GTK: Library {
         css_provider: Pointer,
         path: String,
         error: Pointer?,
-    )
+    ): Int
 
     fun gtk_window_new(type: Uint32_t): Pointer
 
@@ -105,7 +106,7 @@ interface GObject : Library {
         data: Pointer?,
         destroy_data: Pointer?,
         connect_flags: Uint32_t
-    )
+    ): ULONG
 
     companion object {
         val INSTANCE: GObject = Native.load("gobject-2.0", GObject::class.java)
