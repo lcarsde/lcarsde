@@ -34,7 +34,7 @@ private fun checkAndExecute(path: String, files: Files, commander: Commander, lo
 
     if (!autoStart.hidden && !autoStart.excludeByShow){
         logger.logDebug("run $path")
-        commander.run("/usr/share/lcarsde/tools/launcher.py $path")
+        commander.run("dex $path")
     }
 }
 

@@ -10,7 +10,7 @@ class AppDescriptor(private val filePath: String, data: List<String>) {
     val color = BUTTON_COLORS[name?.sumOf(Char::code)?.mod(BUTTON_COLORS.size) ?: 0]
 
     fun start() {
-        // TODO require dex
+        // todo put exec in lcarsde common
         val builder = ProcessBuilder()
         builder.command("dex", filePath)
             .directory(File(System.getProperty("user.home")))
