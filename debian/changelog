@@ -1,0 +1,6 @@
+lcarsde (%version%) unstable; urgency=low
+
+  * Upstream release.
+  * Check https://github.com/lcarsde/lcarsde/blob/master/CHANGELOG
+
+ -- Andreas Tennert <lcarsde@andreas-tennert.de>  %time%

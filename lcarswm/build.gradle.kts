@@ -67,3 +67,16 @@ kotlin {
 tasks.withType<Wrapper> {
     distributionType = Wrapper.DistributionType.ALL
 }
+
+tasks.register<Copy>("installDist")
+tasks.named<Copy>("installDist") {
+    group = "distribution"
+    dependsOn("build")
+
+    into("build/install")
+
+    from(file("src/nativeMain/resources"))
+    from(file("build/bin/native/releaseExecutable")) {
+        into("/usr/bin/")
+    }
+}

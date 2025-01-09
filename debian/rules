@@ -1,0 +1,44 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+DH_VERBOSE = 1         # what dh_ commands are executed
+export DH_OPTIONS=-v   # what commands are executed by each dh_command
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# see ENVIRONMENT in dpkg-buildflags(1)
+# package maintainers to append CFLAGS
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+# package maintainers to append LDFLAGS
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+#clean:
+#	dh_testdir
+#	dh_testroot
+#	dh_autoreconf_clean
+#	dh_clean
+
+build:
+	dh_testdir
+
+    ./gradlew clean
+	./gradlew build
+	./gradlew installDist
+	./gradlew combineRelease
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	cp -r "build/release/usr" "debian/lcarsde/usr"
+	cp -r "build/release/etc" "debian/lcarsde/etc"
+
+	mkdir -p "debian/lcarsde/usr/share/doc/lcarsde"
+	cp "LICENSE" "debian/lcarsde/usr/share/doc/lcarsde/copyright"
+
+
+%:
+	dh $@
