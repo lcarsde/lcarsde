@@ -17,7 +17,7 @@ fun main() = gtkApplication {
 
     val job = readWindowUpdates(windowListQ, menu)
 
-    window.connect("destroy", ::mainQuit)
+    window.connect("destroy", CallbackContainer(::mainQuit))
     main()
 
     job.cancelAndJoin()
@@ -79,7 +79,7 @@ class Menu(private val window: GtkWindow, private val sendQ: MQ) {
         scrollContainer.add(appContainer)
         window.add(scrollContainer)
 
-        window.connect("realize") { window.setUtf8Property(LCARSDE_APP_MENU, LCARSDE_APP_MENU) }
+        window.connect("realize", CallbackContainer { window.setUtf8Property(LCARSDE_APP_MENU, LCARSDE_APP_MENU) })
     }
 
 
@@ -170,12 +170,12 @@ class GtkWindowEntry(
             selectButtonClasses += "selected"
         }
         selectButton.setStyling(CSS_PROVIDER, *selectButtonClasses)
-        selectButton.onClick { onSelect(id) }
+        selectButton.onClick(CallbackContainer { onSelect(id) })
         packStart(selectButton, false, false, 0u)
 
         closeButton.setSize(32, Menu.CELL_SIZE)
         closeButton.setStyling(CSS_PROVIDER, "close_button")
-        closeButton.onClick { onClose(id) }
+        closeButton.onClick(CallbackContainer { onClose(id) })
         packStart(closeButton, false, false, 0u)
     }
 }

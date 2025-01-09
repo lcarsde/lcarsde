@@ -5,6 +5,7 @@ import com.sun.jna.ptr.IntByReference
 import de.atennert.Uint32_t
 
 class JvmReference(val pointer: Pointer)
+class CallbackContainer(val callback: SignalCallback)
 
 actual typealias WidgetRef = JvmReference
 actual typealias ContainerRef = JvmReference
@@ -18,6 +19,7 @@ actual typealias WindowRef = JvmReference
 actual typealias GdkWindowRef = JvmReference
 actual typealias BoxRef = JvmReference
 actual typealias FlowBoxRef = JvmReference
+actual typealias CallbackRef = CallbackContainer
 
 
 actual fun WidgetRef.toSignalInstanceRef(): SignalInstanceRef = this
@@ -73,11 +75,11 @@ actual fun gtkWidgetSetVAlign(widget: WidgetRef, vAlign: GtkAlignment) =
 
 actual fun gtkWidgetShowAll(widget: WidgetRef) = GTK.INSTANCE.gtk_widget_show_all(widget.pointer)
 
-actual fun gSignalConnectData(instance: SignalInstanceRef, signal: String, callback: () -> Unit) =
+actual fun gSignalConnectData(instance: SignalInstanceRef, signal: String, callback: CallbackRef) =
     GObject.INSTANCE.g_signal_connect_data(
         instance.pointer,
         signal,
-        callback,
+        callback.callback,
         null,
         null,
         Uint32_t(0)

@@ -34,7 +34,7 @@ class Logout(window: GtkWindow) {
             val button = GtkButton(it.label)
             button.setAlignment(1f, 1f)
             button.setStyling(CSS_PROVIDER, "button", "button-${it.color.color}")
-            button.onClick(it::call)
+            button.onClick(CallbackContainer(it::call))
             appContainer.packStart(button, false, false, 0u)
         }
 
@@ -49,6 +49,6 @@ fun main() = gtkApplication {
     Logout(window)
     window.showAll()
 
-    window.connect("destroy", ::mainQuit)
+    window.connect("destroy", CallbackContainer(::mainQuit))
     main()
 }

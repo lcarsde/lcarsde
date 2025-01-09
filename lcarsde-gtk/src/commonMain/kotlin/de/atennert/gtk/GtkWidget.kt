@@ -34,7 +34,7 @@ open class GtkWidget(val widget: WidgetRef) {
         gtkWidgetShowAll(widget)
     }
 
-    fun connect(signal: String, callback: () -> Unit) {
+    fun connect(signal: String, callback: CallbackRef) {
         gSignalConnectData(widget.toSignalInstanceRef(), signal, callback)
     }
 

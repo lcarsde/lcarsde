@@ -4,6 +4,7 @@ package de.atennert.gtk
 
 import gtk.*
 import kotlinx.cinterop.*
+import kotlin.native.concurrent.freeze
 
 class NativeWidgetRef(val pointer: CPointer<gtk.GtkWidget>?)
 class NativContainerRef(val pointer: CPointer<gtk.GtkContainer>?)
@@ -17,6 +18,7 @@ class NativeWindowRef(val pointer: CPointer<gtk.GtkWindow>?)
 class NativeGdkWindowRef(val pointer: CPointer<GdkWindow>?)
 class NativeBoxRef(val pointer: CPointer<gtk.GtkBox>?)
 class NativeFlowBoxRef(val pointer: CPointer<gtk.GtkFlowBox>?)
+class NativeCallbackRef(val pointer: CPointer<CFunction<() -> Unit>>)
 
 actual typealias WidgetRef = NativeWidgetRef
 actual typealias ContainerRef = NativContainerRef
@@ -30,6 +32,7 @@ actual typealias WindowRef = NativeWindowRef
 actual typealias GdkWindowRef = NativeGdkWindowRef
 actual typealias BoxRef = NativeBoxRef
 actual typealias FlowBoxRef = NativeFlowBoxRef
+actual typealias CallbackRef = NativeCallbackRef
 
 
 @ExperimentalForeignApi
@@ -162,11 +165,11 @@ actual fun gtkWidgetSetVAlign(widget: WidgetRef, vAlign: GtkAlignment) =
 actual fun gtkWidgetShowAll(widget: WidgetRef) = gtk_widget_show_all(widget.pointer)
 
 @ExperimentalForeignApi
-actual fun gSignalConnectData(instance: SignalInstanceRef, signal: String, callback: () -> Unit) =
+actual fun gSignalConnectData(instance: SignalInstanceRef, signal: String, callback: CallbackRef) =
     g_signal_connect_data(
         instance.pointer,
         signal,
-        staticCFunction(callback),
+        callback.pointer,
         null,
         null,
         0u

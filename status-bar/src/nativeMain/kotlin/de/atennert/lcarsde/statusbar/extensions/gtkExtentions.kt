@@ -4,9 +4,9 @@ import gtk.*
 import kotlinx.cinterop.*
 
 @ExperimentalForeignApi
-fun <F : CFunction<*>> gSignalConnect(obj: CPointer<*>, actionName: String, action: CPointer<F>,
+fun <F : CFunction<*>> gSignalConnect(obj: CPointer<*>?, actionName: String, action: CPointer<F>,
                                       data: gpointer? = null, connect_flags: GConnectFlags = 0u) {
-    g_signal_connect_data(obj.reinterpret(), actionName, action.reinterpret(), data,
+    g_signal_connect_data(obj?.reinterpret(), actionName, action.reinterpret(), data,
         destroy_data = null, connect_flags = connect_flags)
 }
 

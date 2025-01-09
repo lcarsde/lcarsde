@@ -28,7 +28,7 @@ class AppSelector(window: GtkWindow) {
                     val button = GtkButton(app.name)
                     button.setStyling(CSS_PROVIDER, "button", "button-${app.color.color}")
                     button.setAlignment(1f, 1f)
-                    button.onClick(app::start)
+                    button.onClick(CallbackContainer { println("Run ${app.name}"); app.start() })
                     flowBox.add(button)
                 }
                 appContainer.add(flowBox)
@@ -45,6 +45,6 @@ fun main() = gtkApplication {
     AppSelector(window)
     window.showAll()
 
-    window.connect("destroy", ::mainQuit)
+    window.connect("destroy", CallbackContainer(::mainQuit))
     main()
 }
