@@ -1,0 +1,89 @@
+name: Build and Deploy
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxpm-dev libgtk-3-dev libxrandr-dev libpango1.0-dev libicu-dev libxml2-dev libtinfo6
+
+      - name: Run tests
+        run: |
+          ./gradlew test
+          ./gradlew nativeTest
+
+  deploy-ubuntu:
+    needs: test
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y devscripts debhelper fakeroot libx11-dev libxpm-dev libgtk-3-dev libxrandr-dev libpango1.0-dev libicu-dev libxml2-dev libtinfo6
+
+      - name: Build lcarsde release
+        run: ./deploy-deb.sh lcarsde "${GITHUB_REF_NAME}"
+
+      - shell: bash
+        run: |
+          if ls -1qA ./build/deb/deploy | grep -q . ; then
+            echo "deb package built!";
+          else
+            echo "deb package not built"; exit 1
+          fi
+
+      - name: Prepare release notes
+        id: release_notes
+        shell: bash
+        run: |
+          intro='lcarsde $1 is out. Changes in this release include:\n\n'
+          r=$(perl -p0e "s/([0-9]+\.[0-9]+)\R/$intro/ms;" -p0e 's/\R+[0-9]+\.[0-9]+\R.*//ms' CHANGELOG)
+          r="${r//'%'/'%25'}"
+          r="${r//$'\n'/'%0A'}"
+          r="${r//$'\r'/'%0D'}"
+          echo "RELEASE_BODY=$r" >> $GITHUB_OUTPUT
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: ./build/deb/deploy
+          body: ${{ steps.release_notes.outputs.RELEASE_BODY }}
+
+#  deploy-aur:
+#    needs: test
+#    runs-on:
+#    steps:
