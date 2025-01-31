@@ -99,7 +99,8 @@ class Menu(private val window: GtkWindow, private val sendQ: MQ) {
 
     private fun updateWindows(newWindowEntries: List<WindowEntry>) {
         val windowsToRemove = windowEntries.filter { !newWindowEntries.contains(it) }
-        val windowsToReplace = windowEntries.minus { windowsToRemove }.map { newWindowEntries.first { newIt -> it == newIt } }
+        val windowsToReplace =
+            windowEntries.minus { windowsToRemove }.mapNotNull { newWindowEntries.find { newIt -> it == newIt } }
         val windowsToAdd = newWindowEntries.filter { !windowEntries.contains(it) }
 
         windowsToRemove.forEach(::removeWindow)
