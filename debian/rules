@@ -33,8 +33,8 @@ install: build
 	dh_prep
 	dh_installdirs
 
-	cp -r "build/release/etc" "debian/lcarsde/etc"
-	cp -r "build/release/usr" "debian/lcarsde/usr"
+	cp -r "build/release/etc" "debian/lcarsde/"
+	cp -r "build/release/usr" "debian/lcarsde/"
 
 	mkdir -p "debian/lcarsde/usr/share/doc/lcarsde"
 	cp "LICENSE" "debian/lcarsde/usr/share/doc/lcarsde/copyright"
