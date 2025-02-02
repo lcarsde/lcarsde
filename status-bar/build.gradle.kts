@@ -7,7 +7,7 @@ plugins {
 group = "de.atennert"
 
 kotlin {
-    val nativeTarget = when (System.getProperty("os.name")) {
+    val linuxTarget = when (System.getProperty("os.name")) {
         "Linux" -> {
             val architecture: String = ByteArrayOutputStream().use { os ->
                 project.exec {
@@ -17,9 +17,9 @@ kotlin {
                 os.toString().trim()
             }
             when {
-                architecture == "x86_64" -> linuxX64("native")
-                architecture.startsWith("arm64") -> linuxArm64("native")
-                architecture.startsWith("aarch64") -> linuxArm64("native")
+                architecture == "x86_64" -> linuxX64()
+                architecture.startsWith("arm64") -> linuxArm64("linuxX64")
+                architecture.startsWith("aarch64") -> linuxArm64("linuxX64")
                 else -> throw GradleException("Host CPU architecture not supported: $architecture.\n" +
                         "If you think, it should work, please:\n" +
                         "1. check your CPU architecture with \"uname -a\",\n" +
@@ -32,7 +32,7 @@ kotlin {
         else -> throw GradleException("Host OS is not supported.")
     }
 
-    nativeTarget.apply {
+    linuxTarget.apply {
         binaries {
             executable {
                 entryPoint = "main"
@@ -55,14 +55,12 @@ kotlin {
                 implementation( "org.jetbrains.kotlin:kotlin-test-common")
             }
         }
-        val nativeMain by getting
-        val nativeTest by getting
-
-        nativeMain {
+        linuxX64Main {
             dependencies {
                 implementation(libs.kotlinx.coroutines.core.linux)
             }
         }
+        linuxX64Test {}
     }
 }
 
@@ -77,8 +75,8 @@ tasks.named<Copy>("installDist") {
 
     into("build/install")
 
-    from(file("src/nativeMain/resources"))
-    from(file("build/bin/native/releaseExecutable")) {
+    from(file("src/linuxX64Main/resources"))
+    from(file("build/bin/linuxX64/releaseExecutable")) {
         into("/usr/bin/")
     }
 }

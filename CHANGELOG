@@ -4,3 +4,6 @@
 * Remove launcher.py and launch apps using dex (new dependency)
 * Remove all Python dependencies
 * As a result of the package merge, all parts of lcarsde are now licensed under GNU GPL V2 from this version on
+* New status bar LcarsdeStatusAudio widget -> breaking changes in configuration
+    * Old audio widget properties are gone
+    * New properties added: volumeIncrease, volumeDecrease with integer percent values as steps for increasing/decreasing audio volume

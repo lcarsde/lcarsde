@@ -2,8 +2,8 @@ package de.atennert.lcarsde.statusbar.widgets
 
 import de.atennert.lcarsde.statusbar.CELL_SIZE
 import de.atennert.lcarsde.statusbar.GAP_SIZE
+import de.atennert.lcarsde.statusbar.audio.PulseAudio
 import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
-import de.atennert.lcarsde.statusbar.executeCommand
 import de.atennert.lcarsde.statusbar.extensions.gSignalConnect
 import gtk.*
 import kotlinx.cinterop.*
@@ -19,7 +19,7 @@ class AudioWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointe
     private val muteButton: Pair<CPointer<GtkWidget>, CPointer<GtkWidget>>
     private val raiseButton: Pair<CPointer<GtkWidget>, CPointer<GtkWidget>>
 
-    private lateinit var currentAudioStatus: Pair<Boolean, Int>
+    private var currentAudioStatus = Pair(false, 0)
 
     init {
         widget = gtk_box_new(GtkOrientation.GTK_ORIENTATION_HORIZONTAL, GAP_SIZE)!!
@@ -62,6 +62,12 @@ class AudioWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointe
     }
 
     override fun start() {
+        PulseAudio.start { volume, muted ->
+            println("volume = $volume, muted = $muted")
+            currentAudioStatus = Pair(muted, volume.toInt())
+            gtk_widget_queue_draw(volumeDrawArea)
+            setMuteStatus()
+        }
         ref = StableRef.create(this)
 
 
@@ -92,43 +98,13 @@ class AudioWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointe
 
     override fun stop() {
         super.stop()
+        PulseAudio.stop()
 
         ref!!.dispose()
     }
 
     override fun update() {
-        currentAudioStatus = readAudioStatus()
-        gtk_widget_queue_draw(volumeDrawArea)
-        setMuteStatus()
-    }
-
-    private fun readAudioStatus(): Pair<Boolean, Int> {
-        properties["getData"]?.let { command ->
-            try {
-                popen(command, "r")?.let { fp ->
-                    var s = ""
-                    val buf = ByteArray(1000)
-                    buf.usePinned {
-                        while (fgets(it.addressOf(0), 1000, fp) != null) {
-                            s += it.get().toKString()
-                        }
-                    }
-                    pclose(fp)
-                    val data = s.trim().split(";")
-                    return Pair(
-                        when (data[1].lowercase()) {
-                            "yes" -> true
-                            "1" -> true
-                            else -> false
-                        },
-                        data[0].replace("%", "").toInt()
-                    )
-                }
-            } catch (e: Exception) {
-                return Pair(true, 0)
-            }
-        }
-        return Pair(true, 0)
+        PulseAudio.run()
     }
 
     private fun setMuteStatus() {
@@ -216,23 +192,22 @@ class AudioWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointe
 
         private fun lowerVolume(ref: COpaquePointer) {
             val widget = ref.asStableRef<AudioWidget>().get()
-            widget.properties["lowerVolume"]?.let {
-                executeCommand(it)
+            println(widget.properties)
+            widget.properties["volumeDecrease"]?.let {
+                PulseAudio.lowerVolume(it.trimEnd('%').toInt())
             }
         }
 
         private fun raiseVolume(ref: COpaquePointer) {
             val widget = ref.asStableRef<AudioWidget>().get()
-            widget.properties["raiseVolume"]?.let {
-                executeCommand(it)
+            widget.properties["volumeIncrease"]?.let {
+                PulseAudio.raiseVolume(it.trimEnd('%').toInt())
             }
         }
 
         private fun toggleMute(ref: COpaquePointer) {
             val widget = ref.asStableRef<AudioWidget>().get()
-            widget.properties["toggleMute"]?.let {
-                executeCommand(it)
-            }
+            PulseAudio.setMute(!widget.currentAudioStatus.first)
         }
     }
 }

@@ -54,12 +54,8 @@
     <widget name="LcarsdeStatusAudio">
         <position x="5" y="0" width="4" height="1" />
         <properties>
-            <!-- used to get the audio status -->
-            <!-- returns "volume;muted" -->
-            <property key="getData" value="/usr/share/lcarsde/tools/getaudio.sh" />
-            <property key="toggleMute" value="amixer -D pulse set Master toggle" />
-            <property key="raiseVolume" value="amixer -D pulse set Master 3%+" />
-            <property key="lowerVolume" value="amixer -D pulse set Master 3%-" />
+            <property key="volumeIncrease" value="3%" />
+            <property key="volumeDecrease" value="3%" />
         </properties>
     </widget>
     <widget name="LcarsdeStatusButton">

@@ -14,7 +14,7 @@ fun main() = gtkApplication {
     gSignalConnect(
         statusBar.window,
         "destroy",
-        staticCFunction { _: CPointer<GtkWidget>, ref: COpaquePointer -> ref.asStableRef<GtkApplication>().get().mainQuit() },
+        staticCFunction { _: CPointer<GtkWidget>, r: COpaquePointer -> r.asStableRef<GtkApplication>().get().mainQuit() },
         ref.asCPointer())
     gtk_widget_show_all(statusBar.window)
 
