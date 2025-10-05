@@ -1,5 +1,6 @@
 package de.atennert.lcarswm.lifecycle
 
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.system.api.SystemApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import staticLogger

@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.lifecycle
+package de.atennert.lcarsde.lifecycle
 
 /**
  * List of things that needs to be closed (executed for cleanup) when the

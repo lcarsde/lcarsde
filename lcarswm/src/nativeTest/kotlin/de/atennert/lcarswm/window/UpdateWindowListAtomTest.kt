@@ -2,7 +2,7 @@ package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.conversion.toULongArray
-import de.atennert.lcarswm.lifecycle.closeClosables
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.system.WindowUtilApiMock
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert

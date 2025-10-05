@@ -1,5 +1,6 @@
 package de.atennert.lcarswm.lifecycle
 
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.*
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.NumberAtomReader

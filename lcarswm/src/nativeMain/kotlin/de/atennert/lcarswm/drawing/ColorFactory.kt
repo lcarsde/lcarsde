@@ -1,6 +1,6 @@
 package de.atennert.lcarswm.drawing
 
-import de.atennert.lcarswm.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.system.api.DrawApi
 import kotlinx.cinterop.*
 import xlib.*

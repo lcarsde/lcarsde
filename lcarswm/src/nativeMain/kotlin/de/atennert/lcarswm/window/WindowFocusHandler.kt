@@ -2,7 +2,7 @@ package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.AppMenuMessageHandler
 import de.atennert.lcarswm.keys.KeySessionManager
-import de.atennert.lcarswm.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.rx.NextObserver
 import de.atennert.rx.ReplaySubject
 import de.atennert.rx.operators.filter

@@ -1,6 +1,6 @@
 package de.atennert.lcarswm.signal
 
-import de.atennert.lcarswm.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.system.api.PosixApi
 import kotlinx.cinterop.*
 import platform.posix.SA_NOCLDSTOP

@@ -1,6 +1,6 @@
 package de.atennert.lcarswm.system
 
-import de.atennert.lcarswm.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.closeWith
 import kotlinx.cinterop.*
 import platform.linux.*
 import platform.posix.*
