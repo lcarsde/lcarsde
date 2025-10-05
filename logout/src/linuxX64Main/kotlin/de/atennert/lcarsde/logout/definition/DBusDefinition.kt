@@ -1,13 +1,13 @@
 package de.atennert.lcarsde.logout.definition
 
-import com.sun.jna.Pointer
-import com.sun.jna.ptr.PointerByReference
 import de.atennert.lcarsde.logout.LcarsColors
-import de.atennert.lcarsde.logout.dbus.GBusType
-import de.atennert.lcarsde.logout.dbus.GDBusCallFlags
-import de.atennert.lcarsde.logout.dbus.GDBusProxyFlags
-import de.atennert.lcarsde.logout.dbus.JnaDBus
+import gtk.*
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.cValuesOf
+import kotlinx.cinterop.toKString
 
+@OptIn(ExperimentalForeignApi::class)
 class DBusDefinition(
     override val label: String,
     override val color: LcarsColors,
@@ -22,9 +22,8 @@ class DBusDefinition(
         checkNotNull(handler)()
     }
 
+    @ExperimentalForeignApi
     private companion object {
-        val dbus = JnaDBus.INSTANCE
-
         fun getHandler(consoleKitMethod: String?, systemdMethod: String): (() -> Unit)? {
             if (isSystemdMethodAvailable(systemdMethod)) {
                 return { runSystemdMethod(systemdMethod) }
@@ -44,17 +43,17 @@ class DBusDefinition(
             )
 
             try {
-                val result = dbus.g_dbus_proxy_call_sync(
+                val result = g_dbus_proxy_call_sync(
                     proxy,
                     "Can$methodName",
                     null,
-                    GDBusCallFlags.NONE,
+                    G_DBUS_CALL_FLAGS_NONE,
                     100,
                     null,
                     null
                 )
-                return result != null && dbus.g_variant_get_string(dbus.g_variant_get_child_value(result, 0), null) == "yes"
-            } catch (ex: Exception) {
+                return result != null && g_variant_get_string(g_variant_get_child_value(result, 0u), null)?.toKString() == "yes"
+            } catch (_: Exception) {
                 return false
             }
         }
@@ -67,13 +66,13 @@ class DBusDefinition(
             )
 
             try {
-                val interactive = dbus.g_variant_new_boolean(true)
-                val parameters = dbus.g_variant_new_tuple(PointerByReference(interactive), 1)
-                dbus.g_dbus_proxy_call_sync(
+                val interactive = g_variant_new_boolean(1)
+                val parameters = g_variant_new_tuple(cValuesOf(interactive), 1u)
+                g_dbus_proxy_call_sync(
                     proxy,
                     methodName,
                     parameters,
-                    GDBusCallFlags.NONE,
+                    G_DBUS_CALL_FLAGS_NONE,
                     100,
                     null,
                     null
@@ -91,17 +90,17 @@ class DBusDefinition(
             )
 
             try {
-                val result = dbus.g_dbus_proxy_call_sync(
+                val result = g_dbus_proxy_call_sync(
                     proxy,
                     "Can$methodName",
                     null,
-                    GDBusCallFlags.NONE,
+                    G_DBUS_CALL_FLAGS_NONE,
                     100,
                     null,
                     null
                 )
-                return result != null && dbus.g_variant_get_boolean(dbus.g_variant_get_child_value(result, 0))
-            } catch (ex: Exception) {
+                return result != null && (g_variant_get_boolean(g_variant_get_child_value(result, 0u)) > 0)
+            } catch (_: Exception) {
                 return false
             }
         }
@@ -114,11 +113,11 @@ class DBusDefinition(
             )
 
             try {
-                dbus.g_dbus_proxy_call_sync(
+                g_dbus_proxy_call_sync(
                     proxy,
                     methodName,
                     null,
-                    GDBusCallFlags.NONE,
+                    G_DBUS_CALL_FLAGS_NONE,
                     100,
                     null,
                     null
@@ -132,11 +131,11 @@ class DBusDefinition(
             name: String,
             objectPath: String,
             interfaceName: String,
-        ): Pointer {
-            val bus = dbus.g_bus_get_sync(GBusType.G_BUS_TYPE_SYSTEM, null, null)
-            return dbus.g_dbus_proxy_new_sync(
+        ): CPointer<_GDBusProxy>? {
+            val bus = g_bus_get_sync(G_BUS_TYPE_SYSTEM, null, null)
+            return g_dbus_proxy_new_sync(
                 bus,
-                GDBusProxyFlags.NONE,
+                G_DBUS_PROXY_FLAGS_NONE,
                 null,
                 name,
                 objectPath,

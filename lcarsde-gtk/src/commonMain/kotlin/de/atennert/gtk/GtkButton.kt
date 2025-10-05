@@ -12,7 +12,7 @@ class GtkButton(label: String? = null, private val button: ButtonRef = gtkButton
         gtkButtonSetAlignment(button, xalign, yalign)
     }
 
-    fun onClick(callback: CallbackRef) {
-        this.connect("clicked", callback)
+    fun onClick(callback: CallbackRef, signalDataRef: SignalDataRef? = null) {
+        this.connect("clicked", callback, signalDataRef)
     }
 }
