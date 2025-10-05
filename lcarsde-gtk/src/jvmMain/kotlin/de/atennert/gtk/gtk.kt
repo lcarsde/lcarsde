@@ -20,6 +20,7 @@ actual typealias GdkWindowRef = JvmReference
 actual typealias BoxRef = JvmReference
 actual typealias FlowBoxRef = JvmReference
 actual typealias CallbackRef = CallbackContainer
+actual typealias SignalDataRef = JvmReference
 
 
 actual fun WidgetRef.toSignalInstanceRef(): SignalInstanceRef = this
@@ -75,12 +76,17 @@ actual fun gtkWidgetSetVAlign(widget: WidgetRef, vAlign: GtkAlignment) =
 
 actual fun gtkWidgetShowAll(widget: WidgetRef) = GTK.INSTANCE.gtk_widget_show_all(widget.pointer)
 
-actual fun gSignalConnectData(instance: SignalInstanceRef, signal: String, callback: CallbackRef) =
+actual fun gSignalConnectData(
+    instance: SignalInstanceRef,
+    signal: String,
+    callback: CallbackRef,
+    signalDataRef: SignalDataRef?
+) =
     GObject.INSTANCE.g_signal_connect_data(
         instance.pointer,
         signal,
         callback.callback,
-        null,
+        signalDataRef?.pointer,
         null,
         Uint32_t(0)
     ).toLong().toULong()

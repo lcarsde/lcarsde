@@ -34,8 +34,8 @@ open class GtkWidget(val widget: WidgetRef) {
         gtkWidgetShowAll(widget)
     }
 
-    fun connect(signal: String, callback: CallbackRef) {
-        gSignalConnectData(widget.toSignalInstanceRef(), signal, callback)
+    fun connect(signal: String, callback: CallbackRef, signalDataRef: SignalDataRef? = null) {
+        gSignalConnectData(widget.toSignalInstanceRef(), signal, callback, signalDataRef)
     }
 
     fun setHAlign(hAlign: GtkAlignment) {

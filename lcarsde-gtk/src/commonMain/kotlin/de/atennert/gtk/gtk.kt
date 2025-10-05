@@ -13,6 +13,7 @@ expect class GdkWindowRef
 expect class BoxRef
 expect class FlowBoxRef
 expect class CallbackRef
+expect class SignalDataRef
 
 expect fun WidgetRef.toSignalInstanceRef(): SignalInstanceRef
 expect fun CssProviderRef.toStyleProviderRef(): StyleProviderRef
@@ -54,7 +55,7 @@ expect fun gtkWidgetSetVAlign(widget: WidgetRef, vAlign: GtkAlignment)
 
 expect fun gtkWidgetShowAll(widget: WidgetRef)
 
-expect fun gSignalConnectData(instance: SignalInstanceRef, signal: String, callback: CallbackRef): ULong
+expect fun gSignalConnectData(instance: SignalInstanceRef, signal: String, callback: CallbackRef, signalDataRef: SignalDataRef? = null): ULong
 
 expect fun gtkContainerAdd(parent: ContainerRef, child: WidgetRef)
 

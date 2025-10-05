@@ -14,11 +14,13 @@ class NativeStyleContextRef(val pointer: CValuesRef<GtkStyleContext>?)
 class NativeCssProviderRef(val pointer: CPointer<GtkCssProvider>?)
 class NativeStyleProviderRef(val pointer: CPointer<GtkStyleProvider>?)
 class NativeSignalInstanceRef(val pointer: CPointer<out CPointed>?)
+class NativeSignalDataRef(val pointer: CPointer<out CPointed>?)
 class NativeWindowRef(val pointer: CPointer<gtk.GtkWindow>?)
 class NativeGdkWindowRef(val pointer: CPointer<GdkWindow>?)
 class NativeBoxRef(val pointer: CPointer<gtk.GtkBox>?)
 class NativeFlowBoxRef(val pointer: CPointer<gtk.GtkFlowBox>?)
 class NativeCallbackRef(val pointer: CPointer<CFunction<() -> Unit>>)
+
 
 actual typealias WidgetRef = NativeWidgetRef
 actual typealias ContainerRef = NativContainerRef
@@ -33,6 +35,7 @@ actual typealias GdkWindowRef = NativeGdkWindowRef
 actual typealias BoxRef = NativeBoxRef
 actual typealias FlowBoxRef = NativeFlowBoxRef
 actual typealias CallbackRef = NativeCallbackRef
+actual typealias SignalDataRef = NativeSignalDataRef
 
 
 @ExperimentalForeignApi
@@ -165,12 +168,17 @@ actual fun gtkWidgetSetVAlign(widget: WidgetRef, vAlign: GtkAlignment) =
 actual fun gtkWidgetShowAll(widget: WidgetRef) = gtk_widget_show_all(widget.pointer)
 
 @ExperimentalForeignApi
-actual fun gSignalConnectData(instance: SignalInstanceRef, signal: String, callback: CallbackRef) =
+actual fun gSignalConnectData(
+    instance: SignalInstanceRef,
+    signal: String,
+    callback: CallbackRef,
+    signalDataRef: SignalDataRef?
+) =
     g_signal_connect_data(
         instance.pointer,
         signal,
         callback.pointer,
-        null,
+        signalDataRef?.pointer,
         null,
         0u
     )
