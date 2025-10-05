@@ -1,7 +1,7 @@
 package de.atennert.lcarsde.statusbar.widgets
 
+import de.atennert.lcarsde.files.execute
 import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
-import de.atennert.lcarsde.statusbar.executeCommand
 import de.atennert.lcarsde.statusbar.extensions.gSignalConnect
 import de.atennert.lcarsde.statusbar.extensions.setStyling
 import gtk.*
@@ -47,7 +47,7 @@ class ButtonWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPoint
 
         fun executeBtnCommand(ref: COpaquePointer) {
             val command = ref.asStableRef<ButtonWidget>().get().properties["command"] ?: return
-            executeCommand(command)
+            execute(command)
         }
     }
 }

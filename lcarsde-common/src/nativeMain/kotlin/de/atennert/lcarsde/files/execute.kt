@@ -1,13 +1,12 @@
-package de.atennert.lcarsde.statusbar
+package de.atennert.lcarsde.files
 
 import kotlinx.cinterop.*
 import platform.posix.*
 
-@ExperimentalForeignApi
-fun executeCommand(command: String) {
-    val commandParts = command.split(' ')
 
-    val byteArgs = commandParts.map { it.encodeToByteArray().pin() }
+@OptIn(ExperimentalForeignApi::class)
+fun execute(vararg command: String) {
+    val byteArgs = command.map { it.encodeToByteArray().pin() }
     val convertedArgs = nativeHeap.allocArrayOfPointersTo(byteArgs.map { it.addressOf(0).pointed })
     when (fork()) {
         -1 -> return
@@ -17,7 +16,7 @@ fun executeCommand(command: String) {
                 exit(1)
             }
 
-            if (execvp(commandParts[0], convertedArgs) == -1) {
+            if (execvp(command[0], convertedArgs) == -1) {
                 perror("execvp failed")
                 exit(1)
             }
@@ -26,4 +25,11 @@ fun executeCommand(command: String) {
         }
     }
     byteArgs.map { it.unpin() }
+}
+
+@ExperimentalForeignApi
+fun execute(command: String) {
+    val commandParts = command.split(' ')
+
+    execute(*commandParts.toTypedArray())
 }

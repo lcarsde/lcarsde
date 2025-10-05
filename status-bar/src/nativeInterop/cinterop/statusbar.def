@@ -1,6 +1,7 @@
 headers = libxml/parser.h \
     pulseaudio.h
 compilerOpts = -I/usr/include \
+    -I/usr/include/x86_64-linux-gnu \
     -I/usr/include/libxml2 \
     -I/usr/include/pulse
 linkerOpts = -L/usr/lib -L/usr/lib64 -L/usr/lib/x86_64-linux-gnu \
