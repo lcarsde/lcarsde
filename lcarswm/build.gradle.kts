@@ -2,8 +2,8 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    kotlin("plugin.serialization") version "2.0.20"
-    id("io.kotest.multiplatform") version "5.4.1"
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotestMultiplatform)
 }
 
 group = "de.atennert"

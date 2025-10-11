@@ -2,10 +2,20 @@ package de.atennert.lcarsde.appSelector
 
 import de.atennert.gtk.*
 import de.atennert.lcarsde.LabelWithRoundedBoxes
+import gtk.GtkWidget
+import kotlinx.cinterop.COpaquePointer
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.StableRef
+import kotlinx.cinterop.asStableRef
+import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.staticCFunction
 
+@OptIn(ExperimentalForeignApi::class)
 private val CSS_PROVIDER = gtkCssProviderNew()
 private const val STYLE_PATH = "/usr/share/lcarsde/appSelector/style.css"
 
+@OptIn(ExperimentalForeignApi::class)
 class AppSelector(window: GtkWindow) {
     private val scrollContainer = GtkScrollContainer()
     private val appContainer = GtkBox(GtkOrientation.VERTICAL, 8)
@@ -28,7 +38,14 @@ class AppSelector(window: GtkWindow) {
                     val button = GtkButton(app.name)
                     button.setStyling(CSS_PROVIDER, "button", "button-${app.color.color}")
                     button.setAlignment(1f, 1f)
-                    button.onClick(CallbackContainer { println("Run ${app.name}"); app.start() })
+                    button.onClick(
+                        NativeCallbackRef((staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer ->
+                            val app = p.asStableRef<AppDescriptor>().get()
+                            println("Run ${app.name}")
+                            app.start()
+                        }).reinterpret()),
+                        NativeSignalDataRef(StableRef.create(app).asCPointer())
+                    )
                     flowBox.add(button)
                 }
                 appContainer.add(flowBox)
@@ -37,14 +54,4 @@ class AppSelector(window: GtkWindow) {
         scrollContainer.add(appContainer)
         window.add(scrollContainer)
     }
-}
-
-fun main() = gtkApplication {
-    val window = GtkWindow()
-    window.setTitle("Logout")
-    AppSelector(window)
-    window.showAll()
-
-    window.connect("destroy", CallbackContainer(::mainQuit))
-    main()
 }

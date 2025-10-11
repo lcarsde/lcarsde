@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    id("io.kotest.multiplatform") version "5.4.1"
+    alias(libs.plugins.kotestMultiplatform)
 }
 
 group = "de.atennert"

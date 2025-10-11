@@ -1,6 +1,9 @@
 package de.atennert.lcarsde.appSelector
 
-import java.io.File
+import de.atennert.lcarsde.process.ProcessBuilder
+import gtk.getenv
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.toKString
 import kotlin.system.exitProcess
 
 class AppDescriptor(private val filePath: String, data: List<String>) {
@@ -9,13 +12,12 @@ class AppDescriptor(private val filePath: String, data: List<String>) {
     val noDisplay = data.find { it.startsWith("NoDisplay=") }?.drop(10)?.equals("true", true) ?: false
     val color = BUTTON_COLORS[name?.sumOf(Char::code)?.mod(BUTTON_COLORS.size) ?: 0]
 
+    @OptIn(ExperimentalForeignApi::class)
     fun start() {
-        // todo put exec in lcarsde common
         val builder = ProcessBuilder()
         builder.command("dex", filePath)
-            .directory(File(System.getProperty("user.home")))
+            .directory(getenv("HOME")?.toKString() ?: throw IllegalStateException("HOME not set"))
             .start()
-            .waitFor()
         exitProcess(0)
     }
 
