@@ -16,7 +16,7 @@ import kotlinx.cinterop.staticCFunction
 @ExperimentalForeignApi
 fun main() = gtkApplication {
     val window = GtkWindow()
-    window.setTitle("Logout")
+    window.setTitle("App Selector")
     AppSelector(window)
     window.showAll()
 

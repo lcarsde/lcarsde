@@ -1,7 +1,7 @@
 package de.atennert.lcarswm.lifecycle
 
 import de.atennert.lcarswm.AppMenuMessageHandler
-import de.atennert.lcarswm.system.MessageQueue
+import de.atennert.lcarsde.comm.MessageQueue
 import kotlinx.cinterop.ExperimentalForeignApi
 
 @ExperimentalForeignApi

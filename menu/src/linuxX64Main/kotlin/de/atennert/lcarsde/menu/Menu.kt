@@ -1,60 +1,22 @@
 package de.atennert.lcarsde.menu
 
-import com.sun.jna.Memory
 import de.atennert.gtk.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.cinterop.ExperimentalForeignApi
+import de.atennert.lcarsde.comm.MessageQueue
+import gtk.GtkWidget
+import kotlinx.cinterop.COpaquePointer
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.StableRef
+import kotlinx.cinterop.asStableRef
+import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.staticCFunction
+import kotlin.experimental.ExperimentalNativeApi
 
-fun main() = gtkApplication {
-    val windowListQ = MQ("/lcarswm-active-window-list", MQ.Mode.READ, false)
-    val sendQ = MQ("/lcarswm-app-menu-messages", MQ.Mode.WRITE, false)
-
-    val window = GtkWindow()
-    val menu = Menu(window, sendQ)
-    window.showAll()
-
-    val job = readWindowUpdates(windowListQ, menu)
-
-    window.connect("destroy", CallbackContainer(::mainQuit))
-    main()
-
-    job.cancelAndJoin()
-    windowListQ.close()
-    sendQ.close()
-}
-
-private fun CoroutineScope.readWindowUpdates(
-    windowListQ: MQ,
-    menu: Menu
-) = launch {
-    try {
-        while (true) {
-            windowListQ.receive()?.let {
-                val data = Memory(it.length.toLong() + 1)
-                data.setString(0, it)
-                GLib.INSTANCE.g_idle_add(
-                    { dataPointer ->
-                        val message = dataPointer?.getString(0)
-                        if (message != null) {
-                            menu.updateWindowList(it)
-                        }
-                        false
-                    },
-                    data
-                )
-            }
-            delay(100)
-        }
-    } catch (e: InterruptedException) {
-        println("stopped listening")
-    }
-}
-
+@OptIn(ExperimentalForeignApi::class)
 private val CSS_PROVIDER = gtkCssProviderNew()
 
-class Menu(private val window: GtkWindow, private val sendQ: MQ) {
+@OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
+class Menu(private val window: GtkWindow, private val sendQ: MessageQueue) {
     private val scrollContainer = GtkScrollContainer()
     private val appContainer = GtkBox(GtkOrientation.VERTICAL, 8)
 
@@ -79,7 +41,12 @@ class Menu(private val window: GtkWindow, private val sendQ: MQ) {
         scrollContainer.add(appContainer)
         window.add(scrollContainer)
 
-        window.connect("realize", CallbackContainer { window.setUtf8Property(LCARSDE_APP_MENU, LCARSDE_APP_MENU) })
+        window.connect("realize", NativeCallbackRef((staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer ->
+                val window = p.asStableRef<GtkWindow>().get()
+                window.setUtf8Property(LCARSDE_APP_MENU, LCARSDE_APP_MENU)
+            }).reinterpret()),
+            NativeSignalDataRef(StableRef.create(window).asCPointer())
+        )
     }
 
 
@@ -124,11 +91,10 @@ class Menu(private val window: GtkWindow, private val sendQ: MQ) {
 
     private fun addWindow(entry: WindowEntry) {
         val gtkWindow = GtkWindowEntry(
-            entry.id,
             entry.name,
             entry.isActive,
-            ::selectWindow,
-            ::closeWindow,
+            { selectWindow(entry.id) },
+            { closeWindow(entry.id) },
         )
         appContainer.packStart(gtkWindow, false, false, 0u)
         gtkWindows[entry.id] = gtkWindow
@@ -151,12 +117,12 @@ class Menu(private val window: GtkWindow, private val sendQ: MQ) {
     }
 }
 
+@OptIn(ExperimentalForeignApi::class)
 class GtkWindowEntry(
-    id: String,
     name: String,
     isActive: Boolean,
-    onSelect: (String) -> Unit,
-    onClose: (String) -> Unit
+    onSelect: () -> Unit,
+    onClose: () -> Unit
 ) : GtkBox(GtkOrientation.HORIZONTAL, Menu.GAP_SIZE) {
     private val shortenedName = if (name.take(15) == name) name else "${name.take(15)}…"
 
@@ -171,12 +137,22 @@ class GtkWindowEntry(
             selectButtonClasses += "selected"
         }
         selectButton.setStyling(CSS_PROVIDER, *selectButtonClasses)
-        selectButton.onClick(CallbackContainer { onSelect(id) })
+        val onSelectRef = StableRef.create(onSelect)
+        selectButton.onClick(NativeCallbackRef((staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer ->
+                p.asStableRef<() -> Unit>().get().invoke()
+            }).reinterpret()),
+            NativeSignalDataRef(onSelectRef.asCPointer())
+        )
         packStart(selectButton, false, false, 0u)
 
         closeButton.setSize(32, Menu.CELL_SIZE)
         closeButton.setStyling(CSS_PROVIDER, "close_button")
-        closeButton.onClick(CallbackContainer { onClose(id) })
+        val onCloseRef = StableRef.create(onClose)
+        closeButton.onClick(NativeCallbackRef((staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer ->
+            p.asStableRef<() -> Unit>().get().invoke()
+        }).reinterpret()),
+            NativeSignalDataRef(onCloseRef.asCPointer())
+        )
         packStart(closeButton, false, false, 0u)
     }
 }

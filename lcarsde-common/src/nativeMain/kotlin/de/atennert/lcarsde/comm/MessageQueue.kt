@@ -1,9 +1,25 @@
-package de.atennert.lcarswm.system
+package de.atennert.lcarsde.comm
 
 import de.atennert.lcarsde.lifecycle.closeWith
-import kotlinx.cinterop.*
-import platform.linux.*
-import platform.posix.*
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.convert
+import kotlinx.cinterop.nativeHeap
+import kotlinx.cinterop.usePinned
+import platform.linux.mq_attr
+import platform.linux.mq_close
+import platform.linux.mq_open
+import platform.linux.mq_receive
+import platform.linux.mq_send
+import platform.linux.mq_unlink
+import platform.linux.mqd_t
+import platform.posix.O_CREAT
+import platform.posix.O_NONBLOCK
+import platform.posix.O_RDONLY
+import platform.posix.O_RDWR
+import platform.posix.O_WRONLY
+import platform.posix.mode_t
 import kotlin.experimental.ExperimentalNativeApi
 
 /**
@@ -33,7 +49,7 @@ class MessageQueue(private val name: String, private val mode: Mode, private val
             mqAttributes.mq_msgsize = MAX_MESSAGE_SIZE.convert()
             mqAttributes.mq_curmsgs = 0
 
-            mqDes = wrapMqOpen(name, oFlags, QUEUE_PERMISSIONS, mqAttributes)
+            mqDes = mq_open(name, oFlags, QUEUE_PERMISSIONS, mqAttributes)
         } else {
             mqDes = mq_open(name, mode.flag)
         }
@@ -45,7 +61,7 @@ class MessageQueue(private val name: String, private val mode: Mode, private val
     fun send(message: String) {
         check(mode != Mode.READ) { "Can not use MQ send in read mode" }
 
-        wrapMqSend(mqDes, message, message.length.convert(), 0.convert())
+        mq_send(mqDes, message, message.length.convert(), 0.convert())
     }
 
     @ExperimentalNativeApi
@@ -55,7 +71,7 @@ class MessageQueue(private val name: String, private val mode: Mode, private val
         val msgBuffer = ByteArray(MESSAGE_BUFFER_SIZE)
         var msgSize: Long = -1
         msgBuffer.usePinned {
-            msgSize = wrapMqReceive(mqDes, it.addressOf(0), MESSAGE_BUFFER_SIZE.convert(), null)
+            msgSize = mq_receive(mqDes, it.addressOf(0), MESSAGE_BUFFER_SIZE.convert(), null)
         }
         if (msgSize > 0) {
             return msgBuffer.decodeToString(0, msgSize.convert())
@@ -64,12 +80,12 @@ class MessageQueue(private val name: String, private val mode: Mode, private val
     }
 
     private fun close() {
-        if (wrapMqClose(mqDes) == -1) {
+        if (mq_close(mqDes) == -1) {
             return
         }
 
         if (isManaging) {
-            wrapMqUnlink(name)
+            mq_unlink(name)
         }
     }
 

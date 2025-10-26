@@ -1,5 +1,6 @@
 package de.atennert.lcarswm.window
 
+import de.atennert.lcarsde.comm.MessageQueue
 import de.atennert.lcarswm.ColorSet
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
