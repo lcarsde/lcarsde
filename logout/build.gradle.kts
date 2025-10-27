@@ -34,7 +34,7 @@ kotlin {
 
     linuxTarget.apply {
         binaries {
-            executable {
+            executable("lcarsde-logout") {
                 entryPoint = "main"
 
             }
@@ -77,7 +77,7 @@ tasks.named<Copy>("installDist") {
     into("build/install")
 
     from(file("src/linuxX64Main/resources"))
-    from(file("build/bin/linuxX64/releaseExecutable")) {
+    from(file("build/bin/linuxX64/lcarsde-logoutReleaseExecutable")) {
         into("/usr/bin/")
     }
 }

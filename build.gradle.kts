@@ -8,10 +8,13 @@ plugins {
 }
 
 tasks.register<Copy>("combineRelease")
-
 tasks.named<Copy>("combineRelease") {
     description = "Copies all builds into release"
     group = "distribution"
+    val installDependencies = gradle.rootProject.subprojects
+        .filter { it.tasks.any { t -> t.name == "installDist" } }
+        .map { ":${it.name}:installDist" }
+    dependsOn(installDependencies)
 
     val projDir = layout.projectDirectory
     from(
@@ -23,4 +26,17 @@ tasks.named<Copy>("combineRelease") {
     )
     into(layout.buildDirectory.dir("release").get().asFile)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register<Delete>("clean")
+tasks.named<Delete>("clean") {
+    group = "build"
+    description = "Delete build directories"
+
+    val cleanDependencies = gradle.rootProject.subprojects
+        .filter { it.tasks.any { t -> t.name == "clean" } }
+        .map { ":${it.name}:clean" }
+    shouldRunAfter(cleanDependencies)
+
+    delete(layout.buildDirectory)
 }

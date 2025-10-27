@@ -3,11 +3,11 @@ Maintainer: Andreas Tennert <lcarsde@andreas-tennert.de>
 Section: x11
 Priority: optional
 Standards-Version: 4.5.0
-Build-Depends: default-jdk-headless | default-jdk, debhelper (>= 9), devscripts, fakeroot, libx11-dev, libxpm-dev, libgtk-3-dev, libxrandr-dev, libpango1.0-dev, libicu-dev, libxml2-dev, libtinfo6, libpulse-dev, libxpm-dev
+Build-Depends: default-jdk-headless | default-jdk, debhelper (>= 9), devscripts, fakeroot, libx11-dev, libxpm-dev, libgtk-3-dev, libxrandr-dev, libpango1.0-dev, libicu-dev, libxml2-dev, libtinfo6, libpulse-dev
 
 Package: lcarsde
 Architecture: any
-Depends: default-jdk-headless | default-jdk, libx11-6, libxpm4, libxrandr2, libgtk-3-0, libpango-1.0-0, libpangoxft-1.0-0, libxml2, dex, libpulse
+Depends: default-jdk-headless | default-jdk, libx11-6, libxpm4, libxrandr2, libgtk-3-0, libpango-1.0-0, libpangoxft-1.0-0, libxml2, dex, libpulse0
 Recommends: fonts-ubuntu, alsa-utils
 Suggests: x-display-manager, kdm | gdm, xterm, firefox
 Provides: x-window-manager

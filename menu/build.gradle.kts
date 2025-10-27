@@ -34,7 +34,7 @@ kotlin {
 
     linuxTarget.apply {
         binaries {
-            executable {
+            executable("lcarsde-menu") {
                 entryPoint = "main"
 
             }
@@ -79,7 +79,7 @@ tasks.named<Copy>("installDist") {
     into("build/install")
 
     from(file("src/linuxX64Main/resources"))
-    from(file("build/bin/linuxX64/releaseExecutable")) {
+    from(file("build/bin/linuxX64/lcarsde-menuReleaseExecutable")) {
         into("/usr/bin/")
     }
 }
