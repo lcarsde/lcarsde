@@ -3,7 +3,7 @@ package de.atennert.lcarswm.log
 import de.atennert.lcarswm.file.AccessMode
 import de.atennert.lcarswm.file.File
 import de.atennert.lcarswm.file.FileFactory
-import de.atennert.lcarswm.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.time.Time
 
 /**

@@ -3,7 +3,7 @@ package de.atennert.lcarswm.window
 import de.atennert.lcarswm.drawing.UIDrawing
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.events.ReparentEvent
-import de.atennert.lcarswm.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.log.Logger
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.monitor.MonitorManager

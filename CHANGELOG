@@ -7,3 +7,4 @@
 * New status bar LcarsdeStatusAudio widget -> breaking changes in configuration
     * Old audio widget properties are gone
     * New properties added: volumeIncrease, volumeDecrease with integer percent values as steps for increasing/decreasing audio volume
+* IMPORTANT: Check files in /etc/lcarsde/ and /etc/xdg/autostart/. Remove old files and adjust the installed files. Remove the .dpkg-new file name ending if necessary.

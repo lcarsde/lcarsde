@@ -4,7 +4,7 @@ import de.atennert.lcarswm.AppMenuMessageHandler
 import de.atennert.lcarswm.Environment
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.keys.*
-import de.atennert.lcarswm.lifecycle.closeClosables
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.monitor.MonitorManagerMock
 import de.atennert.lcarswm.system.SystemCallMocker

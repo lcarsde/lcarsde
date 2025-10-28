@@ -1,6 +1,6 @@
 package de.atennert.lcarswm.window
 
-import de.atennert.lcarswm.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.system.wrapXRestackWindows
 import de.atennert.rx.NextObserver
 import kotlinx.cinterop.CPointer

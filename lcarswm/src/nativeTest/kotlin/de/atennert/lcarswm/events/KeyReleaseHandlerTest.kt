@@ -6,7 +6,7 @@ import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
 import de.atennert.lcarswm.command.Commander
 import de.atennert.lcarswm.keys.*
-import de.atennert.lcarswm.lifecycle.closeClosables
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.system.SystemCallMocker
 import de.atennert.lcarswm.system.SystemFacadeMock

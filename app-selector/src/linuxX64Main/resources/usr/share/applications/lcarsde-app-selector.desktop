@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=App Selector
+Exec=lcarsde-app-selector.kexe
+Categories=System;
+Terminal=false
+NoDisplay=true

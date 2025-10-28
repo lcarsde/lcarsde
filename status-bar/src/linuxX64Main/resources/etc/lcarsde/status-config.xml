@@ -63,7 +63,7 @@
         <properties>
             <property key="text" value="Programs" />
             <property key="color" value="f90" />
-            <property key="command" value="lcarsde-app-selector" />
+            <property key="command" value="lcarsde-app-selector.kexe" />
         </properties>
     </widget>
     <widget name="LcarsdeStatusButton">
@@ -71,7 +71,7 @@
         <properties>
             <property key="text" value="Close" />
             <property key="color" value="c66" />
-            <property key="command" value="lcarsde-logout" />
+            <property key="command" value="lcarsde-logout.kexe" />
         </properties>
     </widget>
     <widget name="LcarsdeStatusTemperature">

@@ -6,7 +6,7 @@ import de.atennert.lcarswm.conversion.combine
 import de.atennert.lcarswm.conversion.toUByteArray
 import de.atennert.lcarswm.events.EventBuffer
 import de.atennert.lcarswm.events.EventTime
-import de.atennert.lcarswm.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.log.Logger
 import de.atennert.lcarswm.system.api.SystemApi
 import kotlinx.cinterop.*

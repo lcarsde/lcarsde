@@ -1,5 +1,7 @@
 package de.atennert.lcarswm.lifecycle
 
+import de.atennert.lcarsde.lifecycle.closeClosables
+import de.atennert.lcarsde.lifecycle.closeWith
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

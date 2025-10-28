@@ -1,6 +1,6 @@
 package de.atennert.lcarswm.mouse
 
-import de.atennert.lcarswm.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.log.Logger
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.monitor.MonitorManager

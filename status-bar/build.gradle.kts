@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
 }
 
-group = "de.atennert"
+group = "de.atennert.lcarsde"
 
 kotlin {
     val linuxTarget = when (System.getProperty("os.name")) {
@@ -26,7 +26,7 @@ kotlin {
                         "2. find the corresponding target in this list: https://kotlinlang.org/docs/mpp-dsl-reference.html#targets,\n" +
                         "3. add a it to the architectures in build.gradle.kts,\n" +
                         "4. run the build and\n" +
-                        "5. if it works, please create a ticket with the changes on https://github.com/lcarsde/lcarswm/issues to have it added permanently.")
+                        "5. if it works, please create a ticket with the changes on https://github.com/lcarsde/lcarsde/issues to have it added permanently.")
             }
         }
         else -> throw GradleException("Host OS is not supported.")
@@ -34,7 +34,7 @@ kotlin {
 
     linuxTarget.apply {
         binaries {
-            executable {
+            executable("lcarsde-status-bar") {
                 entryPoint = "main"
 
             }
@@ -48,6 +48,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(project(":lcarsde-gtk"))
+                implementation(project(":lcarsde-common"))
             }
         }
         commonTest {
@@ -76,7 +77,7 @@ tasks.named<Copy>("installDist") {
     into("build/install")
 
     from(file("src/linuxX64Main/resources"))
-    from(file("build/bin/linuxX64/releaseExecutable")) {
+    from(file("build/bin/linuxX64/lcarsde-status-barReleaseExecutable")) {
         into("/usr/bin/")
     }
 }

@@ -2,8 +2,8 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    kotlin("plugin.serialization") version "2.0.20"
-    id("io.kotest.multiplatform") version "5.4.1"
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotestMultiplatform)
 }
 
 group = "de.atennert"
@@ -28,7 +28,7 @@ kotlin {
                         "2. find the corresponding target in this list: https://kotlinlang.org/docs/mpp-dsl-reference.html#targets,\n" +
                         "3. add a it to the architectures in build.gradle.kts,\n" +
                         "4. run the build and\n" +
-                        "5. if it works, please create a ticket with the changes on https://github.com/lcarsde/lcarswm/issues to have it added permanently.")
+                        "5. if it works, please create a ticket with the changes on https://github.com/lcarsde/lcarsde/issues to have it added permanently.")
             }
         }
         else -> throw GradleException("Host OS is not supported.")

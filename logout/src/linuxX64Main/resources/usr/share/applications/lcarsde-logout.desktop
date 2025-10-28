@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Logout
+Exec=lcarsde-logout.kexe
+Categories=System;
+Terminal=false
+NoDisplay=true

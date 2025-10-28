@@ -2,7 +2,7 @@ package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.AppMenuMessageHandler
 import de.atennert.lcarswm.atom.AtomLibrary
-import de.atennert.lcarswm.lifecycle.closeClosables
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.system.SystemFacadeMock
 import kotlinx.cinterop.ExperimentalForeignApi

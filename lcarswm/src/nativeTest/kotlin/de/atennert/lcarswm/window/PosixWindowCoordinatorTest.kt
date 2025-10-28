@@ -3,7 +3,7 @@ package de.atennert.lcarswm.window
 import de.atennert.lcarswm.ScreenMode
 import de.atennert.lcarswm.drawing.UIDrawingMock
 import de.atennert.lcarswm.events.EventStore
-import de.atennert.lcarswm.lifecycle.closeClosables
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.monitor.MonitorManagerMock
 import de.atennert.lcarswm.system.FunctionCall

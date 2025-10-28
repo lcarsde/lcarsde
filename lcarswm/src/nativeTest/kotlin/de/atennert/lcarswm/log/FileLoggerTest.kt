@@ -4,7 +4,7 @@ import de.atennert.lcarswm.file.AccessMode
 import de.atennert.lcarswm.file.Directory
 import de.atennert.lcarswm.file.File
 import de.atennert.lcarswm.file.FileFactory
-import de.atennert.lcarswm.lifecycle.closeClosables
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.time.Time
 import kotlin.test.AfterTest
 import kotlin.test.Test

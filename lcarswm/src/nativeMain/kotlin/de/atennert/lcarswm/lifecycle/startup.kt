@@ -1,5 +1,6 @@
 package de.atennert.lcarswm.lifecycle
 
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.*
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.NumberAtomReader
@@ -24,7 +25,7 @@ import de.atennert.lcarswm.mouse.MoveWindowManager
 import de.atennert.lcarswm.settings.SettingsReader
 import de.atennert.lcarswm.signal.Signal
 import de.atennert.lcarswm.signal.SignalHandler
-import de.atennert.lcarswm.system.MessageQueue
+import de.atennert.lcarsde.comm.MessageQueue
 import de.atennert.lcarswm.system.api.SystemApi
 import de.atennert.lcarswm.window.*
 import de.atennert.rx.NextObserver

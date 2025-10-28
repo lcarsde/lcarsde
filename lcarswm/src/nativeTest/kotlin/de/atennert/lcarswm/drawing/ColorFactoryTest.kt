@@ -1,6 +1,6 @@
 package de.atennert.lcarswm.drawing
 
-import de.atennert.lcarswm.lifecycle.closeClosables
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.system.DrawApiDummy
 import kotlinx.cinterop.*
 import xlib.*
