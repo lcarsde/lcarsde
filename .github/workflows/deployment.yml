@@ -79,7 +79,7 @@ jobs:
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file: ./build/deb/deploy
+          file: ${{ format('./build/deb/deploy/lcarsde_{0}_amd64.deb', github.ref_name) }}
           body: ${{ steps.release_notes.outputs.RELEASE_BODY }}
 
 #  deploy-aur:
