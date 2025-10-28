@@ -51,7 +51,7 @@ class MessageQueue(private val name: String, private val mode: Mode, private val
 
             mqDes = mq_open(name, oFlags, QUEUE_PERMISSIONS, mqAttributes)
         } else {
-            mqDes = mq_open(name, mode.flag)
+            mqDes = mq_open(name, mode.flag or O_NONBLOCK)
         }
 
         closeWith(MessageQueue::close)

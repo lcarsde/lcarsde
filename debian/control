@@ -7,7 +7,7 @@ Build-Depends: default-jdk-headless | default-jdk, debhelper (>= 9), devscripts,
 
 Package: lcarsde
 Architecture: any
-Depends: default-jdk-headless | default-jdk, libx11-6, libxpm4, libxrandr2, libgtk-3-0, libpango-1.0-0, libpangoxft-1.0-0, libxml2, dex, libpulse0
+Depends: libx11-6, libxpm4, libxrandr2, libgtk-3-0, libpango-1.0-0, libpangoxft-1.0-0, libxml2, libpulse0, dex
 Recommends: fonts-ubuntu, alsa-utils
 Suggests: x-display-manager, kdm | gdm, xterm, firefox
 Provides: x-window-manager
