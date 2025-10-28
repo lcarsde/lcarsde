@@ -30,8 +30,7 @@ jobs:
 
       - name: Run tests
         run: |
-          ./gradlew test
-          ./gradlew nativeTest
+          ./gradlew allTests
 
   deploy-ubuntu:
     needs: test
