@@ -1,10 +1,2 @@
-25.1
-* Merged all sub projects into lcarsde
-* Rewrite app selector, menu and logout in Kotlin (JVM based); breaking change for status-bar configuration
-* Remove launcher.py and launch apps using dex (new dependency)
-* Remove all Python dependencies
-* As a result of the package merge, all parts of lcarsde are now licensed under GNU GPL V2 from this version on
-* New status bar LcarsdeStatusAudio widget -> breaking changes in configuration
-    * Old audio widget properties are gone
-    * New properties added: volumeIncrease, volumeDecrease with integer percent values as steps for increasing/decreasing audio volume
-* IMPORTANT: Check files in /etc/lcarsde/ and /etc/xdg/autostart/. Remove old files and adjust the installed files. Remove the .dpkg-new file name ending if necessary.
+25.2
+* Removed replacement of old packages in Debian configuration. UPGRADE VIA VERSION 25.1 IF YOU HAVE AN OLD INSTALLATION WITH SEPARATE PACKAGES!

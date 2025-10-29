@@ -11,7 +11,5 @@ Depends: libx11-6, libxpm4, libxrandr2, libgtk-3-0, libpango-1.0-0, libpangoxft-
 Recommends: fonts-ubuntu, alsa-utils
 Suggests: x-display-manager, kdm | gdm, xterm, firefox
 Provides: x-window-manager
-Breaks: lcarswm, status-bar, lcarsde-application-starter, lcarsde-logout, lcarsde-app-menu
-Replaces: lcarswm, status-bar, lcarsde-application-starter, lcarsde-logout, lcarsde-app-menu
 Description: A simple desktop environment that looks somewhat like a LCARS interface
  https://lcarsde.github.io
