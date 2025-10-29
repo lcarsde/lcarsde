@@ -4,7 +4,6 @@ package de.atennert.gtk
 
 import gtk.*
 import kotlinx.cinterop.*
-import kotlin.native.concurrent.freeze
 
 class NativeWidgetRef(val pointer: CPointer<gtk.GtkWidget>?)
 class NativContainerRef(val pointer: CPointer<gtk.GtkContainer>?)
