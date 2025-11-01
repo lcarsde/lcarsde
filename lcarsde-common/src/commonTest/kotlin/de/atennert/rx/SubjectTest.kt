@@ -64,43 +64,11 @@ class SubjectTest {
             }
         }
         val subject = Subject<Int>()
-        subject.asObservable().subscribe(observer)
+        subject.subscribe(observer)
 
         subject.complete()
 
         observer.received.shouldContainExactly("complete")
-    }
-
-    @Test
-    fun `should take operators`() {
-        val observer = object : Subscriber<Int>() {
-            val received = mutableListOf<Any>()
-            override fun next(value: Int) {
-                received.add(value)
-            }
-            override fun complete() {
-                received.add("completed")
-            }
-        }
-        val subject = Subject<Int>()
-        subject.apply { observable ->
-                Observable { subscriber ->
-                    (observable).subscribe(object : Subscriber<Int>() {
-                        override fun next(value: Int) {
-                            subscriber.next(value * 2)
-                        }
-                        override fun complete() {
-                            subscriber.complete()
-                        }
-                    })
-                }
-            }
-            .subscribe(observer)
-        subject.next(1)
-        subject.next(2)
-        subject.complete()
-
-        observer.received.shouldContainExactly(2, 4, "completed")
     }
 
     @Test

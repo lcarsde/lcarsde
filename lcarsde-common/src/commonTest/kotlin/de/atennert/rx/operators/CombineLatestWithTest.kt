@@ -16,12 +16,13 @@ class CombineLatestWithTest {
             override fun next(value: Tuple1<Int>) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         Observable.of(1)
-            .apply(combineLatestWith())
+            .combineLatestWith()
             .subscribe(observer)
 
         assertContentEquals(listOf(Tuple1(1), "complete"), observer.received)
@@ -34,12 +35,13 @@ class CombineLatestWithTest {
             override fun next(value: Tuple2<Int, Int>) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         Observable.of(1)
-            .apply(combineLatestWith(Observable.of(2)))
+            .combineLatestWith(Observable.of(2))
             .subscribe(observer)
 
         assertContentEquals(listOf(Tuple2(1, 2), "complete"), observer.received)
@@ -52,12 +54,13 @@ class CombineLatestWithTest {
             override fun next(value: Tuple3<Int, Int, Int>) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         Observable.of(1)
-            .apply(combineLatestWith(Observable.of(2), Observable.of(3)))
+            .combineLatestWith(Observable.of(2), Observable.of(3))
             .subscribe(observer)
 
         assertContentEquals(listOf(Tuple3(1, 2, 3), "complete"), observer.received)

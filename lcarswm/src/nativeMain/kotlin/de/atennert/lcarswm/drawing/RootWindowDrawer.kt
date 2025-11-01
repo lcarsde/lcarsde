@@ -1,7 +1,7 @@
 package de.atennert.lcarswm.drawing
 
-import de.atennert.lcarswm.*
 import de.atennert.lcarsde.lifecycle.closeWith
+import de.atennert.lcarswm.*
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.settings.GeneralSetting
@@ -68,9 +68,9 @@ class RootWindowDrawer(
         logoText = settings[GeneralSetting.TITLE] ?: "LCARS"
 
         triggerDrawSj
-            .apply(withLatestFrom(monitorManager.monitorsObs))
-            .apply(map { it.v2 })
-            .apply(withLatestFrom(monitorManager.combinedScreenSizeObs))
+            .withLatestFrom(monitorManager.monitorsObs)
+            .map { it.v2 }
+            .withLatestFrom(monitorManager.combinedScreenSizeObs)
             .subscribe(NextObserver { (monitors, combinedScreenSize) ->
                 internalDrawWindowManagerFrame(monitors, combinedScreenSize)
             })

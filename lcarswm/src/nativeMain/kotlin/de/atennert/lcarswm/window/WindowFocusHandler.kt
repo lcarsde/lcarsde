@@ -1,8 +1,8 @@
 package de.atennert.lcarswm.window
 
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.AppMenuMessageHandler
 import de.atennert.lcarswm.keys.KeySessionManager
-import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.rx.NextObserver
 import de.atennert.rx.ReplaySubject
 import de.atennert.rx.operators.filter
@@ -12,6 +12,7 @@ import xlib.Window
 
 @ExperimentalForeignApi
 typealias FocusObserver = (Window?, Window?, Boolean) -> Unit
+
 @ExperimentalForeignApi
 data class WindowFocusEvent(val newWindow: Window?, val oldWindow: Window?, val toggleSessionActive: Boolean)
 
@@ -30,22 +31,23 @@ class WindowFocusHandler(windowList: WindowList, appMenuMessageHandler: AppMenuM
 
     init {
         windowList.windowEventObs
-            .apply(filter { it.window !is PosixTransientWindow || !it.window.isTransientForRoot })
+            .filter { it.window !is PosixTransientWindow || !it.window.isTransientForRoot }
             .subscribe(NextObserver {
                 when (it) {
                     is WindowAddedEvent -> setFocusedWindow(it.window.id)
                     is WindowRemovedEvent -> removeWindow(it.window.id)
-                    is WindowUpdatedEvent -> { /* Nothing to do */ }
+                    is WindowUpdatedEvent -> { /* Nothing to do */
+                    }
                 }
             })
             .closeWith { this.unsubscribe() }
 
         appMenuMessageHandler.selectAppObs
-            .apply(withLatestFrom(windowList.windowsObs))
-            .apply(filter { (selectedWindowId, windows) ->
+            .withLatestFrom(windowList.windowsObs)
+            .filter { (selectedWindowId, windows) ->
                 windows.find { it.id == selectedWindowId && (it !is PosixTransientWindow || !it.isTransientForRoot) } != null
-            })
-            .subscribe(NextObserver { (selectedWindowId) -> setFocusedWindow(selectedWindowId)})
+            }
+            .subscribe(NextObserver { (selectedWindowId) -> setFocusedWindow(selectedWindowId) })
             .closeWith { this.unsubscribe() }
     }
 

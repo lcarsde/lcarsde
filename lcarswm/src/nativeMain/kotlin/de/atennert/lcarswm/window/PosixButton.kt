@@ -89,14 +89,14 @@ class PosixButton(
 
     init {
         subscription.add(eventStore.enterNotifyObs
-            .apply(filter { it == id })
+            .filter { it == id }
             .subscribe(NextObserver {
                 isHovered = true
                 draw()
             }))
 
         subscription.add(eventStore.leaveNotifyObs
-            .apply(filter { it == id })
+            .filter { it == id }
             .subscribe(NextObserver {
                 isHovered = false
                 draw()

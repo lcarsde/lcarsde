@@ -2,11 +2,13 @@ package de.atennert.rx.operators
 
 import de.atennert.rx.Observable
 import de.atennert.rx.Observer
-import de.atennert.rx.Operator
+import de.atennert.rx.Subscribable
 import de.atennert.rx.Subscription
-import de.atennert.rx.util.*
+import de.atennert.rx.util.Tuple
+import de.atennert.rx.util.Tuple2
+import de.atennert.rx.util.Tuple3
 
-private class WithSubscription<T>(obs: Observable<T>, private val onError: (Throwable) -> Unit) : Subscription() {
+private class WithSubscription<T>(obs: Subscribable<T>, private val onError: (Throwable) -> Unit) : Subscription() {
     var initialized = false
         private set
 
@@ -25,119 +27,47 @@ private class WithSubscription<T>(obs: Observable<T>, private val onError: (Thro
             // Nothing to do
         }
     }
+
     val subscription = obs.subscribe(WithObserver())
 
     override fun unsubscribe() = subscription.unsubscribe()
 }
 
-fun <A> withLatestFrom(): Operator<A, Tuple1<A>> = Operator { source ->
-    source.apply(map { Tuple(it) })
-}
+fun <T> Subscribable<T>.withLatestFrom() = this.map { Tuple(it) }
 
-fun <A, B> withLatestFrom(obs1: Observable<B>): Operator<A, Tuple2<A, B>> {
-    return Operator { source ->
-        Observable { subscriber ->
-            val withSubs = Tuple(
-                WithSubscription(obs1, subscriber::error),
-            )
+fun <T1, T2> Subscribable<T1>.withLatestFrom(obs2: Subscribable<T2>): Observable<Tuple2<T1, T2>> =
+    this.internalWithLatestFrom(obs2)
+        .map { Tuple2(it) }
 
-            val subscription = Subscription()
-            val withSubList = withSubs.toList()
+fun <T1, T2, T3> Subscribable<T1>.withLatestFrom(
+    obs2: Subscribable<T2>,
+    obs3: Subscribable<T3>
+): Observable<Tuple3<T1, T2, T3>> =
+    this.internalWithLatestFrom(obs2, obs3)
+        .map { Tuple3(it) }
 
-            withSubList.forEach(subscription::add)
+private fun Subscribable<*>.internalWithLatestFrom(vararg obss: Subscribable<*>) = Observable { subscriber ->
+    val withSubs = obss.map { WithSubscription(it, subscriber::error) }
+    val subscription = Subscription()
+    withSubs.forEach(subscription::add)
 
-            subscription.add(source.subscribe(object : Observer<A> {
-                override fun next(value: A) {
-                    if (withSubList.any { !it.initialized }) {
-                        return
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    subscriber.next(Tuple(value, withSubs.v1.lastValue as B))
-                }
-
-                override fun error(error: Throwable) {
-                    subscriber.error(error)
-                }
-
-                override fun complete() {
-                    subscriber.complete()
-                }
-            }))
-            subscription.add(subscriber)
-            subscription
+    subscription.add(this.subscribe(object : Observer<Any?> {
+        override fun next(value: Any?) {
+            if (withSubs.any { !it.initialized }) {
+                return
+            }
+            @Suppress("UNCHECKED_CAST")
+            subscriber.next(listOf(value).plus(withSubs.map { it.lastValue }))
         }
-    }
-}
 
-fun <A, B, C> withLatestFrom(obs1: Observable<B>, obs2: Observable<C>): Operator<A, Tuple3<A, B, C>> {
-    return Operator { source ->
-        Observable { subscriber ->
-            val withSubs = Tuple(
-                WithSubscription(obs1, subscriber::error),
-                WithSubscription(obs2, subscriber::error),
-            )
-
-            val subscription = Subscription()
-            val withSubList = withSubs.toList().map { it as WithSubscription<*> }
-
-            withSubList.forEach(subscription::add)
-
-            subscription.add(source.subscribe(object : Observer<A> {
-                override fun next(value: A) {
-                    if (withSubList.any { !it.initialized }) {
-                        return
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    subscriber.next(Tuple(value, withSubs.v1.lastValue as B, withSubs.v2.lastValue as C))
-                }
-
-                override fun error(error: Throwable) {
-                    subscriber.error(error)
-                }
-
-                override fun complete() {
-                    subscriber.complete()
-                }
-            }))
-            subscription.add(subscriber)
-            subscription
+        override fun error(error: Throwable) {
+            subscriber.error(error)
         }
-    }
-}
 
-fun <A, B, C, D> withLatestFrom(obs1: Observable<B>, obs2: Observable<C>, obs3: Observable<D>): Operator<A, Tuple4<A, B, C, D>> {
-    return Operator { source ->
-        Observable { subscriber ->
-            val withSubs = Tuple(
-                WithSubscription(obs1, subscriber::error),
-                WithSubscription(obs2, subscriber::error),
-                WithSubscription(obs3, subscriber::error),
-            )
-
-            val subscription = Subscription()
-            val withSubList = withSubs.toList().map { it as WithSubscription<*> }
-
-            withSubList.forEach(subscription::add)
-
-            subscription.add(source.subscribe(object : Observer<A> {
-                override fun next(value: A) {
-                    if (withSubList.any { !it.initialized }) {
-                        return
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    subscriber.next(Tuple(value, withSubs.v1.lastValue as B, withSubs.v2.lastValue as C, withSubs.v3.lastValue as D))
-                }
-
-                override fun error(error: Throwable) {
-                    subscriber.error(error)
-                }
-
-                override fun complete() {
-                    subscriber.complete()
-                }
-            }))
-            subscription.add(subscriber)
-            subscription
+        override fun complete() {
+            subscriber.complete()
         }
-    }
+    }))
+    subscription.add(subscriber)
+    subscription
 }

@@ -39,56 +39,61 @@ class PosixAppMenuWindow(
         .combine()
 
     private val windowMeasurementsObs = monitorManager.primaryMonitorObs
-        .apply(map(::getWindowMeasurements))
+        .map(::getWindowMeasurements)
 
     private val frameIdSj = ReplaySubject<Window>(1)
     private val frameIdObs = frameIdSj.asObservable()
 
-    private val nextHandler = NextObserver.NextHandler<Tuple2<Window, Monitor<RROutput>?>> { (frameId, primaryMonitor) ->
-        if (primaryMonitor != null && primaryMonitor.screenMode == ScreenMode.NORMAL) {
-            internalShow(frameId)
-        } else {
-            internalHide(frameId)
+    private val nextHandler =
+        NextObserver.NextHandler<Tuple2<Window, Monitor<RROutput>?>> { (frameId, primaryMonitor) ->
+            if (primaryMonitor != null && primaryMonitor.screenMode == ScreenMode.NORMAL) {
+                internalShow(frameId)
+            } else {
+                internalHide(frameId)
+            }
         }
-    }
 
     private val activeWindowAndListObs = focusHandler.windowFocusEventObs
-        .apply(map { it.newWindow })
-        .apply(combineLatestWith(windowList.windowEventObs
-            .apply(scan(mutableMapOf<Window, String>()) { list, event ->
-                when (event) {
-                    is WindowAddedEvent -> list[event.window.id] = event.window.wmClass
-                    is WindowRemovedEvent -> list.remove(event.window.id)
-                    is WindowUpdatedEvent -> list[event.window.id] = event.window.wmClass
+        .map { it.newWindow }
+        .combineLatestWith(
+            windowList.windowEventObs
+                .scan(mutableMapOf<Window, String>()) { list, event ->
+                    when (event) {
+                        is WindowAddedEvent -> list[event.window.id] = event.window.wmClass
+                        is WindowRemovedEvent -> list.remove(event.window.id)
+                        is WindowUpdatedEvent -> list[event.window.id] = event.window.wmClass
+                    }
+                    list
                 }
-                list
-            })))
+        )
 
     private val subscription = Subscription()
 
     init {
-        subscription.add(windowMeasurementsObs
-            .apply(filterNotNull())
-            .apply(take(1))
-            .apply(map { measurements ->
-                wrapXCreateSimpleWindow(
-                    display,
-                    rootWindowId,
-                    measurements.x,
-                    measurements.y,
-                    measurements.width.convert(),
-                    measurements.frameHeight.convert(),
-                    0.convert(),
-                    0.convert(),
-                    0.convert(),
-                )
-            })
-            .subscribe(NextObserver { frameIdSj.next(it) }))
+        subscription.add(
+            windowMeasurementsObs
+                .filterNotNull()
+                .take(1)
+                .map { measurements ->
+                    wrapXCreateSimpleWindow(
+                        display,
+                        rootWindowId,
+                        measurements.x,
+                        measurements.y,
+                        measurements.width.convert(),
+                        measurements.frameHeight.convert(),
+                        0.convert(),
+                        0.convert(),
+                        0.convert(),
+                    )
+                }
+                .subscribe(NextObserver { frameIdSj.next(it) })
+        )
 
         subscription.add(
             frameIdObs
-                .apply(combineLatestWith(windowMeasurementsObs.apply(filterNotNull())))
-                .apply(take(1))
+                .combineLatestWith(windowMeasurementsObs.filterNotNull())
+                .take(1)
                 .subscribe(NextObserver { (frameId, measurements) ->
                     wrapXSetWindowBorderWidth(display, id, 0.convert())
                     wrapXReparentWindow(display, id, frameId, 0, 0)
@@ -114,26 +119,31 @@ class PosixAppMenuWindow(
 
         subscription.add(
             frameIdObs
-                .apply(combineLatestWith(monitorManager.primaryMonitorObs))
+                .combineLatestWith(monitorManager.primaryMonitorObs)
                 .subscribe(NextObserver(nextHandler))
         )
 
         subscription.add(
             eventStore.destroyObs
-                .apply(filter { it == id })
-                .apply(switchMap { frameIdObs })
+                .filter { it == id }
+                .switchMap { frameIdObs }
                 .subscribe(NextObserver { removeWindow(it) })
         )
 
         subscription.add(
             frameIdObs
-                .apply(combineLatestWith(windowMeasurementsObs.apply(filterNotNull())))
+                .combineLatestWith(windowMeasurementsObs.filterNotNull())
                 .subscribe(NextObserver { (frameId, measurements) -> internalMoveResize(frameId, measurements) })
         )
 
         subscription.add(
             activeWindowAndListObs
-                .subscribe(NextObserver { ( activeWindow, windowList ) -> sendWindowListUpdate(activeWindow, windowList) })
+                .subscribe(NextObserver { (activeWindow, windowList) ->
+                    sendWindowListUpdate(
+                        activeWindow,
+                        windowList
+                    )
+                })
         )
     }
 

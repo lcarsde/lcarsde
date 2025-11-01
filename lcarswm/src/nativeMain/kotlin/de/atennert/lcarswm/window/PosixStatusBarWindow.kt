@@ -33,44 +33,47 @@ class PosixStatusBarWindow(
         .combine()
 
     private val windowMeasurementsObs = monitorManager.primaryMonitorObs
-        .apply(map(::getWindowMeasurements))
+        .map(::getWindowMeasurements)
 
     private val frameIdSj = ReplaySubject<Window>(1)
     private val frameIdObs = frameIdSj.asObservable()
 
-    private val nextHandler = NextObserver.NextHandler<Tuple2<Window, Monitor<RROutput>?>> { (frameId, primaryMonitor) ->
-        if (primaryMonitor != null && primaryMonitor.screenMode == ScreenMode.NORMAL) {
-            internalShow(frameId)
-        } else {
-            internalHide(frameId)
+    private val nextHandler =
+        NextObserver.NextHandler<Tuple2<Window, Monitor<RROutput>?>> { (frameId, primaryMonitor) ->
+            if (primaryMonitor != null && primaryMonitor.screenMode == ScreenMode.NORMAL) {
+                internalShow(frameId)
+            } else {
+                internalHide(frameId)
+            }
         }
-    }
 
     private val subscription = Subscription()
 
     init {
-        subscription.add(windowMeasurementsObs
-            .apply(filterNotNull())
-            .apply(take(1))
-            .apply(map { measurements ->
-                wrapXCreateSimpleWindow(
-                    display,
-                    rootWindowId,
-                    measurements.x,
-                    measurements.y,
-                    measurements.width.convert(),
-                    measurements.frameHeight.convert(),
-                    0.convert(),
-                    0.convert(),
-                    0.convert(),
-                )
-            })
-            .subscribe(NextObserver { frameIdSj.next(it) }))
+        subscription.add(
+            windowMeasurementsObs
+                .filterNotNull()
+                .take(1)
+                .map { measurements ->
+                    wrapXCreateSimpleWindow(
+                        display,
+                        rootWindowId,
+                        measurements.x,
+                        measurements.y,
+                        measurements.width.convert(),
+                        measurements.frameHeight.convert(),
+                        0.convert(),
+                        0.convert(),
+                        0.convert(),
+                    )
+                }
+                .subscribe(NextObserver { frameIdSj.next(it) })
+        )
 
         subscription.add(
             frameIdObs
-                .apply(combineLatestWith(windowMeasurementsObs.apply(filterNotNull())))
-                .apply(take(1))
+                .combineLatestWith(windowMeasurementsObs.filterNotNull())
+                .take(1)
                 .subscribe(NextObserver { (frameId, measurements) ->
                     wrapXReparentWindow(display, id, frameId, 0, 0)
                     wrapXResizeWindow(display, id, measurements.width.convert(), measurements.height.convert())
@@ -95,14 +98,14 @@ class PosixStatusBarWindow(
 
         subscription.add(
             frameIdObs
-                .apply(combineLatestWith(monitorManager.primaryMonitorObs,))
+                .combineLatestWith(monitorManager.primaryMonitorObs)
                 .subscribe(NextObserver(nextHandler))
         )
 
         subscription.add(
             eventStore.destroyObs
-                .apply(filter { it == id })
-                .apply(switchMap { frameIdObs })
+                .filter { it == id }
+                .switchMap { frameIdObs }
                 .subscribe(NextObserver {
                     removeWindow(it)
                 })
@@ -110,7 +113,7 @@ class PosixStatusBarWindow(
 
         subscription.add(
             frameIdObs
-                .apply(combineLatestWith(windowMeasurementsObs.apply(filterNotNull())))
+                .combineLatestWith(windowMeasurementsObs.filterNotNull())
                 .subscribe(NextObserver { (frameId, measurements) ->
                     internalMoveResize(frameId, measurements)
                 })

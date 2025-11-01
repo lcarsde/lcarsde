@@ -19,7 +19,7 @@ class MapTest {
             }
         }
         Observable.of(1)
-            .apply(map { it + 1 })
+            .map { it + 1 }
             .subscribe(observer)
 
         assertContentEquals(listOf(2, "complete"), observer.received)
@@ -34,7 +34,7 @@ class MapTest {
             }
         }
         Observable.error<Int>()
-            .apply(map { it + 1 })
+            .map { it + 1 }
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])

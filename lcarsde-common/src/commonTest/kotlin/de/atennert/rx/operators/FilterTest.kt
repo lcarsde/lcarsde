@@ -19,7 +19,7 @@ class FilterTest {
             }
         }
         Observable.of(1, 2, 3, 4)
-            .apply(filter { it % 2 == 0 })
+            .filter { it % 2 == 0 }
             .subscribe(observer)
 
         assertContentEquals(listOf(2, 4, "complete"), observer.received)
@@ -34,7 +34,7 @@ class FilterTest {
             }
         }
         Observable.error<Int>()
-            .apply(filter { it % 2 == 0 })
+            .filter { it % 2 == 0 }
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])

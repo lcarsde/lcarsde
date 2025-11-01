@@ -15,14 +15,14 @@ class BufferTest {
             override fun next(value: List<Int>) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         val trigger = Subject<Int>()
         val source = Subject<Int>()
-        source
-            .apply(buffer(trigger.asObservable()))
+        source.buffer(trigger)
             .subscribe(observer)
 
         source.next(1)
@@ -49,14 +49,14 @@ class BufferTest {
             override fun next(value: List<Int>) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         val trigger = Subject<Int>()
         val source = Subject<Int>()
-        source
-            .apply(buffer(trigger.asObservable()))
+        source.buffer(trigger)
             .subscribe(observer)
 
         source.next(1)
@@ -86,7 +86,7 @@ class BufferTest {
         }
         val trigger = Subject<Int>()
         Observable.error<Int>()
-            .apply(buffer(trigger.asObservable()))
+            .buffer(trigger)
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])

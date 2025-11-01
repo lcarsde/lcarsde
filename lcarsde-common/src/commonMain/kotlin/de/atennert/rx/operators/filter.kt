@@ -1,10 +1,15 @@
 package de.atennert.rx.operators
 
-import de.atennert.rx.Operator
-import de.atennert.rx.ValueOperator
+import de.atennert.rx.Observable
+import de.atennert.rx.Subscribable
+import de.atennert.rx.ValueObserver
 
-fun <X> filter(f: (X) -> Boolean): Operator<X, X> = ValueOperator { value, next ->
-    if (f(value)) {
-        next(value)
-    }
+fun <T> Subscribable<T>.filter(f: (T) -> Boolean) = Observable { subscriber ->
+    this.subscribe(object : ValueObserver<T, T>(subscriber) {
+        override fun next(value: T) {
+            if (f(value)) {
+                subscriber.next(value)
+            }
+        }
+    })
 }

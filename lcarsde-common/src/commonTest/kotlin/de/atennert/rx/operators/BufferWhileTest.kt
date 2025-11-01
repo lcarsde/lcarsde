@@ -13,6 +13,7 @@ class BufferWhileTest {
             override fun next(value: List<Int>) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
@@ -20,8 +21,7 @@ class BufferWhileTest {
         val triggerBuffer = Subject<Int>()
         val triggerPassThrough = Subject<Int>()
         val source = Subject<Int>()
-        source
-            .apply(bufferWhile(triggerBuffer.asObservable(), triggerPassThrough.asObservable()))
+        source.bufferWhile(triggerBuffer, triggerPassThrough)
             .subscribe(observer)
 
         source.next(1)

@@ -15,6 +15,7 @@ class CombinationTest {
             override fun next(value: Tuple2<List<Int>, Int>) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
@@ -22,8 +23,9 @@ class CombinationTest {
         val subject1 = Subject<Int>()
         val subject2 = Subject<Int>()
 
-        subject1.apply(buffer(subject2.asObservable()))
-            .apply(withLatestFrom(subject2.asObservable()))
+        subject1
+            .buffer(subject2)
+            .withLatestFrom(subject2)
             .subscribe(observer)
 
         subject2.next(10)

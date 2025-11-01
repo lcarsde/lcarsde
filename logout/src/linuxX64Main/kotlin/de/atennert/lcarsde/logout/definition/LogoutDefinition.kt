@@ -22,10 +22,10 @@ class LogoutDefinition : LogoutOptionDefinition {
     @OptIn(ExperimentalForeignApi::class)
     override fun call() {
         list("/proc")
-            .apply(filter { it.matches(Regex("^[0-9]+$")) })
-            .apply(filter { read("/proc/$it/comm")?.trim() == "lcarswm.kexe" })
-            .apply(map(String::toInt))
-            .apply(first())
+            .filter { it.matches(Regex("^[0-9]+$")) }
+            .filter { read("/proc/$it/comm")?.trim() == "lcarswm.kexe" }
+            .map(String::toInt)
+            .first()
             .subscribe(NextObserver {
                 kill(it, SIGTERM)
             })

@@ -14,12 +14,13 @@ class ScanTest {
             override fun next(value: Int) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         Observable.of(1, 2, 3)
-            .apply(scan(0) { acc, value -> acc + value })
+            .scan(0) { acc, value -> acc + value }
             .subscribe(observer)
 
         assertContentEquals(listOf(1, 3, 6, "complete"), observer.received)
@@ -34,7 +35,7 @@ class ScanTest {
             }
         }
         Observable.error<Int>()
-            .apply(scan(0) { acc, value -> acc + value })
+            .scan(0) { acc, value -> acc + value }
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])

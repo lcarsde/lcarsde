@@ -14,17 +14,20 @@ class SwitchMapTest {
             override fun next(value: Int) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         Observable.of(1, 2)
-            .apply(switchMap { Observable { subscriber ->
-                subscriber.next(1 + it * 10)
-                subscriber.next(2 + it * 10)
-                subscriber.complete()
-                subscriber
-            } })
+            .switchMap {
+                Observable { subscriber ->
+                    subscriber.next(1 + it * 10)
+                    subscriber.next(2 + it * 10)
+                    subscriber.complete()
+                    subscriber
+                }
+            }
             .subscribe(observer)
 
         assertContentEquals(listOf(11, 12, 21, 22, "complete"), observer.received)
@@ -39,12 +42,14 @@ class SwitchMapTest {
             }
         }
         Observable.error<Int>()
-            .apply(switchMap { Observable { subscriber ->
-                subscriber.next(1 + it * 10)
-                subscriber.next(2 + it * 10)
-                subscriber.complete()
-                subscriber
-            } })
+            .switchMap {
+                Observable { subscriber ->
+                    subscriber.next(1 + it * 10)
+                    subscriber.next(2 + it * 10)
+                    subscriber.complete()
+                    subscriber
+                }
+            }
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])

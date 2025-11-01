@@ -5,8 +5,22 @@ package de.atennert.rx.util
  */
 
 data class Tuple1<out A>(val v1: A)
-data class Tuple2<out A, out B>(val v1: A, val v2: B)
-data class Tuple3<out A, out B, out C>(val v1: A, val v2: B, val v3: C)
+data class Tuple2<out A, out B>(val v1: A, val v2: B) {
+    @Suppress("UNCHECKED_CAST")
+    internal constructor(input: Array<Any?>) : this(input[0] as A, input[1] as B)
+
+    @Suppress("UNCHECKED_CAST")
+    internal constructor(input: List<Any?>) : this(input[0] as A, input[1] as B)
+}
+
+data class Tuple3<out A, out B, out C>(val v1: A, val v2: B, val v3: C) {
+    @Suppress("UNCHECKED_CAST")
+    internal constructor(input: Array<Any?>) : this(input[0] as A, input[1] as B, input[2] as C)
+
+    @Suppress("UNCHECKED_CAST")
+    internal constructor(input: List<Any?>) : this(input[0] as A, input[1] as B, input[2] as C)
+}
+
 data class Tuple4<out A, out B, out C, out D>(val v1: A, val v2: B, val v3: C, val v4: D)
 
 object Tuple {

@@ -62,8 +62,8 @@ suspend fun runWindowManager(system: SystemApi, logger: Logger, resourceGenerato
     runtimeResources?.let { rr ->
         try {
             (rr.platform.monitorManager.primaryMonitorObs)
-                .apply(filterNotNull())
-                .apply(take(1))
+                .filterNotNull()
+                .take(1)
                 .subscribe(NextObserver {
                     runAutostartApps(
                         rr.platform.environment,

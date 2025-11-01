@@ -20,7 +20,7 @@ class LastTest {
         }
 
         Observable.empty<Int>()
-            .apply(last())
+            .last()
             .subscribe(observer)
 
         observer.received.shouldContainExactly("complete")
@@ -39,7 +39,7 @@ class LastTest {
         }
 
         Observable.of(1, 2, 3)
-            .apply(last())
+            .last()
             .subscribe(observer)
 
         observer.received.shouldContainExactly(3, "complete")
@@ -62,7 +62,7 @@ class LastTest {
         }
 
         Observable.error<Int>()
-            .apply(last())
+            .last()
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])

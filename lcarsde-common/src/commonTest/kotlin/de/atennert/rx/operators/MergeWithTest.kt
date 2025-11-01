@@ -15,12 +15,13 @@ class MergeWithTest {
             override fun next(value: Int) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         val sj1 = Subject<Int>()
-        sj1.apply(mergeWith())
+        sj1.mergeWith()
             .subscribe(observer)
         sj1.next(1)
         sj1.next(2)
@@ -36,6 +37,7 @@ class MergeWithTest {
             override fun next(value: Int) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
@@ -43,7 +45,7 @@ class MergeWithTest {
         val sj1 = Subject<Int>()
         val sj2 = Subject<Int>()
         val sj3 = Subject<Int>()
-        sj1.apply(mergeWith(sj2.asObservable(), sj3.asObservable()))
+        sj1.mergeWith(sj2, sj3)
             .subscribe(observer)
         sj1.next(1)
         sj3.next(21)
@@ -62,6 +64,7 @@ class MergeWithTest {
             override fun next(value: Int) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
@@ -69,7 +72,7 @@ class MergeWithTest {
         val sj1 = Subject<Int>()
         val sj2 = Subject<Int>()
         val sj3 = Subject<Int>()
-        sj1.apply(mergeWith(sj2.asObservable(), sj3.asObservable()))
+        sj1.mergeWith(sj2, sj3)
             .subscribe(observer)
 
         sj1.complete()
@@ -91,7 +94,7 @@ class MergeWithTest {
             }
         }
         Observable.error<Int>()
-            .apply(mergeWith(Observable.of(1)))
+            .mergeWith(Observable.of(1))
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])
@@ -106,7 +109,7 @@ class MergeWithTest {
             }
         }
         Observable.of(1)
-            .apply(mergeWith(Observable.error()))
+            .mergeWith(Observable.error())
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])

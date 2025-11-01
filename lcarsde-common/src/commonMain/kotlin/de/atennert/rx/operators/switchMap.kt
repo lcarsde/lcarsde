@@ -1,12 +1,8 @@
 package de.atennert.rx.operators
 
 import de.atennert.rx.Observable
-import de.atennert.rx.Operator
+import de.atennert.rx.Subscribable
 
-fun <X, Y> switchMap(f: (X) -> Observable<Y>): Operator<X, Y> {
-    return Operator { source ->
-        source
-            .apply(map { f(it) })
-            .apply(switchAll())
-    }
-}
+fun <T, U> Subscribable<T>.switchMap(f: (T) -> Observable<U>) = this
+    .map { f(it) }
+    .switchAll()

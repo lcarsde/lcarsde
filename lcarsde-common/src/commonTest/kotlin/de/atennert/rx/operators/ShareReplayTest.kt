@@ -18,7 +18,7 @@ class ShareReplayTest {
         }
         val subject = Subject<Int>()
         val obs = subject
-            .apply(shareReplay())
+            .shareReplay()
 
         subject.next(1)
 
@@ -40,7 +40,7 @@ class ShareReplayTest {
         }
         val subject = Subject<Int>()
         val obs = subject
-            .apply(shareReplay())
+            .shareReplay()
 
         obs.subscribe(preObserver)
 
@@ -64,7 +64,7 @@ class ShareReplayTest {
         }
         val subject = Subject<Int>()
         val obs = subject
-            .apply(shareReplay(2))
+            .shareReplay(2)
 
         obs.subscribe(preObserver)
 
@@ -86,7 +86,7 @@ class ShareReplayTest {
             }
         }
         Observable.error<Int>()
-            .apply(map { it + 1 })
+            .map { it + 1 }
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])
@@ -102,7 +102,7 @@ class ShareReplayTest {
         }
         val subject = Subject<Int>()
         val obs = subject
-            .apply(shareReplay(2))
+            .shareReplay(2)
 
         subject.complete()
 
@@ -120,13 +120,14 @@ class ShareReplayTest {
             override fun next(value: Int) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         val subject = Subject<Int>()
         val obs = subject
-            .apply(shareReplay(2))
+            .shareReplay(2)
         obs.subscribe(preObserver)
 
         subject.next(1)
@@ -156,7 +157,7 @@ class ShareReplayTest {
         }
         val subject = Subject<Int>()
         val obs = subject
-            .apply(shareReplay(2))
+            .shareReplay(2)
         obs.subscribe(preObserver)
 
         subject.next(1)
@@ -182,7 +183,7 @@ class ShareReplayTest {
         }
         val subject = Subject<Int>()
         val obs = subject
-            .apply(shareReplay(2, true))
+            .shareReplay(2, true)
 
         val sub1 = obs.subscribe(observer1)
         val sub2 = obs.subscribe(observer2)
@@ -211,7 +212,7 @@ class ShareReplayTest {
         }
         val subject = Subject<Int>()
         val obs = subject
-            .apply(shareReplay(2))
+            .shareReplay(2)
 
         val sub1 = obs.subscribe(observer1)
         val sub2 = obs.subscribe(observer2)

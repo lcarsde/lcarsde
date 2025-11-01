@@ -2,7 +2,7 @@ package de.atennert.rx
 
 import kotlin.reflect.KProperty
 
-open class Subject<T> : Observer<T> {
+open class Subject<T> : Observer<T>, Subscribable<T> {
     open operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         throw UnsupportedOperationException("Use Behavior Subject to do that! ($thisRef.${property.name})")
     }
@@ -11,13 +11,9 @@ open class Subject<T> : Observer<T> {
         next(value)
     }
 
-    fun <R> apply(operator: Operator<T, R>): Observable<R> {
-        return asObservable().apply(operator)
-    }
-
     private val subscribers = mutableSetOf<Subscriber<T>>()
 
-    open fun subscribe(observer: Observer<T>): Subscription {
+    override fun subscribe(observer: Observer<T>): Subscription {
         if (stopped) {
             val err = error
             if (err != null) {

@@ -1,6 +1,6 @@
 package de.atennert.rx
 
-open class Subscriber<T>(private var observer: Observer<T>? = null) : Subscription(), Observer<T> {
+open class Subscriber<in T>(private var observer: Observer<T>? = null) : Subscription(), Observer<T> {
     override fun next(value: T) {
         observer?.next(value)
     }

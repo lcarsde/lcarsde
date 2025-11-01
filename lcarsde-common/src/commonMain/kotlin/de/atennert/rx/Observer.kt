@@ -1,6 +1,6 @@
 package de.atennert.rx
 
-interface Observer<T> {
+interface Observer<in T> {
     fun next(value: T)
 
     fun error(error: Throwable)

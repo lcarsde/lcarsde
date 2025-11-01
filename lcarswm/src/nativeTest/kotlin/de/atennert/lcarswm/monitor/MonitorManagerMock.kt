@@ -16,30 +16,30 @@ open class MonitorManagerMock : MonitorManager<RROutput> {
 
     val lastMonitorBuildersSj = BehaviorSubject(listOf(createMonitorBuilder(1, isPrimary = true)))
     private val lastMonitorBuildersObs = lastMonitorBuildersSj.asObservable()
-    val lastMonitorBuilders by  lastMonitorBuildersSj
+    val lastMonitorBuilders by lastMonitorBuildersSj
 
     private val screenModeSj = BehaviorSubject(ScreenMode.NORMAL)
     override val screenModeObs = screenModeSj.asObservable()
     var screenMode by screenModeSj
 
     override val monitorsObs = lastMonitorBuildersObs
-        .apply(combineLatestWith(screenModeObs))
-        .apply(map { (monitorBuilders, screenMode) ->
+        .combineLatestWith(screenModeObs)
+        .map { (monitorBuilders, screenMode) ->
             monitorBuilders.map { it.setScreenMode(screenMode).build() }
-        })
+        }
 
     override val primaryMonitorObs = monitorsObs
-        .apply(map { monitors -> monitors.firstOrNull { it.isPrimary } })
+        .map { monitors -> monitors.firstOrNull { it.isPrimary } }
 
     override val combinedScreenSizeObs = monitorsObs
-        .apply(map { monitors ->
+        .map { monitors ->
             monitors.fold(Pair(0, 0)) { (oldWidth, oldHeight), monitor ->
                 Pair(
                     max(monitor.x + monitor.width, oldWidth),
                     max(monitor.y + monitor.height, oldHeight)
                 )
             }
-        })
+        }
 
     override fun updateMonitorList() {
         functionCalls.add(FunctionCall("updateMonitorList"))

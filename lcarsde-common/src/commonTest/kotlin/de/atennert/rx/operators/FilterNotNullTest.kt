@@ -14,12 +14,13 @@ class FilterNotNullTest {
             override fun next(value: Int) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         Observable.of(null, 2, null, 4)
-            .apply(filterNotNull())
+            .filterNotNull()
             .subscribe(observer)
 
         assertContentEquals(listOf(2, 4, "complete"), observer.received)
@@ -34,7 +35,7 @@ class FilterNotNullTest {
             }
         }
         Observable.error<Int?>()
-            .apply(filterNotNull())
+            .filterNotNull()
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])

@@ -14,12 +14,13 @@ class TakeTest {
             override fun next(value: Int) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         Observable.of(1, 2, 3)
-            .apply(take(1))
+            .take(1)
             .subscribe(observer)
 
         assertContentEquals(listOf(1, "complete"), observer.received)
@@ -32,12 +33,13 @@ class TakeTest {
             override fun next(value: Int) {
                 received.add(value)
             }
+
             override fun complete() {
                 received.add("complete")
             }
         }
         Observable.of(1, 2, 3)
-            .apply(take(2))
+            .take(2)
             .subscribe(observer)
 
         assertContentEquals(listOf(1, 2, "complete"), observer.received)
@@ -52,7 +54,7 @@ class TakeTest {
             }
         }
         Observable.error<Int>()
-            .apply(take(1))
+            .take(1)
             .subscribe(observer)
 
         assertIs<Throwable>(observer.received[0])

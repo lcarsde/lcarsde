@@ -18,7 +18,7 @@ fun updateWindowListAtom(
     windowList: WindowList,
 ) {
     windowList.windowsObs
-        .apply(map { windows -> windows.map { it.id } })
+        .map { windows -> windows.map { it.id } }
         .subscribe(NextObserver { windowIds ->
             windowUtilApi.changeProperty(
                 rootWindow,

@@ -20,23 +20,23 @@ class MonitorManagerImpl(private val randrApi: RandrApi, private val rootWindowI
     private var screenMode by screenModeSj
 
     override val monitorsObs = lastMonitorBuildersObs
-        .apply(combineLatestWith(screenModeObs))
-        .apply(map { (monitorBuilders, screenMode) ->
+        .combineLatestWith(screenModeObs)
+        .map { (monitorBuilders, screenMode) ->
             monitorBuilders.map { it.setScreenMode(screenMode).build() }
-        })
+        }
 
     override val primaryMonitorObs = monitorsObs
-        .apply(map { monitors -> monitors.firstOrNull { it.isPrimary } })
+        .map { monitors -> monitors.firstOrNull { it.isPrimary } }
 
     override val combinedScreenSizeObs = monitorsObs
-        .apply(map { monitors ->
+        .map { monitors ->
             monitors.fold(Pair(0, 0)) { (oldWidth, oldHeight), monitor ->
                 Pair(
                     max(monitor.x + monitor.width, oldWidth),
                     max(monitor.y + monitor.height, oldHeight)
                 )
             }
-        })
+        }
 
     override fun updateMonitorList() {
         val monitorData = getMonitorData()
@@ -50,12 +50,19 @@ class MonitorManagerImpl(private val randrApi: RandrApi, private val rootWindowI
         val monitorNames = activeMonitorInfos
             .map { (_, outputInfo) -> getOutputName(outputInfo!!) }
 
-        lastMonitorBuildersSj.next(activeMonitorInfos
+        lastMonitorBuildersSj.next(
+            activeMonitorInfos
             .map { (monitorId, _) -> monitorId }
             .zip(monitorNames)
             .map { (id, name) -> Monitor.Builder(id, name, id == primary) }
             .zip(activeMonitorInfos.map { it.second })
-            .map { (monitor, outputInfo) -> addMeasurementToMonitor(monitor, outputInfo!!.pointed.crtc, monitorData) }
+            .map { (monitor, outputInfo) ->
+                addMeasurementToMonitor(
+                    monitor,
+                    outputInfo!!.pointed.crtc,
+                    monitorData
+                )
+            }
             .sortedBy { (it.y + it.height).toULong().shl(32) + it.x.toULong() })
     }
 

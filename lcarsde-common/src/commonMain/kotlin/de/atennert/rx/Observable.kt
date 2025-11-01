@@ -7,13 +7,9 @@ fun interface Subscribe<T> {
     fun subscribe(subscriber: Subscriber<T>): Subscription
 }
 
-open class Observable<T>(private val subscribeFn: Subscribe<T>) {
+open class Observable<T>(private val subscribeFn: Subscribe<T>) : Subscribable<T> {
 
-    fun <R> apply(operator: Operator<T, R>): Observable<R> {
-        return operator.call(this)
-    }
-
-    fun subscribe(observer: Observer<T>): Subscription {
+    override fun subscribe(observer: Observer<T>): Subscription {
         return subscribeFn.subscribe(Subscriber(observer))
     }
 
@@ -43,7 +39,7 @@ open class Observable<T>(private val subscribeFn: Subscribe<T>) {
             if (obss.isEmpty()) {
                 return empty()
             }
-            return obss[0].apply(mergeWith(*obss.drop(1).toTypedArray()))
+            return obss[0].mergeWith(*obss.drop(1).toTypedArray())
         }
 
         fun <T> forkJoin(obss: List<Observable<T>>): Observable<List<T>> {
@@ -55,7 +51,7 @@ open class Observable<T>(private val subscribeFn: Subscribe<T>) {
                 val valueBuffer = mutableMapOf<Int, T>()
                 val subscription = Subscription()
 
-                obss.map { it.apply(last()) }
+                obss.map { it.last() }
                     .forEachIndexed { index, obs ->
                         subscription.add(obs.subscribe(object : Observer<T> {
                             override fun next(value: T) {

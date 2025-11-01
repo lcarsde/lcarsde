@@ -2,164 +2,64 @@ package de.atennert.rx.operators
 
 import de.atennert.rx.Observable
 import de.atennert.rx.Observer
-import de.atennert.rx.Operator
+import de.atennert.rx.Subscribable
 import de.atennert.rx.Subscription
 import de.atennert.rx.util.Tuple
 import de.atennert.rx.util.Tuple1
 import de.atennert.rx.util.Tuple2
 import de.atennert.rx.util.Tuple3
 
-fun <X> combineLatestWith(): Operator<X, Tuple1<X>> = Operator { source ->
-    source.apply(map { Tuple(it) })
-}
+fun <T> Subscribable<T>.combineLatestWith(): Observable<Tuple1<T>> = this.map { Tuple(it) }
 
-fun <A, B> combineLatestWith(obs2: Observable<B>): Operator<A, Tuple2<A, B>> {
-    return Operator { obs1 ->
-        Observable { subscriber ->
-            var value1: A? = null
-            var value2: B? = null
-            var isValue1Set = false
-            var isValue2Set = false
-            var isObs1Complete = false
-            var isObs2Complete = false
-            val subscription = Subscription()
+fun <T1, T2> Subscribable<T1>.combineLatestWith(obs2: Subscribable<T2>): Observable<Tuple2<T1, T2>> =
+    this.internalCombineLatestWith(obs2)
+        .map { Tuple2(it) }
 
-            fun nextAll() {
-                if (isValue1Set && isValue2Set) {
-                    @Suppress("UNCHECKED_CAST")
-                    subscriber.next(Tuple(value1 as A, value2 as B))
-                }
-            }
+fun <T1, T2, T3> Subscribable<T1>.combineLatestWith(
+    o2: Subscribable<T2>,
+    o3: Subscribable<T3>
+): Subscribable<Tuple3<T1, T2, T3>> =
+    this.internalCombineLatestWith(o2, o3)
+        .map { Tuple3(it) }
 
-            fun completeAll() {
-                if (isObs1Complete && isObs2Complete) {
-                    subscriber.complete()
-                    subscription.unsubscribe()
-                }
-            }
+private fun Subscribable<*>.internalCombineLatestWith(vararg obss: Subscribable<*>) = Observable { subscriber ->
+    val values = arrayOfNulls<Any?>(obss.size + 1)
+    val isValueSet = BooleanArray(obss.size + 1) { false }
+    val isObsComplete = BooleanArray(obss.size + 1) { false }
+    val subscription = Subscription()
 
-            subscription.add(obs1.subscribe(object : Observer<A> {
-                override fun next(value: A) {
-                    value1 = value
-                    isValue1Set = true
-                    nextAll()
-                }
-
-                override fun error(error: Throwable) {
-                    subscriber.error(error)
-                    subscription.unsubscribe()
-                }
-
-                override fun complete() {
-                    isObs1Complete = true
-                    completeAll()
-                }
-            }))
-            subscription.add(obs2.subscribe(object : Observer<B> {
-                override fun next(value: B) {
-                    value2 = value
-                    isValue2Set = true
-                    nextAll()
-                }
-
-                override fun error(error: Throwable) {
-                    subscriber.error(error)
-                    subscription.unsubscribe()
-                }
-
-                override fun complete() {
-                    isObs2Complete = true
-                    completeAll()
-                }
-            }))
-
-            subscription
+    fun nextAll() {
+        if (isValueSet.all { it }) {
+            subscriber.next(values)
         }
     }
-}
 
-fun <A, B, C> combineLatestWith(obs2: Observable<B>, obs3: Observable<C>): Operator<A, Tuple3<A, B, C>> {
-    return Operator { obs1 ->
-        Observable { subscriber ->
-            var value1: A? = null
-            var value2: B? = null
-            var value3: C? = null
-            var isValue1Set = false
-            var isValue2Set = false
-            var isValue3Set = false
-            var isObs1Complete = false
-            var isObs2Complete = false
-            var isObs3Complete = false
-            val subscription = Subscription()
-
-            fun nextAll() {
-                if (isValue1Set && isValue2Set && isValue3Set) {
-                    @Suppress("UNCHECKED_CAST")
-                    subscriber.next(Tuple(value1 as A, value2 as B, value3 as C))
-                }
-            }
-
-            fun completeAll() {
-                if (isObs1Complete && isObs2Complete && isObs3Complete) {
-                    subscriber.complete()
-                    subscription.unsubscribe()
-                }
-            }
-
-            subscription.add(obs1.subscribe(object : Observer<A> {
-                override fun next(value: A) {
-                    value1 = value
-                    isValue1Set = true
-                    nextAll()
-                }
-
-                override fun error(error: Throwable) {
-                    subscriber.error(error)
-                    subscription.unsubscribe()
-                }
-
-                override fun complete() {
-                    isObs1Complete = true
-                    completeAll()
-                }
-            }))
-            subscription.add(obs2.subscribe(object : Observer<B> {
-                override fun next(value: B) {
-                    value2 = value
-                    isValue2Set = true
-                    nextAll()
-                }
-
-                override fun error(error: Throwable) {
-                    subscriber.error(error)
-                    subscription.unsubscribe()
-                }
-
-                override fun complete() {
-                    isObs2Complete = true
-                    completeAll()
-                }
-            }))
-            subscription.add(obs3.subscribe(object : Observer<C> {
-                override fun next(value: C) {
-                    value3 = value
-                    isValue3Set = true
-                    nextAll()
-                }
-
-                override fun error(error: Throwable) {
-                    subscriber.error(error)
-                    subscription.unsubscribe()
-                }
-
-                override fun complete() {
-                    isObs3Complete = true
-                    completeAll()
-                }
-            }))
-
-            subscription
+    fun completeAll() {
+        if (isObsComplete.all { it }) {
+            subscriber.complete()
+            subscription.unsubscribe()
         }
     }
-}
 
+    listOf(this).plus(obss).forEachIndexed { i, obs ->
+        subscription.add(obs.subscribe(object : Observer<Any?> {
+            override fun next(value: Any?) {
+                values[i] = value
+                isValueSet[i] = true
+                nextAll()
+            }
+
+            override fun error(error: Throwable) {
+                subscriber.error(error)
+                subscription.unsubscribe()
+            }
+
+            override fun complete() {
+                isObsComplete[i] = true
+                completeAll()
+            }
+        }))
+    }
+
+    subscription
+}
