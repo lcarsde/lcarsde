@@ -1,7 +1,7 @@
 package de.atennert.lcarsde.logout.definition
 
-import de.atennert.lcarsde.files.execute
 import de.atennert.lcarsde.logout.LcarsColors
+import de.atennert.lcarsde.process.ProcessBuilder
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKString
 import platform.posix.X_OK
@@ -15,7 +15,9 @@ class LockScreenDefinition : LogoutOptionDefinition {
         get() = isLockScreenAvailable()
 
     override fun call() {
-        execute("xdg-screensaver", "lock")
+        ProcessBuilder()
+            .command("xdg-screensaver", "lock")
+            .start()
     }
 
     @OptIn(ExperimentalForeignApi::class)

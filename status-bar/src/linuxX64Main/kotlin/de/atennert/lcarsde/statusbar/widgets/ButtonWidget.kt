@@ -1,6 +1,6 @@
 package de.atennert.lcarsde.statusbar.widgets
 
-import de.atennert.lcarsde.files.execute
+import de.atennert.lcarsde.process.ProcessBuilder
 import de.atennert.lcarsde.statusbar.configuration.WidgetConfiguration
 import de.atennert.lcarsde.statusbar.extensions.gSignalConnect
 import de.atennert.lcarsde.statusbar.extensions.setStyling
@@ -8,8 +8,8 @@ import gtk.*
 import kotlinx.cinterop.*
 
 @ExperimentalForeignApi
-class ButtonWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointer<GtkCssProvider>)
-    : StatusWidget(widgetConfiguration, cssProvider, null) {
+class ButtonWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPointer<GtkCssProvider>) :
+    StatusWidget(widgetConfiguration, cssProvider, null) {
 
     private var ref: StableRef<ButtonWidget>? = null
 
@@ -29,9 +29,11 @@ class ButtonWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPoint
 
     override fun start() {
         ref = StableRef.create(this)
-        gSignalConnect(widget, "clicked",
-                staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer -> executeBtnCommand(p) },
-                ref!!.asCPointer())
+        gSignalConnect(
+            widget, "clicked",
+            staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer -> executeBtnCommand(p) },
+            ref!!.asCPointer()
+        )
     }
 
     override fun stop() {
@@ -47,7 +49,9 @@ class ButtonWidget(widgetConfiguration: WidgetConfiguration, cssProvider: CPoint
 
         fun executeBtnCommand(ref: COpaquePointer) {
             val command = ref.asStableRef<ButtonWidget>().get().properties["command"] ?: return
-            execute(command)
+            ProcessBuilder()
+                .command(command)
+                .start()
         }
     }
 }
