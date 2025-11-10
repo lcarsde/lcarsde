@@ -1,10 +1,13 @@
-import de.atennert.gtk.*
+import de.atennert.gtk.GtkWindow
+import de.atennert.gtk.gtkApplication
 import de.atennert.lcarsde.comm.MessageQueue
 import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarsde.menu.Menu
-import gtk.GtkWidget
 import gtk.g_idle_add
-import kotlinx.cinterop.*
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.StableRef
+import kotlinx.cinterop.asStableRef
+import kotlinx.cinterop.staticCFunction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
@@ -23,12 +26,7 @@ fun main() = gtkApplication {
 
     val job = readWindowUpdates(windowListQ, menu)
 
-    window.connect("destroy",
-        NativeCallbackRef((staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer ->
-            p.asStableRef<GtkApplication>().get().mainQuit()
-        }).reinterpret()),
-        NativeSignalDataRef(StableRef.create(this).asCPointer())
-    )
+    window.connect("destroy", this) { _, app -> app.mainQuit() }
     main()
 
     job.cancelAndJoin()

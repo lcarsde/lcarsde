@@ -1,32 +1,24 @@
 package de.atennert.lcarsde.appSelector
 
 import de.atennert.gtk.*
-import de.atennert.lcarsde.LabelWithRoundedBoxes
-import gtk.GtkWidget
-import kotlinx.cinterop.COpaquePointer
-import kotlinx.cinterop.CPointer
+import de.atennert.gtk.lcarsde.LabelWithRoundedBoxes
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.StableRef
-import kotlinx.cinterop.asStableRef
-import kotlinx.cinterop.reinterpret
-import kotlinx.cinterop.staticCFunction
 
 @OptIn(ExperimentalForeignApi::class)
-private val CSS_PROVIDER = gtkCssProviderNew()
 private const val STYLE_PATH = "/usr/share/lcarsde/appSelector/style.css"
+private val CSS_PROVIDER = CssProvider.fromPath(STYLE_PATH)
 
 @OptIn(ExperimentalForeignApi::class)
 class AppSelector(window: GtkWindow) {
     private val scrollContainer = GtkScrollContainer()
-    private val appContainer = GtkBox(GtkOrientation.VERTICAL, 8)
+    private val appContainer = GtkBox(gtk.GtkOrientation.GTK_ORIENTATION_VERTICAL, 8)
 
     init {
         val appManager = AppManager()
 
-        gtkCssProviderLoadFromPath(CSS_PROVIDER, STYLE_PATH)
         window.setStyling(CSS_PROVIDER, "window")
 
-        scrollContainer.setPolicy(GtkPolicyType.NEVER, GtkPolicyType.AUTOMATIC)
+        scrollContainer.setPolicy(gtk.GtkPolicyType.GTK_POLICY_NEVER, gtk.GtkPolicyType.GTK_POLICY_AUTOMATIC)
 
         appManager.appsByCategory.map { (category, apps) -> Pair(category, apps) }
             .sortedBy { it.first }
@@ -38,14 +30,10 @@ class AppSelector(window: GtkWindow) {
                     val button = GtkButton(app.name)
                     button.setStyling(CSS_PROVIDER, "button", "button-${app.color.color}")
                     button.setAlignment(1f, 1f)
-                    button.onClick(
-                        NativeCallbackRef((staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer ->
-                            val app = p.asStableRef<AppDescriptor>().get()
-                            println("Run ${app.name}")
-                            app.start()
-                        }).reinterpret()),
-                        NativeSignalDataRef(StableRef.create(app).asCPointer())
-                    )
+                    button.onClick(app) { _, app ->
+                        println("Run ${app.name}")
+                        app.start()
+                    }
                     flowBox.add(button)
                 }
                 appContainer.add(flowBox)

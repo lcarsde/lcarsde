@@ -1,24 +1,18 @@
 package de.atennert.lcarsde.menu
 
 import de.atennert.gtk.*
-import kotlinx.cinterop.ExperimentalForeignApi
 import de.atennert.lcarsde.comm.MessageQueue
-import gtk.GtkWidget
-import kotlinx.cinterop.COpaquePointer
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.StableRef
-import kotlinx.cinterop.asStableRef
-import kotlinx.cinterop.reinterpret
-import kotlinx.cinterop.staticCFunction
+import de.atennert.lcarsde.menu.Menu.Companion.STYLE_PATH
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.experimental.ExperimentalNativeApi
 
 @OptIn(ExperimentalForeignApi::class)
-private val CSS_PROVIDER = gtkCssProviderNew()
+private val CSS_PROVIDER = CssProvider.fromPath(STYLE_PATH)
 
 @OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
 class Menu(private val window: GtkWindow, private val sendQ: MessageQueue) {
     private val scrollContainer = GtkScrollContainer()
-    private val appContainer = GtkBox(GtkOrientation.VERTICAL, 8)
+    private val appContainer = GtkBox(gtk.GtkOrientation.GTK_ORIENTATION_VERTICAL, 8)
 
     private var windowEntries: List<WindowEntry> = emptyList()
         set(value) {
@@ -29,10 +23,9 @@ class Menu(private val window: GtkWindow, private val sendQ: MessageQueue) {
     private val gtkWindows = mutableMapOf<String, GtkWindowEntry>()
 
     init {
-        gtkCssProviderLoadFromPath(CSS_PROVIDER, STYLE_PATH)
         window.setStyling(CSS_PROVIDER, "window")
 
-        scrollContainer.setPolicy(GtkPolicyType.NEVER, GtkPolicyType.AUTOMATIC)
+        scrollContainer.setPolicy(gtk.GtkPolicyType.GTK_POLICY_NEVER, gtk.GtkPolicyType.GTK_POLICY_AUTOMATIC)
 
         val spacer = GtkLabel("")
         spacer.setStyling(CSS_PROVIDER, "spacer")
@@ -41,12 +34,9 @@ class Menu(private val window: GtkWindow, private val sendQ: MessageQueue) {
         scrollContainer.add(appContainer)
         window.add(scrollContainer)
 
-        window.connect("realize", NativeCallbackRef((staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer ->
-                val window = p.asStableRef<GtkWindow>().get()
-                window.setUtf8Property(LCARSDE_APP_MENU, LCARSDE_APP_MENU)
-            }).reinterpret()),
-            NativeSignalDataRef(StableRef.create(window).asCPointer())
-        )
+        window.connect("realize", window) { _, window ->
+            window.setUtf8Property(LCARSDE_APP_MENU, LCARSDE_APP_MENU)
+        }
     }
 
 
@@ -123,7 +113,7 @@ class GtkWindowEntry(
     isActive: Boolean,
     onSelect: () -> Unit,
     onClose: () -> Unit
-) : GtkBox(GtkOrientation.HORIZONTAL, Menu.GAP_SIZE) {
+) : GtkBox(gtk.GtkOrientation.GTK_ORIENTATION_HORIZONTAL, Menu.GAP_SIZE) {
     private val shortenedName = if (name.take(15) == name) name else "${name.take(15)}…"
 
     private val selectButton = GtkButton(shortenedName)
@@ -137,22 +127,12 @@ class GtkWindowEntry(
             selectButtonClasses += "selected"
         }
         selectButton.setStyling(CSS_PROVIDER, *selectButtonClasses)
-        val onSelectRef = StableRef.create(onSelect)
-        selectButton.onClick(NativeCallbackRef((staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer ->
-                p.asStableRef<() -> Unit>().get().invoke()
-            }).reinterpret()),
-            NativeSignalDataRef(onSelectRef.asCPointer())
-        )
+        selectButton.onClick(onSelect) { _, f -> f.invoke() }
         packStart(selectButton, false, false, 0u)
 
         closeButton.setSize(32, Menu.CELL_SIZE)
         closeButton.setStyling(CSS_PROVIDER, "close_button")
-        val onCloseRef = StableRef.create(onClose)
-        closeButton.onClick(NativeCallbackRef((staticCFunction { _: CPointer<GtkWidget>, p: COpaquePointer ->
-            p.asStableRef<() -> Unit>().get().invoke()
-        }).reinterpret()),
-            NativeSignalDataRef(onCloseRef.asCPointer())
-        )
+        closeButton.onClick(onClose) { _, f -> f.invoke() }
         packStart(closeButton, false, false, 0u)
     }
 }
