@@ -1,6 +1,7 @@
 package de.atennert.lcarswm.events
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.mouse.MoveWindowManager
 import de.atennert.lcarswm.window.Button
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -10,10 +11,11 @@ import xlib.XEvent
 
 @ExperimentalForeignApi
 class ButtonReleaseHandler(
-    private val logger: Logger,
     private val moveWindowManager: MoveWindowManager,
     private val modeButton: Button<Window>
 ) : XEventHandler {
+    private val logger: Logger by inject()
+
     override val xEventType = ButtonRelease
 
     override fun handleEvent(event: XEvent): Boolean {

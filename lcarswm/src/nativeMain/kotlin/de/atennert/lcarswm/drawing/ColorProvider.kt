@@ -1,7 +1,7 @@
 package de.atennert.lcarswm.drawing
 
+import de.atennert.lcarsde.file.Files
 import de.atennert.lcarswm.*
-import de.atennert.lcarswm.file.Files
 
 class ColorLoader(files: Files) {
 //    private val configuredColors = files.readLines()

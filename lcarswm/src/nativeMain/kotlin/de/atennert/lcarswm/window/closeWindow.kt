@@ -2,7 +2,7 @@ package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.system.api.SystemApi
 import kotlinx.cinterop.*
 import xlib.AtomVar

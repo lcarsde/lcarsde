@@ -1,4 +1,4 @@
-package de.atennert.lcarsde.files
+package de.atennert.lcarsde.file
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -7,7 +7,7 @@ import kotlinx.cinterop.usePinned
 
 @ExperimentalForeignApi
 fun read(path: String): String? {
-    platform.posix.fopen(path, "r")?. let { fp ->
+    platform.posix.fopen(path, "r")?.let { fp ->
         var s = ""
         val buf = ByteArray(1000)
         buf.usePinned {

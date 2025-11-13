@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.log
+package de.atennert.lcarsde.log
 
 /**
  * Interface for logger implementations

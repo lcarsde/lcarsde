@@ -1,4 +1,4 @@
-package de.atennert.lcarsde.files
+package de.atennert.lcarsde.file
 
 import de.atennert.rx.Observable
 import de.atennert.rx.Subscription

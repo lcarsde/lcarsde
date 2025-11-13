@@ -1,11 +1,11 @@
 package de.atennert.lcarswm.log
 
-import de.atennert.lcarswm.file.AccessMode
-import de.atennert.lcarswm.file.Directory
-import de.atennert.lcarswm.file.File
-import de.atennert.lcarswm.file.FileFactory
+import de.atennert.lcarsde.file.AccessMode
+import de.atennert.lcarsde.file.File
+import de.atennert.lcarsde.file.Files
 import de.atennert.lcarsde.lifecycle.closeClosables
-import de.atennert.lcarswm.time.Time
+import de.atennert.lcarsde.log.FileLogger
+import de.atennert.lcarsde.time.Time
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,15 +35,21 @@ class FileLoggerTest {
         }
     }
 
-    class FakeFileFactory : FileFactory {
+    class FakeFiles : Files {
         val openedFiles = mutableListOf<FakeFile>()
 
-        override fun getFile(path: String, accessMode: AccessMode): File {
-            return FakeFile(path, accessMode)
+        override fun open(path: String, mode: AccessMode): File {
+            return FakeFile(path, mode)
                 .also { openedFiles.add(it) }
         }
 
-        override fun getDirectory(path: String): Directory? = null
+        override fun exists(path: String): Boolean {
+            throw NotImplementedError()
+        }
+
+        override fun readLines(path: String, consumer: (String) -> Unit) {
+            throw NotImplementedError()
+        }
     }
 
     @AfterTest
@@ -53,7 +59,7 @@ class FileLoggerTest {
 
     @Test
     fun `open and close file logger`() {
-        val fileFactory = FakeFileFactory()
+        val fileFactory = FakeFiles()
         FileLogger(fileFactory, this.filePath, FakeTime())
         assertEquals(this.filePath, fileFactory.openedFiles[0].path, "handed in file path not used")
         assertEquals(AccessMode.WRITE, fileFactory.openedFiles[0].accessMode, "not using log file for write only")
@@ -66,33 +72,45 @@ class FileLoggerTest {
     fun `log debug info to file`() {
         val text = "this is my text"
 
-        val fileFactory = FakeFileFactory()
+        val fileFactory = FakeFiles()
         val fileLogger = FileLogger(fileFactory, this.filePath, FakeTime())
 
         fileLogger.logDebug(text)
-        assertEquals("0 - DEBUG: $text\n", fileFactory.openedFiles[0].text, "the written text doesn't fit (maybe missing \\n?)")
+        assertEquals(
+            "0 - DEBUG: $text\n",
+            fileFactory.openedFiles[0].text,
+            "the written text doesn't fit (maybe missing \\n?)"
+        )
     }
 
     @Test
     fun `log info to file`() {
         val text = "this is my text"
 
-        val fileFactory = FakeFileFactory()
+        val fileFactory = FakeFiles()
         val fileLogger = FileLogger(fileFactory, this.filePath, FakeTime())
 
         fileLogger.logInfo(text)
-        assertEquals("0 -  INFO: $text\n", fileFactory.openedFiles[0].text, "the written text doesn't fit (maybe missing \\n?)")
+        assertEquals(
+            "0 -  INFO: $text\n",
+            fileFactory.openedFiles[0].text,
+            "the written text doesn't fit (maybe missing \\n?)"
+        )
     }
 
     @Test
     fun `log warning to file`() {
         val text = "this is my warning"
 
-        val fileFactory = FakeFileFactory()
+        val fileFactory = FakeFiles()
         val fileLogger = FileLogger(fileFactory, this.filePath, FakeTime())
 
         fileLogger.logWarning(text)
-        assertEquals("0 -  WARN: $text\n", fileFactory.openedFiles[0].text, "the written text doesn't fit (maybe missing \\n?)")
+        assertEquals(
+            "0 -  WARN: $text\n",
+            fileFactory.openedFiles[0].text,
+            "the written text doesn't fit (maybe missing \\n?)"
+        )
     }
 
     @Test
@@ -101,23 +119,29 @@ class FileLoggerTest {
         val errorMessage = "some error message"
         val throwable = Throwable(errorMessage)
 
-        val fileFactory = FakeFileFactory()
+        val fileFactory = FakeFiles()
         val fileLogger = FileLogger(fileFactory, this.filePath, FakeTime())
 
         fileLogger.logWarning(text, throwable)
-        assertTrue(fileFactory.openedFiles[0].text.startsWith("0 -  WARN: $text: $errorMessage\n"),
-            "the written text doesn't fit (maybe missing \\n?):\n${fileFactory.openedFiles[0].text}")
+        assertTrue(
+            fileFactory.openedFiles[0].text.startsWith("0 -  WARN: $text: $errorMessage\n"),
+            "the written text doesn't fit (maybe missing \\n?):\n${fileFactory.openedFiles[0].text}"
+        )
     }
 
     @Test
     fun `log error to file`() {
         val text = "this is my error"
 
-        val fileFactory = FakeFileFactory()
+        val fileFactory = FakeFiles()
         val fileLogger = FileLogger(fileFactory, this.filePath, FakeTime())
 
         fileLogger.logError(text)
-        assertEquals("0 - ERROR: $text\n", fileFactory.openedFiles[0].text, "the written text doesn't fit (maybe missing \\n?)")
+        assertEquals(
+            "0 - ERROR: $text\n",
+            fileFactory.openedFiles[0].text,
+            "the written text doesn't fit (maybe missing \\n?)"
+        )
     }
 
     @Test
@@ -126,11 +150,13 @@ class FileLoggerTest {
         val errorMessage = "some error message"
         val throwable = Throwable(errorMessage)
 
-        val fileFactory = FakeFileFactory()
+        val fileFactory = FakeFiles()
         val fileLogger = FileLogger(fileFactory, this.filePath, FakeTime())
 
         fileLogger.logError(text, throwable)
-        assertTrue(fileFactory.openedFiles[0].text.startsWith("0 - ERROR: $text: $errorMessage\n"),
-            "the written text doesn't fit (maybe missing \\n?):\n${fileFactory.openedFiles[0].text}")
+        assertTrue(
+            fileFactory.openedFiles[0].text.startsWith("0 - ERROR: $text: $errorMessage\n"),
+            "the written text doesn't fit (maybe missing \\n?):\n${fileFactory.openedFiles[0].text}"
+        )
     }
 }

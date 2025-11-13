@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.file
+package de.atennert.lcarsde.file
 
 interface File {
     fun write(text: String)

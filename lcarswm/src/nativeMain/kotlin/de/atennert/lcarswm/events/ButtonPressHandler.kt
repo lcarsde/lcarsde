@@ -1,6 +1,7 @@
 package de.atennert.lcarswm.events
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.mouse.MoveWindowManager
 import de.atennert.lcarswm.system.api.InputApi
 import de.atennert.lcarswm.window.Button
@@ -15,13 +16,14 @@ import xlib.XEvent
 
 @ExperimentalForeignApi
 class ButtonPressHandler(
-    private val logger: Logger,
     private val inputApi: InputApi,
     private val windowList: WindowList,
     private val focusHandler: WindowFocusHandler,
     private val moveWindowManager: MoveWindowManager,
     private val modeButton: Button<Window>
 ) : XEventHandler {
+    private val logger: Logger by inject()
+
     override val xEventType = ButtonPress
 
     override fun handleEvent(event: XEvent): Boolean {

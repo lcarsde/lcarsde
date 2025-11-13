@@ -1,6 +1,7 @@
 package de.atennert.lcarswm.events
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.MapRequest
 import xlib.XEvent
@@ -9,9 +10,10 @@ import xlib.XEvent
  *
  */
 class MapRequestHandler(
-    private val logger: Logger,
     private val eventStore: EventStore
-) : XEventHandler{
+) : XEventHandler {
+    private val logger: Logger by inject()
+
     @OptIn(ExperimentalForeignApi::class)
     override val xEventType = MapRequest
 

@@ -1,10 +1,17 @@
+import de.atennert.lcarsde.file.AccessMode
+import de.atennert.lcarsde.file.File
+import de.atennert.lcarsde.file.Files
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.HOME_CACHE_DIR_PROPERTY
 import de.atennert.lcarswm.HOME_CONFIG_DIR_PROPERTY
 import de.atennert.lcarswm.ResourceGenerator
 import de.atennert.lcarswm.environment.Environment
-import de.atennert.lcarswm.file.*
+import de.atennert.lcarswm.file.Directory
+import de.atennert.lcarswm.file.FileFactory
 import de.atennert.lcarswm.lifecycle.ROOT_WINDOW_MASK
-import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.signal.Signal
 import de.atennert.lcarswm.system.FunctionCall
@@ -14,6 +21,7 @@ import kotlinx.cinterop.*
 import kotlinx.coroutines.runBlocking
 import xlib.*
 import kotlin.experimental.ExperimentalNativeApi
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -24,17 +32,22 @@ class ShutdownTest : SystemCallMocker() {
     private class FakeResourceGenerator : ResourceGenerator {
         override fun createEnvironment(): Environment {
             return object : Environment {
-                override fun get(name: String): String = when(name) {
+                override fun get(name: String): String = when (name) {
                     HOME_CONFIG_DIR_PROPERTY -> "/home/me"
                     HOME_CACHE_DIR_PROPERTY -> "/home/me"
                     else -> error("getenv with unsimulated key: $name")
                 }
+
                 override fun set(name: String, value: String): Boolean = true
             }
         }
 
         override fun createFiles(): Files {
             return object : Files {
+                override fun open(path: String, mode: AccessMode): File {
+                    throw NotImplementedError()
+                }
+
                 override fun exists(path: String): Boolean = true
 
                 override fun readLines(path: String, consumer: (String) -> Unit) {}
@@ -52,9 +65,13 @@ class ShutdownTest : SystemCallMocker() {
         }
     }
 
+    @BeforeTest
+    fun setUp() {
+        ServiceLocator.provide<Logger> { LoggerMock().closeWith(LoggerMock::close) }
+    }
+
     @Test
     fun `shutdown when there's no display to get`() = runBlocking {
-        val logger = LoggerMock().closeWith(LoggerMock::close)
         val testFacade = object : SystemFacadeMock() {
             override fun openDisplay(): Boolean {
                 super.openDisplay()
@@ -63,14 +80,14 @@ class ShutdownTest : SystemCallMocker() {
         }
         val resourceGenerator = FakeResourceGenerator()
 
-        runWindowManager(testFacade, logger, resourceGenerator)
+        runWindowManager(testFacade, resourceGenerator)
 
         val functionCalls = testFacade.functionCalls
             .dropWhile { it.name != "openDisplay" }
             .drop(1)
             .toMutableList()
 
-        checkThatTheLoggerIsClosed(logger)
+        checkThatTheLoggerIsClosed()
         checkSynchronizationRequest(functionCalls)
         checkCleanupOfSignals(functionCalls, testFacade.signalActions.keys)
 
@@ -79,7 +96,6 @@ class ShutdownTest : SystemCallMocker() {
 
     @Test
     fun `shutdown when there's no default screen to get`() = runBlocking {
-        val logger = LoggerMock().closeWith(LoggerMock::close)
         val resourceGenerator = FakeResourceGenerator()
         lateinit var modifierKeymapRef: CPointer<XModifierKeymap>
         lateinit var keymapRef: CPointer<KeySymVar>
@@ -103,14 +119,14 @@ class ShutdownTest : SystemCallMocker() {
                 return keymapRef
             }
         }
-        runWindowManager(testFacade, logger, resourceGenerator)
+        runWindowManager(testFacade, resourceGenerator)
 
         val functionCalls = testFacade.functionCalls
             .dropWhile { it.name != "defaultScreenOfDisplay" }
             .drop(1)
             .toMutableList()
 
-        checkThatTheLoggerIsClosed(logger)
+        checkThatTheLoggerIsClosed()
         checkSynchronizationRequest(functionCalls)
         checkThatKeyBindingsWereFreed(functionCalls, modifierKeymapRef, keymapRef)
         checkThatTheDisplayWasClosed(functionCalls)
@@ -121,7 +137,6 @@ class ShutdownTest : SystemCallMocker() {
 
     @Test
     fun `shutdown when the old WM doesn't`() = runBlocking {
-        val logger = LoggerMock().closeWith(LoggerMock::close)
         lateinit var modifierKeymapRef: CPointer<XModifierKeymap>
         lateinit var keymapRef: CPointer<KeySymVar>
         val resourceGenerator = FakeResourceGenerator()
@@ -173,14 +188,14 @@ class ShutdownTest : SystemCallMocker() {
             }
         }
 
-        runWindowManager(testFacade, logger, resourceGenerator)
+        runWindowManager(testFacade, resourceGenerator)
 
         val functionCalls = testFacade.functionCalls
-                .dropWhile { it.name != "setSelectionOwner" }
-                .drop(1)
-                .toMutableList()
+            .dropWhile { it.name != "setSelectionOwner" }
+            .drop(1)
+            .toMutableList()
 
-        checkThatTheLoggerIsClosed(logger)
+        checkThatTheLoggerIsClosed()
         checkRequestForCurrentSelectionOwner(functionCalls)
         checkSynchronizationRequest(functionCalls)
         checkThatSupportWindowWasDestroyed(functionCalls)
@@ -193,7 +208,6 @@ class ShutdownTest : SystemCallMocker() {
 
     @Test
     fun `shutdown when the wm can not become screen owner`() = runBlocking {
-        val logger = LoggerMock().closeWith(LoggerMock::close)
         lateinit var modifierKeymapRef: CPointer<XModifierKeymap>
         lateinit var keymapRef: CPointer<KeySymVar>
         val resourceGenerator = FakeResourceGenerator()
@@ -242,13 +256,13 @@ class ShutdownTest : SystemCallMocker() {
             }
         }
 
-        runWindowManager(testFacade, logger, resourceGenerator)
+        runWindowManager(testFacade, resourceGenerator)
 
         val functionCalls = testFacade.functionCalls
             .dropWhile { it.name != "getSelectionOwner" || it.parameters.elementAtOrNull(1) != 1 }
             .toMutableList()
 
-        checkThatTheLoggerIsClosed(logger)
+        checkThatTheLoggerIsClosed()
         checkRequestForCurrentSelectionOwner(functionCalls)
         checkSynchronizationRequest(functionCalls)
         checkThatSupportWindowWasDestroyed(functionCalls)
@@ -261,7 +275,6 @@ class ShutdownTest : SystemCallMocker() {
 
     @Test
     fun `shutdown when there is an error response for select input`() = runBlocking {
-        val logger = LoggerMock().closeWith(LoggerMock::close)
         lateinit var modifierKeymapRef: CPointer<XModifierKeymap>
         lateinit var keymapRef: CPointer<KeySymVar>
         val resourceGenerator = FakeResourceGenerator()
@@ -308,13 +321,13 @@ class ShutdownTest : SystemCallMocker() {
                 return keymapRef
             }
         }
-        runWindowManager(testFacade, logger, resourceGenerator)
+        runWindowManager(testFacade, resourceGenerator)
 
         val functionCalls = testFacade.functionCalls
             .dropWhile { it.name != "setErrorHandler" }
             .toMutableList()
 
-        checkThatTheLoggerIsClosed(logger)
+        checkThatTheLoggerIsClosed()
         checkSettingOfErrorHandler(functionCalls)
         checkSelectInputSetting(functionCalls, ROOT_WINDOW_MASK)
         checkSynchronizationRequest(functionCalls)
@@ -329,7 +342,6 @@ class ShutdownTest : SystemCallMocker() {
 
     @Test
     fun `shutdown after sending shutdown key combo`() = runBlocking {
-        val logger = LoggerMock().closeWith(LoggerMock::close)
         lateinit var modifierKeymapRef: CPointer<XModifierKeymap>
         lateinit var keymapRef: CPointer<KeySymVar>
         val resourceGenerator = FakeResourceGenerator()
@@ -345,6 +357,7 @@ class ShutdownTest : SystemCallMocker() {
                         event.pointed.type = PropertyNotify
                         event.pointed.xproperty.time = eventCount.convert()
                     }
+
                     else -> {
                         super.nextEvent(event)
                         event.pointed.type = KeyRelease
@@ -372,14 +385,14 @@ class ShutdownTest : SystemCallMocker() {
             }
         }
 
-        runWindowManager(testFacade, logger, resourceGenerator)
+        runWindowManager(testFacade, resourceGenerator)
 
         val functionCalls = testFacade.functionCalls
             .dropWhile { it.name != "nextEvent" }
             .dropWhile { it.name == "nextEvent" }
             .toMutableList()
 
-        checkThatTheLoggerIsClosed(logger)
+        checkThatTheLoggerIsClosed()
         checkFinalizingSync(functionCalls)
         checkClosingOfAppMenuMessageQueues(functionCalls)
         checkFreeingOfColors(functionCalls)
@@ -397,7 +410,6 @@ class ShutdownTest : SystemCallMocker() {
 
     @Test
     fun `shutdown after sending selection clear event`() = runBlocking {
-        val logger = LoggerMock().closeWith(LoggerMock::close)
         lateinit var modifierKeymapRef: CPointer<XModifierKeymap>
         lateinit var keymapRef: CPointer<KeySymVar>
         val resourceGenerator = FakeResourceGenerator()
@@ -414,6 +426,7 @@ class ShutdownTest : SystemCallMocker() {
                         event.pointed.type = PropertyNotify
                         event.pointed.xproperty.time = eventCount.convert()
                     }
+
                     else -> {
                         super.nextEvent(event)
                         event.pointed.type = SelectionClear
@@ -438,14 +451,14 @@ class ShutdownTest : SystemCallMocker() {
             }
         }
 
-        runWindowManager(testFacade, logger, resourceGenerator)
+        runWindowManager(testFacade, resourceGenerator)
 
         val functionCalls = testFacade.functionCalls
             .dropWhile { it.name != "nextEvent" }
             .dropWhile { it.name == "nextEvent" }
             .toMutableList()
 
-        checkThatTheLoggerIsClosed(logger)
+        checkThatTheLoggerIsClosed()
         checkFinalizingSync(functionCalls)
         checkClosingOfAppMenuMessageQueues(functionCalls)
         checkFreeingOfColors(functionCalls)
@@ -461,8 +474,9 @@ class ShutdownTest : SystemCallMocker() {
         checkThatThereIsNoUnexpectedInteraction(functionCalls)
     }
 
-    private fun checkThatTheLoggerIsClosed(logger: LoggerMock) {
-        assertTrue(logger.closed, "The logger needs to be closed")
+    private fun checkThatTheLoggerIsClosed() {
+        val logger by inject<Logger>()
+        assertTrue((logger as LoggerMock).closed, "The logger needs to be closed")
     }
 
     private fun checkCleanupOfSignals(functionCalls: MutableList<FunctionCall>, registeredSignals: Set<Signal>) {

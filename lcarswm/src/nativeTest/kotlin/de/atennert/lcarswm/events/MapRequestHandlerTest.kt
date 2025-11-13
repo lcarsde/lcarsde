@@ -1,5 +1,7 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.rx.NextObserver
 import io.kotest.matchers.collections.shouldContainExactly
@@ -10,6 +12,7 @@ import kotlinx.cinterop.nativeHeap
 import xlib.MapRequest
 import xlib.Window
 import xlib.XEvent
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,9 +21,14 @@ import kotlin.test.assertEquals
 class MapRequestHandlerTest {
     private val eventStore = EventStore()
 
+    @BeforeTest
+    fun setup() {
+        ServiceLocator.provide<Logger> { LoggerMock() }
+    }
+
     @Test
     fun `has MapRequest type`() {
-        val mapRequestHandler = MapRequestHandler(LoggerMock(), eventStore)
+        val mapRequestHandler = MapRequestHandler(eventStore)
 
         assertEquals(MapRequest, mapRequestHandler.xEventType, "The MapRequestHandler should have the type MapRequest")
     }
@@ -30,7 +38,7 @@ class MapRequestHandlerTest {
         val events = mutableListOf<Window>()
         val subscription = eventStore.mapObs.subscribe(NextObserver(events::add))
 
-        val mapRequestHandler = MapRequestHandler(LoggerMock(), eventStore)
+        val mapRequestHandler = MapRequestHandler(eventStore)
 
         val mapRequestEvent = nativeHeap.alloc<XEvent>()
         mapRequestEvent.type = MapRequest

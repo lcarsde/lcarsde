@@ -1,5 +1,6 @@
 package de.atennert.lcarswm.window
 
+import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarswm.BAR_HEIGHT_WITH_OFFSET
 import de.atennert.lcarswm.ScreenMode
 import de.atennert.lcarswm.atom.AtomLibrary
@@ -10,7 +11,7 @@ import de.atennert.lcarswm.conversion.toUByteArray
 import de.atennert.lcarswm.drawing.IFrameDrawer
 import de.atennert.lcarswm.events.sendConfigureNotify
 import de.atennert.lcarswm.keys.KeyManager
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.system.*
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -31,7 +32,6 @@ private val wmStateData = listOf<ULong>(NormalState.convert(), None.convert())
 
 @ExperimentalForeignApi
 class PosixWindow(
-    private val logger: Logger,
     private val display: CPointer<Display>?,
     private val screen: Screen,
     private val atomLibrary: AtomLibrary,
@@ -42,6 +42,8 @@ class PosixWindow(
     private val borderWidth: Int,
     val type: WindowType
 ) : ManagedWmWindow<Window> {
+    private val logger by inject<Logger>()
+
     override var frame: Window = 0.convert()
         private set
 

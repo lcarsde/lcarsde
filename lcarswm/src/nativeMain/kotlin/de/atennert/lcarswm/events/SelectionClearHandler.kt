@@ -1,11 +1,14 @@
 package de.atennert.lcarswm.events
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.SelectionClear
 import xlib.XEvent
 
-class SelectionClearHandler(private val logger: Logger) : XEventHandler {
+class SelectionClearHandler : XEventHandler {
+    private val logger by inject<Logger>()
+
     @OptIn(ExperimentalForeignApi::class)
     override val xEventType = SelectionClear
 

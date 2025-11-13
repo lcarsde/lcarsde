@@ -1,9 +1,11 @@
 package de.atennert.lcarswm.window
 
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.ScreenMode
 import de.atennert.lcarswm.drawing.UIDrawingMock
 import de.atennert.lcarswm.events.EventStore
-import de.atennert.lcarsde.lifecycle.closeClosables
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.monitor.MonitorManagerMock
 import de.atennert.lcarswm.system.FunctionCall
@@ -25,6 +27,7 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
     override fun setup() {
         super.setup()
         display = nativeHeap.allocPointerTo<Display>().value
+        ServiceLocator.provide<Logger> { LoggerMock() }
     }
 
     @AfterTest
@@ -43,7 +46,6 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         val primaryMonitor = monitorManager.lastMonitorBuilders[0]
 
         PosixWindowCoordinator(
-            LoggerMock(),
             eventStore,
             monitorManager,
             windowFactory,
@@ -73,7 +75,6 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         val rootWindowDrawer = UIDrawingMock()
 
         PosixWindowCoordinator(
-            LoggerMock(),
             eventStore,
             monitorManager,
             windowFactory,
@@ -99,7 +100,6 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         val rootWindowDrawer = UIDrawingMock()
 
         PosixWindowCoordinator(
-            LoggerMock(),
             eventStore,
             monitorManager,
             windowFactory,
@@ -135,7 +135,6 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         val rootWindowDrawer = UIDrawingMock()
 
         val windowCoordinator = PosixWindowCoordinator(
-            LoggerMock(),
             eventStore,
             monitorManager,
             windowFactory,
@@ -187,7 +186,6 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         val rootWindowDrawer = UIDrawingMock()
 
         val windowCoordinator = PosixWindowCoordinator(
-            LoggerMock(),
             eventStore,
             monitorManager,
             windowFactory,
@@ -234,7 +232,6 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         val rootWindowDrawer = UIDrawingMock()
 
         PosixWindowCoordinator(
-            LoggerMock(),
             eventStore,
             monitorManager,
             windowFactory,

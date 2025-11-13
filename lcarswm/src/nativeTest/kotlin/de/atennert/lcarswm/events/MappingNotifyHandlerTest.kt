@@ -1,7 +1,9 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.ServiceLocator
 import de.atennert.lcarswm.Environment
 import de.atennert.lcarswm.keys.*
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.system.SystemCallMocker
 import de.atennert.lcarswm.system.SystemFacadeMock
@@ -10,23 +12,29 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.nativeHeap
 import xlib.MappingNotify
 import xlib.XEvent
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @ExperimentalForeignApi
 class MappingNotifyHandlerTest : SystemCallMocker() {
-
     private val keySetting = setOf(
         KeyExecution("Ctrl+F4", "command arg1 arg2")
     )
+
+    @BeforeTest
+    override fun setup() {
+        super.setup()
+        ServiceLocator.provide<Logger> { LoggerMock() }
+    }
 
     @Test
     fun `return the event type MappingNotify`() {
         val system = SystemFacadeMock()
         val env = Environment(system.display)
         val keyManager = KeyManager(system)
-        val keySessionManager = KeySessionManager(LoggerMock(), env)
+        val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             system,
             keySetting,
@@ -34,9 +42,13 @@ class MappingNotifyHandlerTest : SystemCallMocker() {
             keySessionManager,
             system.rootWindowId
         )
-        val mappingNotifyHandler = MappingNotifyHandler(LoggerMock(), keyManager, keyConfiguration, system.rootWindowId)
+        val mappingNotifyHandler = MappingNotifyHandler(keyManager, keyConfiguration, system.rootWindowId)
 
-        assertEquals(MappingNotify, mappingNotifyHandler.xEventType, "The MappingNotifyHandler should have the correct type")
+        assertEquals(
+            MappingNotify,
+            mappingNotifyHandler.xEventType,
+            "The MappingNotifyHandler should have the correct type"
+        )
     }
 
     @Test
@@ -44,7 +56,7 @@ class MappingNotifyHandlerTest : SystemCallMocker() {
         val system = SystemFacadeMock()
         val env = Environment(system.display)
         val keyManager = KeyManager(system)
-        val keySessionManager = KeySessionManager(LoggerMock(), env)
+        val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             system,
             keySetting,
@@ -52,7 +64,7 @@ class MappingNotifyHandlerTest : SystemCallMocker() {
             keySessionManager,
             system.rootWindowId
         )
-        val mappingNotifyHandler = MappingNotifyHandler(LoggerMock(), keyManager, keyConfiguration, system.rootWindowId)
+        val mappingNotifyHandler = MappingNotifyHandler(keyManager, keyConfiguration, system.rootWindowId)
 
         system.functionCalls.clear()
 

@@ -1,5 +1,7 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.rx.NextObserver
 import io.kotest.matchers.shouldBe
@@ -8,6 +10,7 @@ import xlib.ConfigureRequest
 import xlib.Window
 import xlib.XConfigureRequestEvent
 import xlib.XEvent
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -19,11 +22,20 @@ import kotlin.test.assertFalse
 class ConfigureRequestHandlerTest {
     private val eventStore = EventStore()
 
+    @BeforeTest
+    fun setup() {
+        ServiceLocator.provide<Logger> { LoggerMock() }
+    }
+
     @Test
     fun `has ConfigureRequest type`() {
-        val configureRequestHandler = ConfigureRequestHandler(LoggerMock(), eventStore)
+        val configureRequestHandler = ConfigureRequestHandler(eventStore)
 
-        assertEquals(ConfigureRequest, configureRequestHandler.xEventType, "The ConfigureRequestHandler should have the ConfigureRequest type")
+        assertEquals(
+            ConfigureRequest,
+            configureRequestHandler.xEventType,
+            "The ConfigureRequestHandler should have the ConfigureRequest type"
+        )
     }
 
     @Test
@@ -31,7 +43,7 @@ class ConfigureRequestHandlerTest {
         val events = mutableListOf<XConfigureRequestEvent>()
         val subscription = eventStore.configureRequestObs.subscribe(NextObserver(events::add))
 
-        val configureRequestHandler = ConfigureRequestHandler(LoggerMock(), eventStore)
+        val configureRequestHandler = ConfigureRequestHandler(eventStore)
 
         val configureRequestEvent = createConfigureRequestEvent(42.convert())
         val shutdownValue = configureRequestHandler.handleEvent(configureRequestEvent)

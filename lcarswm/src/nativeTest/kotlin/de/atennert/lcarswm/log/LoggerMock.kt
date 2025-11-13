@@ -1,5 +1,7 @@
 package de.atennert.lcarswm.log
 
+import de.atennert.lcarsde.log.Logger
+
 /**
  *
  */

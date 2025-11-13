@@ -1,6 +1,7 @@
 package de.atennert.lcarswm.events
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.ConfigureRequest
 import xlib.XEvent
@@ -10,9 +11,10 @@ import xlib.XEvent
  * dimensions or simply forward the request.
  */
 class ConfigureRequestHandler(
-    private val logger: Logger,
-    private val eventStore: EventStore,
+    private val eventStore: EventStore
 ) : XEventHandler {
+    private val logger: Logger by inject()
+
     @ExperimentalForeignApi
     override val xEventType = ConfigureRequest
 

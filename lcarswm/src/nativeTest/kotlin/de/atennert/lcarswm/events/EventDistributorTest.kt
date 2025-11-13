@@ -1,11 +1,14 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.free
 import kotlinx.cinterop.nativeHeap
 import xlib.XEvent
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -13,10 +16,15 @@ import kotlin.test.assertTrue
 @ExperimentalForeignApi
 class EventDistributorTest {
 
+    @BeforeTest
+    fun setup() {
+        ServiceLocator.provide<Logger> { LoggerMock() }
+    }
+
     @Test
     fun `handle event`() {
         val eventHandler = TestEventHandler()
-        val eventManager = EventDistributor.Builder(LoggerMock())
+        val eventManager = EventDistributor.Builder()
             .addEventHandler(eventHandler)
             .build()
 
@@ -33,7 +41,7 @@ class EventDistributorTest {
     @Test
     fun `don't handle event`() {
         val eventHandler = TestEventHandler()
-        val eventManager = EventDistributor.Builder(LoggerMock())
+        val eventManager = EventDistributor.Builder()
             .addEventHandler(eventHandler)
             .build()
 

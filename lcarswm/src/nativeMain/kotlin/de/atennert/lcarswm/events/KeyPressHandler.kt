@@ -1,7 +1,8 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarswm.keys.*
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.window.WindowCoordinator
 import de.atennert.lcarswm.window.WindowFocusHandler
@@ -12,7 +13,6 @@ import xlib.XEvent
 
 @ExperimentalForeignApi
 class KeyPressHandler(
-    private val logger: Logger,
     private val keyManager: KeyManager,
     private val keyConfiguration: KeyConfiguration,
     private val toggleSessionManager: KeySessionManager,
@@ -20,6 +20,8 @@ class KeyPressHandler(
     private val windowCoordinator: WindowCoordinator,
     private val windowFocusHandler: WindowFocusHandler
 ) : XEventHandler {
+    private val logger: Logger by inject()
+
     override val xEventType = KeyPress
 
     override fun handleEvent(event: XEvent): Boolean {
@@ -33,7 +35,8 @@ class KeyPressHandler(
             keyConfiguration.getBindingForKey(keySym, keyMask)?.let { keyBinding ->
                 when (keyBinding) {
                     is KeyAction -> act(keyBinding.action)
-                    else -> {/* so far we only handle key actions here */}
+                    else -> {/* so far we only handle key actions here */
+                    }
                 }
                 return false
             }
@@ -50,7 +53,8 @@ class KeyPressHandler(
             WmAction.WINDOW_TOGGLE_FWD -> toggleFocusedWindowForward()
             WmAction.WINDOW_TOGGLE_BWD -> toggleFocusedWindowBackward()
             WmAction.SCREEN_MODE_TOGGLE -> toggleScreenMode()
-            else -> {/* nothing to do, other actions are handled in key release */}
+            else -> {/* nothing to do, other actions are handled in key release */
+            }
         }
         return false
     }

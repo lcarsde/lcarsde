@@ -1,6 +1,7 @@
 package de.atennert.lcarswm.events
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.XEvent
 
@@ -11,9 +12,10 @@ import xlib.XEvent
  * Use the EventDistributor.Builder to create this
  */
 class EventDistributor private constructor(
-    private val eventHandlers: Map<Int, XEventHandler>,
-    private val logger: Logger
+    private val eventHandlers: Map<Int, XEventHandler>
 ) {
+    private val logger by inject<Logger>()
+
     /**
      * Process a given event via one of the registered event handlers.
      * @return true if the WM should shut down, false otherwise
@@ -33,7 +35,7 @@ class EventDistributor private constructor(
     /**
      * Builder for setting up the event distributor.
      */
-    class Builder(private val logger: Logger) {
+    class Builder {
         private val eventHandlers = mutableListOf<XEventHandler>()
 
         /**
@@ -50,7 +52,7 @@ class EventDistributor private constructor(
          */
         fun build(): EventDistributor {
             val mappedEventHandlers = eventHandlers.associateBy { it.xEventType }
-            return EventDistributor(mappedEventHandlers, logger)
+            return EventDistributor(mappedEventHandlers)
         }
     }
 }

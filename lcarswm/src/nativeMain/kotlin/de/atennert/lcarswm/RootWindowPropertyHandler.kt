@@ -1,13 +1,14 @@
 package de.atennert.lcarswm
 
+import de.atennert.lcarsde.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms.*
 import de.atennert.lcarswm.conversion.combine
 import de.atennert.lcarswm.conversion.toUByteArray
 import de.atennert.lcarswm.events.EventBuffer
 import de.atennert.lcarswm.events.EventTime
-import de.atennert.lcarsde.lifecycle.closeWith
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.system.api.SystemApi
 import kotlinx.cinterop.*
 import xlib.*
@@ -19,12 +20,13 @@ private const val OTHER_WM_SHUTDOWN_TIMEOUT = 15000000
  */
 @ExperimentalForeignApi
 class RootWindowPropertyHandler(
-    private val logger: Logger,
     private val system: SystemApi,
     private val rootWindow: Window,
     private val atomLibrary: AtomLibrary,
     private val eventBuffer: EventBuffer
 ) {
+    private val logger by inject<Logger>()
+
     /** used to set supported properties and track the WM screen ownership */
     val ewmhSupportWindow: Window
 

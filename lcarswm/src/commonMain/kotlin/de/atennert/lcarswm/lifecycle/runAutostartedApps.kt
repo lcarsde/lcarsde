@@ -1,11 +1,11 @@
 package de.atennert.lcarswm.lifecycle
 
+import de.atennert.lcarsde.file.Files
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.HOME_CONFIG_DIR_PROPERTY
 import de.atennert.lcarswm.command.Commander
 import de.atennert.lcarswm.environment.Environment
 import de.atennert.lcarswm.file.FileFactory
-import de.atennert.lcarswm.file.Files
-import de.atennert.lcarswm.log.Logger
 
 /**
  * Read the *.desktop file names from the directory.
@@ -32,7 +32,7 @@ private fun checkAndExecute(path: String, files: Files, commander: Commander, lo
         return
     }
 
-    if (!autoStart.hidden && !autoStart.excludeByShow){
+    if (!autoStart.hidden && !autoStart.excludeByShow) {
         logger.logDebug("run $path")
         commander.run("dex $path")
     }
@@ -59,7 +59,8 @@ private class Autostart {
             "hidden" -> hidden = value.trim().lowercase() == "true"
             "onlyshowin" -> excludeByShow = !value.lowercase().contains("lcarsde")
             "notshowin" -> excludeByShow = value.lowercase().contains("lcarsde")
-            else -> { /* nothing to do */}
+            else -> { /* nothing to do */
+            }
         }
     }
 }
@@ -67,7 +68,13 @@ private class Autostart {
 /**
  * Start all the apps / run the commands from the users or default autostart file.
  */
-fun runAutostartApps(environment: Environment, dirFactory: FileFactory, commander: Commander, files: Files, logger: Logger) {
+fun runAutostartApps(
+    environment: Environment,
+    dirFactory: FileFactory,
+    commander: Commander,
+    files: Files,
+    logger: Logger
+) {
     var localApps = emptyList<String>()
     val globalAutostart = "/etc/xdg/autostart"
     val localAutostart = environment[HOME_CONFIG_DIR_PROPERTY]

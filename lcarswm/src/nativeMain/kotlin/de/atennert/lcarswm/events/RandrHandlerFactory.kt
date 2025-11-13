@@ -1,6 +1,7 @@
 package de.atennert.lcarswm.events
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.system.api.SystemApi
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -10,7 +11,8 @@ import xlib.RRScreenChangeNotify
 import xlib.XEvent
 
 @ExperimentalForeignApi
-class RandrHandlerFactory(systemApi: SystemApi, private val logger: Logger) {
+class RandrHandlerFactory(systemApi: SystemApi) {
+    private val logger by inject<Logger>()
     private val randrEventBase: Int
     private val randrErrorBase: Int
 

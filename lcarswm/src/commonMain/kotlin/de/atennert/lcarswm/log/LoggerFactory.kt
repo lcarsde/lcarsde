@@ -1,12 +1,15 @@
 package de.atennert.lcarswm.log
 
-import de.atennert.lcarswm.file.FileFactory
-import de.atennert.lcarswm.time.Time
+import de.atennert.lcarsde.file.Files
+import de.atennert.lcarsde.log.FileLogger
+import de.atennert.lcarsde.log.Logger
+import de.atennert.lcarsde.log.PrintLogger
+import de.atennert.lcarsde.time.Time
 
-fun createLogger(fileFactory: FileFactory, logFilePath: String?, time: Time): Logger {
+fun createLogger(files: Files, logFilePath: String?, time: Time): Logger {
     return object : Logger {
         val internalLogger = setOfNotNull(
-            logFilePath?.let { FileLogger(fileFactory, logFilePath, time) },
+            logFilePath?.let { FileLogger(files, logFilePath, time) },
             PrintLogger()
         )
 

@@ -1,16 +1,16 @@
-package de.atennert.lcarswm.log
+package de.atennert.lcarsde.log
 
-import de.atennert.lcarswm.file.AccessMode
-import de.atennert.lcarswm.file.File
-import de.atennert.lcarswm.file.FileFactory
+import de.atennert.lcarsde.file.AccessMode
+import de.atennert.lcarsde.file.File
+import de.atennert.lcarsde.file.Files
 import de.atennert.lcarsde.lifecycle.closeWith
-import de.atennert.lcarswm.time.Time
+import de.atennert.lcarsde.time.Time
 
 /**
  * Logger that logs into a file at the given path.
  */
-class FileLogger(fileFactory: FileFactory, logFilePath: String, val time: Time) : Logger {
-    private val file: File = fileFactory.getFile(logFilePath, AccessMode.WRITE)
+class FileLogger(files: Files, logFilePath: String, val time: Time) : Logger {
+    private val file: File = files.open(logFilePath, AccessMode.WRITE)
 
     init {
         closeWith(FileLogger::close)
@@ -45,7 +45,7 @@ class FileLogger(fileFactory: FileFactory, logFilePath: String, val time: Time) 
     }
 
     private fun close() {
-        logInfo("FileLogger::close::lcarswm stopped $this")
+        logDebug("FileLogger::close")
         file.close()
     }
 }

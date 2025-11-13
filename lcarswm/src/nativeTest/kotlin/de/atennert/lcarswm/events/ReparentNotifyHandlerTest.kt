@@ -1,5 +1,7 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.rx.NextObserver
 import io.kotest.matchers.collections.shouldContainExactly
@@ -9,6 +11,7 @@ import kotlinx.cinterop.convert
 import kotlinx.cinterop.nativeHeap
 import xlib.ReparentNotify
 import xlib.XEvent
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -17,9 +20,14 @@ import kotlin.test.assertFalse
 class ReparentNotifyHandlerTest {
     private val eventStore = EventStore()
 
+    @BeforeTest
+    fun setup() {
+        ServiceLocator.provide<Logger> { LoggerMock() }
+    }
+
     @Test
     fun `handler should have correct type`() {
-        assertEquals(ReparentNotify, ReparentNotifyHandler(LoggerMock(), eventStore).xEventType)
+        assertEquals(ReparentNotify, ReparentNotifyHandler(eventStore).xEventType)
     }
 
     @Test
@@ -32,7 +40,7 @@ class ReparentNotifyHandlerTest {
         reparentEvent.xreparent.window = 42.convert()
         reparentEvent.xreparent.parent = 21.convert()
 
-        val reparentNotifyHandler = ReparentNotifyHandler(LoggerMock(), eventStore)
+        val reparentNotifyHandler = ReparentNotifyHandler(eventStore)
 
         val shutdownValue = reparentNotifyHandler.handleEvent(reparentEvent)
 

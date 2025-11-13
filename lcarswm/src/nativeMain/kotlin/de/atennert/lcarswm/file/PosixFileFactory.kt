@@ -1,5 +1,8 @@
 package de.atennert.lcarswm.file
 
+import de.atennert.lcarsde.file.AccessMode
+import de.atennert.lcarsde.file.File
+import de.atennert.lcarsde.file.PosixFile
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.posix.opendir
 

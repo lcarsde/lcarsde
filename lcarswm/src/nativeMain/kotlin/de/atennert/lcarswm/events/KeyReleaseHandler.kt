@@ -1,9 +1,10 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.command.Commander
 import de.atennert.lcarswm.keys.*
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.system.api.SystemApi
 import de.atennert.lcarswm.window.WindowFocusHandler
 import de.atennert.lcarswm.window.closeWindow
@@ -17,7 +18,6 @@ import xlib.XEvent
  */
 @ExperimentalForeignApi
 class KeyReleaseHandler(
-    private val logger: Logger,
     private val systemApi: SystemApi,
     private val focusHandler: WindowFocusHandler,
     private val keyManager: KeyManager,
@@ -27,6 +27,8 @@ class KeyReleaseHandler(
     private val commander: Commander
 ) :
     XEventHandler {
+    private val logger: Logger by inject()
+
     override val xEventType = KeyRelease
 
     override fun handleEvent(event: XEvent): Boolean {
@@ -44,6 +46,7 @@ class KeyReleaseHandler(
                         commander.run(keyBinding.command)
                         false
                     }
+
                     is KeyAction -> act(keyBinding.action)
                 }
             }
@@ -56,7 +59,8 @@ class KeyReleaseHandler(
         when (action) {
             WmAction.WINDOW_CLOSE -> closeActiveWindow()
             WmAction.WM_QUIT -> return true
-            else -> {/* nothing to do, other actions are handled in key press */}
+            else -> {/* nothing to do, other actions are handled in key press */
+            }
         }
         return false
     }

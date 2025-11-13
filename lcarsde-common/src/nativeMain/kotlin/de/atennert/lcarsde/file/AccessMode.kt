@@ -1,7 +1,7 @@
-package de.atennert.lcarswm.file
+package de.atennert.lcarsde.file
 
 val AccessMode.posixCode: String
-    get() = when(this) {
+    get() = when (this) {
         AccessMode.READ -> "r"
         AccessMode.WRITE -> "w"
         AccessMode.APPEND -> "a"

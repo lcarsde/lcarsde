@@ -1,13 +1,16 @@
+import de.atennert.lcarsde.file.PosixFiles
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
+import de.atennert.lcarsde.time.PosixTime
 import de.atennert.lcarswm.HOME_CACHE_DIR_PROPERTY
 import de.atennert.lcarswm.LOG_FILE_PATH
 import de.atennert.lcarswm.PosixResourceGenerator
 import de.atennert.lcarswm.ResourceGenerator
 import de.atennert.lcarswm.lifecycle.*
-import de.atennert.lcarswm.log.Logger
 import de.atennert.lcarswm.log.createLogger
 import de.atennert.lcarswm.system.SystemFacade
 import de.atennert.lcarswm.system.api.SystemApi
-import de.atennert.lcarswm.time.PosixTime
 import de.atennert.rx.NextObserver
 import de.atennert.rx.operators.filterNotNull
 import de.atennert.rx.operators.take
@@ -36,9 +39,9 @@ fun main() = runBlocking {
     val system = SystemFacade()
     val cacheDirPath = getenv(HOME_CACHE_DIR_PROPERTY)?.toKString()?.plus(LOG_FILE_PATH)
     val resourceGenerator = PosixResourceGenerator()
-    val logger = createLogger(resourceGenerator.createFileFactory(), cacheDirPath, PosixTime())
+    ServiceLocator.provide<Logger> { createLogger(PosixFiles, cacheDirPath, PosixTime) }
 
-    runWindowManager(system, logger, resourceGenerator)
+    runWindowManager(system, resourceGenerator)
 
     if (exitState.value != 0) {
         exitProcess(exitState.value ?: -1)
@@ -47,13 +50,14 @@ fun main() = runBlocking {
 
 @ExperimentalNativeApi
 @ExperimentalForeignApi
-suspend fun runWindowManager(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenerator) = coroutineScope {
+suspend fun runWindowManager(system: SystemApi, resourceGenerator: ResourceGenerator) = coroutineScope {
+    val logger by inject<Logger>()
     logger.logInfo("::runWindowManager::start lcarswm initialization")
     exitState.value = null
     staticLogger = logger
 
     val runtimeResources: RuntimeResources? = try {
-        startup(system, logger, resourceGenerator)
+        startup(system, resourceGenerator)
     } catch (e: Throwable) {
         logger.logError("::runWindowManager::error starting lcarswm", e)
         null

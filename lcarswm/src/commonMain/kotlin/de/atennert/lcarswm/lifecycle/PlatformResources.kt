@@ -1,9 +1,9 @@
 package de.atennert.lcarswm.lifecycle
 
+import de.atennert.lcarsde.file.Files
 import de.atennert.lcarswm.command.Commander
 import de.atennert.lcarswm.environment.Environment
 import de.atennert.lcarswm.file.FileFactory
-import de.atennert.lcarswm.file.Files
 import de.atennert.lcarswm.monitor.MonitorManager
 
 data class PlatformResources<Output>(

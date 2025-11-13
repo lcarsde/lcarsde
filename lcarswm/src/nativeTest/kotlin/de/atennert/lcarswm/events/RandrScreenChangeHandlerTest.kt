@@ -1,5 +1,7 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.monitor.MonitorManagerMock
 import de.atennert.lcarswm.system.SystemFacadeMock
@@ -8,24 +10,32 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.nativeHeap
 import xlib.RRScreenChangeNotify
 import xlib.XEvent
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 @ExperimentalForeignApi
 class RandrScreenChangeHandlerTest {
+    @BeforeTest
+    fun setup() {
+        ServiceLocator.provide<Logger> { LoggerMock() }
+    }
+
     @Test
     fun `check correct type of RandrScreenChangeHandler`() {
         val systemApi = SystemFacadeMock()
         val monitorManager = MonitorManagerMock()
 
-        val randrHandlerFactory = RandrHandlerFactory(systemApi, LoggerMock())
+        val randrHandlerFactory = RandrHandlerFactory(systemApi)
 
         val screenChangeHandler = randrHandlerFactory.createScreenChangeHandler(monitorManager)
 
-        assertEquals(systemApi.randrEventBase + RRScreenChangeNotify,
-                screenChangeHandler.xEventType,
-                "The factory should create a screen change handler with the appropriate event type")
+        assertEquals(
+            systemApi.randrEventBase + RRScreenChangeNotify,
+            screenChangeHandler.xEventType,
+            "The factory should create a screen change handler with the appropriate event type"
+        )
     }
 
     @Test
@@ -33,7 +43,7 @@ class RandrScreenChangeHandlerTest {
         val systemApi = SystemFacadeMock()
         val monitorManager = MonitorManagerMock()
 
-        val randrHandlerFactory = RandrHandlerFactory(systemApi, LoggerMock())
+        val randrHandlerFactory = RandrHandlerFactory(systemApi)
 
         val screenChangeHandler = randrHandlerFactory.createScreenChangeHandler(monitorManager)
 

@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.file
+package de.atennert.lcarsde.file
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -6,8 +6,12 @@ import kotlinx.cinterop.usePinned
 import platform.posix.*
 
 @ExperimentalForeignApi
-class PosixFiles : Files {
+object PosixFiles : Files {
     private val readBufferSize = 60
+
+    override fun open(path: String, mode: AccessMode): File {
+        return PosixFile(path, mode)
+    }
 
     override fun exists(path: String): Boolean {
         return access(path, F_OK) == 0
@@ -22,7 +26,7 @@ class PosixFiles : Files {
             while (fgets(entry.addressOf(0), readBufferSize, filePointer) != null) {
                 bufferString += entry.get()
                     .takeWhile { it > 0 }
-                    .fold("") {acc, b -> acc + b.toInt().toChar()}
+                    .fold("") { acc, b -> acc + b.toInt().toChar() }
 
                 if (bufferString.endsWith('\n') || feof(filePointer) != 0) {
                     consumer(bufferString.trimEnd('\r', '\n'))

@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.log
+package de.atennert.lcarsde.log
 
 class PrintLogger : Logger {
     override fun logDebug(text: String) {

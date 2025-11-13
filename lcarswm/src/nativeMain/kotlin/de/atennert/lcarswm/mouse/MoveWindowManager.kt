@@ -1,7 +1,8 @@
 package de.atennert.lcarswm.mouse
 
 import de.atennert.lcarsde.lifecycle.closeWith
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.window.ManagedWmWindow
@@ -13,10 +14,10 @@ import xlib.Window
 
 @OptIn(ExperimentalForeignApi::class)
 class MoveWindowManager(
-    private val logger: Logger,
     private val windowCoordinator: WindowCoordinator,
     monitorManager: MonitorManager<RROutput>
 ) {
+    private val logger by inject<Logger>()
 
     private var monitors = emptyList<Monitor<RROutput>>()
 

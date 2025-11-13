@@ -1,5 +1,7 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.rx.NextObserver
 import io.kotest.matchers.collections.shouldContainExactly
@@ -10,6 +12,7 @@ import kotlinx.cinterop.nativeHeap
 import xlib.DestroyNotify
 import xlib.Window
 import xlib.XEvent
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -18,11 +21,20 @@ import kotlin.test.assertFalse
 class DestroyNotifyHandlerTest {
     private val eventStore = EventStore()
 
+    @BeforeTest
+    fun setup() {
+        ServiceLocator.provide<Logger> { LoggerMock() }
+    }
+
     @Test
     fun `return the event type DestroyNotify`() {
-        val destroyNotifyHandler = DestroyNotifyHandler(LoggerMock(), eventStore)
+        val destroyNotifyHandler = DestroyNotifyHandler(eventStore)
 
-        assertEquals(DestroyNotify, destroyNotifyHandler.xEventType, "The event type for DestroyEventHandler needs to be DestroyNotify")
+        assertEquals(
+            DestroyNotify,
+            destroyNotifyHandler.xEventType,
+            "The event type for DestroyEventHandler needs to be DestroyNotify"
+        )
     }
 
     @Test
@@ -35,7 +47,7 @@ class DestroyNotifyHandlerTest {
         val destroyNotifyEvent = nativeHeap.alloc<XEvent>()
         destroyNotifyEvent.xdestroywindow.window = windowId
 
-        val destroyNotifyHandler = DestroyNotifyHandler(LoggerMock(), eventStore)
+        val destroyNotifyHandler = DestroyNotifyHandler(eventStore)
         val requestShutdown = destroyNotifyHandler.handleEvent(destroyNotifyEvent)
 
         assertFalse(requestShutdown, "Destroy handling should not request shutdown of the window manager")

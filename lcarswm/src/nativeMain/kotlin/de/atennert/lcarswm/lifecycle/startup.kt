@@ -1,7 +1,10 @@
 package de.atennert.lcarswm.lifecycle
 
 import de.atennert.lcarsde.comm.MessageQueue
+import de.atennert.lcarsde.file.Files
 import de.atennert.lcarsde.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.*
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.NumberAtomReader
@@ -14,12 +17,10 @@ import de.atennert.lcarswm.drawing.FrameDrawer
 import de.atennert.lcarswm.drawing.RootWindowDrawer
 import de.atennert.lcarswm.environment.Environment
 import de.atennert.lcarswm.events.*
-import de.atennert.lcarswm.file.Files
 import de.atennert.lcarswm.keys.FocusSessionKeyboardGrabber
 import de.atennert.lcarswm.keys.KeyConfiguration
 import de.atennert.lcarswm.keys.KeyManager
 import de.atennert.lcarswm.keys.KeySessionManager
-import de.atennert.lcarswm.log.Logger
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.monitor.MonitorManagerImpl
 import de.atennert.lcarswm.mouse.MoveWindowManager
@@ -52,9 +53,10 @@ private const val XRANDR_MASK = RRScreenChangeNotifyMask or RROutputChangeNotify
 
 @ExperimentalForeignApi
 @ExperimentalNativeApi
-fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenerator): RuntimeResources? {
+fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeResources? {
+    val logger by inject<Logger>()
     val eventStore = EventStore()
-    val commander = PosixCommander(logger)
+    val commander = PosixCommander()
     val files = resourceGenerator.createFiles()
     val environment = resourceGenerator.createEnvironment()
     val fileFactory = resourceGenerator.createFileFactory()
@@ -67,7 +69,7 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
     }
     system.closeWith { closeDisplay() }
 
-    val randrHandlerFactory = RandrHandlerFactory(system, logger)
+    val randrHandlerFactory = RandrHandlerFactory(system)
 
     val atomLibrary = AtomLibrary(system)
 
@@ -106,7 +108,6 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
     setDisplayEnvironment(system, environment)
 
     val rootWindowPropertyHandler = RootWindowPropertyHandler(
-        logger,
         system,
         screen.root,
         atomLibrary,
@@ -143,7 +144,7 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
 
     eventTime.resetEventTime()
 
-    val settings = loadSettings(logger, system, files, environment)
+    val settings = loadSettings(system, files, environment)
     if (settings == null) {
         logger.logError("::startup::unable to load settings")
         return null
@@ -160,9 +161,9 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
 
     keyManager.ungrabAllKeys(screen.root)
 
-    val env = de.atennert.lcarswm.Environment(system.display)
+    val env = Environment(system.display)
 
-    val toggleSessionManager = KeySessionManager(logger, env)
+    val toggleSessionManager = KeySessionManager(env)
 
     val keyConfiguration = KeyConfiguration(
         system,
@@ -179,7 +180,6 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
     val appMenuMessageQueue = MessageQueue("/lcarswm-app-menu-messages", MessageQueue.Mode.READ, true)
 
     val appMenuMessageHandler = AppMenuMessageHandler(
-        logger,
         system,
         atomLibrary,
         windowList,
@@ -197,7 +197,6 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
     val windowListMessageQueue = MessageQueue("/lcarswm-active-window-list", MessageQueue.Mode.WRITE, true)
 
     val windowFactory = PosixWindowFactory(
-        logger,
         system.display,
         screen,
         colorHandler,
@@ -216,7 +215,6 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
 
     val windowCoordinator =
         PosixWindowCoordinator(
-            logger,
             eventStore,
             monitorManager,
             windowFactory,
@@ -244,13 +242,13 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
             screen.root
         )
 
-    val moveWindowManager = MoveWindowManager(logger, windowCoordinator, monitorManager)
+    val moveWindowManager = MoveWindowManager(windowCoordinator, monitorManager)
 
     focusHandler.registerObserver(
         FocusSessionKeyboardGrabber(system, eventTime, rootWindowPropertyHandler.ewmhSupportWindow)
     )
 
-    focusHandler.registerObserver(InputFocusHandler(logger, system, eventTime, screen.root))
+    focusHandler.registerObserver(InputFocusHandler(system, eventTime, screen.root))
 
     focusHandler.windowFocusEventObs
         .withLatestFrom(windowList.windowsObs)
@@ -272,7 +270,6 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
     val eventManager = createEventManager(
         eventStore,
         system,
-        logger,
         monitorManager,
         windowCoordinator,
         focusHandler,
@@ -307,7 +304,7 @@ fun startup(system: SystemApi, logger: Logger, resourceGenerator: ResourceGenera
  */
 @ExperimentalForeignApi
 private fun handleSignal(signalValue: Int, exitState: AtomicRef<Int?>) {
-    val signal = Signal.values().single { it.signalValue == signalValue }
+    val signal = Signal.entries.single { it.signalValue == signalValue }
     staticLogger?.logDebug("::handleSignal::signal: $signal")
     when (signal) {
         Signal.USR1 -> staticLogger?.logInfo("Ignoring signal $signal")
@@ -363,14 +360,13 @@ private fun setupScreen(
  */
 @ExperimentalForeignApi
 private fun loadSettings(
-    logger: Logger,
     systemApi: SystemApi,
     files: Files,
     environment: Environment
 ): SettingsReader? {
     val configPath = environment[HOME_CONFIG_DIR_PROPERTY] ?: return null
 
-    return SettingsReader(logger, systemApi, files, configPath)
+    return SettingsReader(systemApi, files, configPath)
 }
 
 /**
@@ -400,7 +396,6 @@ private fun setupRandr(
 private fun createEventManager(
     eventStore: EventStore,
     system: SystemApi,
-    logger: Logger,
     monitorManager: MonitorManager<*>,
     windowCoordinator: WindowCoordinator,
     focusHandler: WindowFocusHandler,
@@ -416,14 +411,13 @@ private fun createEventManager(
     modeButton: Button<Window>,
 ): EventDistributor {
 
-    return EventDistributor.Builder(logger)
-        .addEventHandler(ConfigureRequestHandler(logger, eventStore))
-        .addEventHandler(DestroyNotifyHandler(logger, eventStore))
-        .addEventHandler(ButtonPressHandler(logger, system, windowList, focusHandler, moveWindowManager, modeButton))
-        .addEventHandler(ButtonReleaseHandler(logger, moveWindowManager, modeButton))
+    return EventDistributor.Builder()
+        .addEventHandler(ConfigureRequestHandler(eventStore))
+        .addEventHandler(DestroyNotifyHandler(eventStore))
+        .addEventHandler(ButtonPressHandler(system, windowList, focusHandler, moveWindowManager, modeButton))
+        .addEventHandler(ButtonReleaseHandler(moveWindowManager, modeButton))
         .addEventHandler(
             KeyPressHandler(
-                logger,
                 keyManager,
                 keyConfiguration,
                 toggleSessionManager,
@@ -434,7 +428,6 @@ private fun createEventManager(
         )
         .addEventHandler(
             KeyReleaseHandler(
-                logger,
                 system,
                 focusHandler,
                 keyManager,
@@ -444,16 +437,16 @@ private fun createEventManager(
                 commander
             )
         )
-        .addEventHandler(MapRequestHandler(logger, eventStore))
-        .addEventHandler(MotionNotifyHandler(logger, moveWindowManager))
-        .addEventHandler(UnmapNotifyHandler(logger, eventStore))
+        .addEventHandler(MapRequestHandler(eventStore))
+        .addEventHandler(MotionNotifyHandler(moveWindowManager))
+        .addEventHandler(UnmapNotifyHandler(eventStore))
         .addEventHandler(screenChangeHandler)
-        .addEventHandler(ReparentNotifyHandler(logger, eventStore))
-        .addEventHandler(ClientMessageHandler(logger, atomLibrary))
-        .addEventHandler(SelectionClearHandler(logger))
-        .addEventHandler(MappingNotifyHandler(logger, keyManager, keyConfiguration, rootWindowId))
+        .addEventHandler(ReparentNotifyHandler(eventStore))
+        .addEventHandler(ClientMessageHandler(atomLibrary))
+        .addEventHandler(SelectionClearHandler())
+        .addEventHandler(MappingNotifyHandler(keyManager, keyConfiguration, rootWindowId))
         .addEventHandler(PropertyNotifyHandler(atomLibrary, eventStore))
-        .addEventHandler(EnterNotifyHandler(logger, eventStore))
-        .addEventHandler(LeaveNotifyHandler(logger, eventStore))
+        .addEventHandler(EnterNotifyHandler(eventStore))
+        .addEventHandler(LeaveNotifyHandler(eventStore))
         .build()
 }

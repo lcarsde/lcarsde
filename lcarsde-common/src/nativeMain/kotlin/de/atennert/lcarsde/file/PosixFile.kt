@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.file
+package de.atennert.lcarsde.file
 
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi

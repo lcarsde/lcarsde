@@ -1,7 +1,7 @@
 package de.atennert.lcarsde.logout.definition
 
-import de.atennert.lcarsde.files.list
-import de.atennert.lcarsde.files.read
+import de.atennert.lcarsde.file.list
+import de.atennert.lcarsde.file.read
 import de.atennert.lcarsde.logout.LcarsColors
 import de.atennert.rx.NextObserver
 import de.atennert.rx.operators.filter

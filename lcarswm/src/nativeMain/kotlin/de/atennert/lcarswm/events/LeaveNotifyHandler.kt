@@ -1,14 +1,16 @@
 package de.atennert.lcarswm.events
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.LeaveNotify
 import xlib.XEvent
 
 class LeaveNotifyHandler(
-    private val logger: Logger,
     private val eventStore: EventStore,
 ) : XEventHandler {
+    private val logger by inject<Logger>()
+
     @ExperimentalForeignApi
     override val xEventType = LeaveNotify
 

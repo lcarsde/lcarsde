@@ -1,6 +1,7 @@
 package de.atennert.lcarswm.events
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.DestroyNotify
 import xlib.XEvent
@@ -10,9 +11,10 @@ import xlib.XEvent
  * need to clean up after it here.
  */
 class DestroyNotifyHandler(
-    private val logger: Logger,
-    private val eventStore: EventStore,
+    private val eventStore: EventStore
 ) : XEventHandler {
+    private val logger: Logger by inject()
+
     @ExperimentalForeignApi
     override val xEventType = DestroyNotify
 

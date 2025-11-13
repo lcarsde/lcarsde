@@ -1,6 +1,6 @@
 package de.atennert.lcarswm.lifecycle
 
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.log.Logger
 import exitState
 import kotlinx.cinterop.*
 import kotlinx.coroutines.*

@@ -1,7 +1,13 @@
+import de.atennert.lcarsde.file.AccessMode
+import de.atennert.lcarsde.file.File
+import de.atennert.lcarsde.file.Files
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.ResourceGenerator
 import de.atennert.lcarswm.atom.Atoms
 import de.atennert.lcarswm.environment.Environment
-import de.atennert.lcarswm.file.*
+import de.atennert.lcarswm.file.Directory
+import de.atennert.lcarswm.file.FileFactory
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.signal.Signal
 import de.atennert.lcarswm.system.FunctionCall
@@ -12,12 +18,8 @@ import kotlinx.cinterop.convert
 import kotlinx.cinterop.pointed
 import kotlinx.coroutines.runBlocking
 import xlib.*
-import kotlin.collections.set
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
+import kotlin.test.*
 
 @ExperimentalForeignApi
 @ExperimentalNativeApi
@@ -37,6 +39,10 @@ class StartupTest {
 
         override fun createFiles(): Files {
             return object : Files {
+                override fun open(path: String, mode: AccessMode): File {
+                    throw NotImplementedError()
+                }
+
                 override fun exists(path: String): Boolean = true
 
                 override fun readLines(path: String, consumer: (String) -> Unit) {}
@@ -54,12 +60,17 @@ class StartupTest {
         }
     }
 
+    @BeforeTest
+    fun setup() {
+        ServiceLocator.provide<Logger> { LoggerMock() }
+    }
+
     @Test
     fun `check startup`() = runBlocking {
         val systemFacade = StartupFacadeMock()
         val resourceGenerator = FakeResourceGenerator()
 
-        runWindowManager(systemFacade, LoggerMock(), resourceGenerator)
+        runWindowManager(systemFacade, resourceGenerator)
 
         val startupCalls = systemFacade.functionCalls
 
@@ -73,7 +84,11 @@ class StartupTest {
 
         assertEquals("defaultScreenOfDisplay", startupCalls.removeAt(0).name, "try to get the displays screen")
 
-        assertEquals("synchronize", startupCalls.removeAt(0).name, "synchronize after getting the display and randr resources")
+        assertEquals(
+            "synchronize",
+            startupCalls.removeAt(0).name,
+            "synchronize after getting the display and randr resources"
+        )
 
         assertEquals(systemFacade.displayString, resourceGenerator.variables["DISPLAY"])
 
@@ -97,7 +112,7 @@ class StartupTest {
     }
 
     private fun checkForAtomRegistration(startupCalls: MutableList<FunctionCall>) {
-        Atoms.values().forEach { atom ->
+        Atoms.entries.forEach { atom ->
             val registrationCall = startupCalls.removeAt(0)
             assertEquals("internAtom", registrationCall.name, "$atom needs to be registered")
             assertEquals(atom.atomName, registrationCall.parameters[0], "_${atom}_ needs to be registered")
@@ -105,7 +120,17 @@ class StartupTest {
     }
 
     private fun checkUserSignalRegistration(startupCalls: MutableList<FunctionCall>) {
-        listOf(Signal.USR1, Signal.USR2, Signal.TERM, Signal.INT, Signal.HUP, Signal.PIPE, Signal.CHLD, Signal.TTIN, Signal.TTOU)
+        listOf(
+            Signal.USR1,
+            Signal.USR2,
+            Signal.TERM,
+            Signal.INT,
+            Signal.HUP,
+            Signal.PIPE,
+            Signal.CHLD,
+            Signal.TTIN,
+            Signal.TTOU
+        )
             .forEach {
                 assertEquals("sigEmptySet", startupCalls.removeAt(0).name, "Initialize the action signal set")
                 val signalRegistrationCall = startupCalls.removeAt(0)
@@ -120,13 +145,25 @@ class StartupTest {
         val lowerSupportWindowCall = startupCalls.removeAt(0)
 
         assertEquals("createWindow", createSupportWindowCall.name, "Create the EWHM support window")
-        assertEquals(system.rootWindowId, createSupportWindowCall.parameters[0], "Create the EWHM support window as parent of root")
+        assertEquals(
+            system.rootWindowId,
+            createSupportWindowCall.parameters[0],
+            "Create the EWHM support window as parent of root"
+        )
 
         assertEquals("mapWindow", mapSupportWindowCall.name, "Map the EWHM support window")
-        assertEquals((system.rootWindowId + 1.convert<Window>()), mapSupportWindowCall.parameters[0], "Map the _EWHM support window_")
+        assertEquals(
+            (system.rootWindowId + 1.convert<Window>()),
+            mapSupportWindowCall.parameters[0],
+            "Map the _EWHM support window_"
+        )
 
         assertEquals("lowerWindow", lowerSupportWindowCall.name, "Lower the EWHM support window")
-        assertEquals((system.rootWindowId + 1.convert<Window>()), lowerSupportWindowCall.parameters[0], "Lower the _EWHM support window_")
+        assertEquals(
+            (system.rootWindowId + 1.convert<Window>()),
+            lowerSupportWindowCall.parameters[0],
+            "Lower the _EWHM support window_"
+        )
     }
 
     private fun checkBecomeScreenOwner(startupCalls: MutableList<FunctionCall>) {
@@ -140,11 +177,12 @@ class StartupTest {
         val systemFacade = StartupFacadeMock()
         val resourceGenerator = FakeResourceGenerator()
 
-        runWindowManager(systemFacade, LoggerMock(), resourceGenerator)
+        runWindowManager(systemFacade, resourceGenerator)
 
         val startupCalls = systemFacade.functionCalls.takeWhile { it.name != "nextEvent" }
 
-        val sendEventCall = startupCalls.singleOrNull { it.name == "sendEvent" && it.parameters[0] == systemFacade.rootWindowId }
+        val sendEventCall =
+            startupCalls.singleOrNull { it.name == "sendEvent" && it.parameters[0] == systemFacade.rootWindowId }
 
         assertNotNull(sendEventCall, "We need to send an event to notify about lcarswm being the WM")
 
@@ -163,7 +201,7 @@ class StartupTest {
         val supportWindow: Window = systemFacade.nextWindowId // first created window starts at 2 in SystemFacadeMock
         val resourceGenerator = FakeResourceGenerator()
 
-        runWindowManager(systemFacade, LoggerMock(), resourceGenerator)
+        runWindowManager(systemFacade, resourceGenerator)
 
         val propertyCalls = systemFacade.functionCalls.filter { it.name == "changeProperty" }
         val atoms = systemFacade.atomMap
@@ -196,6 +234,7 @@ class StartupTest {
                     event.pointed.type = PropertyNotify
                     event.pointed.xproperty.time = eventCount.convert()
                 }
+
                 else -> {
                     super.nextEvent(event)
                     event.pointed.type = KeyRelease

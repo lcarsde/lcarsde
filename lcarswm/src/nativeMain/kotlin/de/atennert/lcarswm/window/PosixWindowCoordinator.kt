@@ -1,10 +1,11 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarsde.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarswm.drawing.UIDrawing
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.events.ReparentEvent
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.system.wrapXConfigureWindow
@@ -39,7 +40,6 @@ private fun Observable<ReparentEvent>.filterForBadParenting(windowList: WindowLi
  */
 @ExperimentalForeignApi
 class PosixWindowCoordinator(
-    private val logger: Logger,
     eventStore: EventStore,
     monitorManager: MonitorManager<RROutput>,
     windowFactory: WindowFactory<Window>,
@@ -47,6 +47,8 @@ class PosixWindowCoordinator(
     rootWindowDrawer: UIDrawing,
     private val display: CPointer<Display>?,
 ) : WindowCoordinator {
+    private val logger by inject<Logger>()
+
     private val windowToMonitorEventSj = Subject<WindowToMonitorEvent>()
     val windowToMonitorEventObs = windowToMonitorEventSj.asObservable()
 

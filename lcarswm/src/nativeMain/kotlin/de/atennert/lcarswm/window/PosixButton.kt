@@ -1,12 +1,11 @@
 package de.atennert.lcarswm.window
 
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.*
 import de.atennert.lcarswm.drawing.ColorFactory
 import de.atennert.lcarswm.drawing.FontProvider
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.keys.KeyManager
-import de.atennert.lcarsde.lifecycle.closeWith
-import de.atennert.lcarswm.log.Logger
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.system.*
@@ -18,7 +17,6 @@ import xlib.*
 
 @ExperimentalForeignApi
 class PosixButton(
-    logger: Logger,
     private val display: CPointer<Display>?,
     private val screen: Screen,
     private val colorFactory: ColorFactory,
@@ -88,19 +86,23 @@ class PosixButton(
     }
 
     init {
-        subscription.add(eventStore.enterNotifyObs
+        subscription.add(
+            eventStore.enterNotifyObs
             .filter { it == id }
             .subscribe(NextObserver {
                 isHovered = true
                 draw()
-            }))
+            })
+        )
 
-        subscription.add(eventStore.leaveNotifyObs
+        subscription.add(
+            eventStore.leaveNotifyObs
             .filter { it == id }
             .subscribe(NextObserver {
                 isHovered = false
                 draw()
-            }))
+            })
+        )
 
         closeWith(PosixButton::cleanup)
 

@@ -1,5 +1,7 @@
 package de.atennert.lcarswm.events
 
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.rx.NextObserver
 import io.kotest.matchers.collections.shouldContainExactly
@@ -10,6 +12,7 @@ import kotlinx.cinterop.nativeHeap
 import xlib.UnmapNotify
 import xlib.Window
 import xlib.XEvent
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -21,9 +24,14 @@ import kotlin.test.assertFalse
 class UnmapNotifyHandlerTest {
     private val eventStore = EventStore()
 
+    @BeforeTest
+    fun setup() {
+        ServiceLocator.provide<Logger> { LoggerMock() }
+    }
+
     @Test
     fun `return correct message type`() {
-        val unmapNotifyHandler = UnmapNotifyHandler(LoggerMock(), eventStore)
+        val unmapNotifyHandler = UnmapNotifyHandler(eventStore)
 
         assertEquals(UnmapNotify, unmapNotifyHandler.xEventType, "UnmapNotifyHandler should have type UnmapNotify")
     }
@@ -33,7 +41,7 @@ class UnmapNotifyHandlerTest {
         val events = mutableListOf<Window>()
         val subscription = eventStore.unmapObs.subscribe(NextObserver(events::add))
 
-        val unmapNotifyHandler = UnmapNotifyHandler(LoggerMock(), eventStore)
+        val unmapNotifyHandler = UnmapNotifyHandler(eventStore)
 
         val unmapEvent = nativeHeap.alloc<XEvent>()
         unmapEvent.type = UnmapNotify

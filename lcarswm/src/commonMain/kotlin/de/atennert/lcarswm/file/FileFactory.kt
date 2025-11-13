@@ -1,5 +1,8 @@
 package de.atennert.lcarswm.file
 
+import de.atennert.lcarsde.file.AccessMode
+import de.atennert.lcarsde.file.File
+
 /**
  * Used to get instances of Directory.
  */

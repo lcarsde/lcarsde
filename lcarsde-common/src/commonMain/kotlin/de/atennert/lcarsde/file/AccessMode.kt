@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.file
+package de.atennert.lcarsde.file
 
 enum class AccessMode {
     READ,

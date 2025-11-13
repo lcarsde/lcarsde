@@ -1,15 +1,16 @@
-package de.atennert.lcarswm.time
+package de.atennert.lcarsde.time
 
 import kotlinx.cinterop.*
+import platform.posix.gettimeofday
 import platform.posix.localtime
 import platform.posix.strftime
 import platform.posix.timeval
 
 @ExperimentalForeignApi
-class PosixTime : Time {
+object PosixTime : Time {
     override fun getTime(format: String): String {
         val timeStruct = nativeHeap.alloc<timeval>()
-        platform.posix.gettimeofday(timeStruct.ptr, null)
+        gettimeofday(timeStruct.ptr, null)
         val timeSeconds = timeStruct.tv_sec
         nativeHeap.free(timeStruct)
         val timeInfo = localtime(cValuesOf(timeSeconds))

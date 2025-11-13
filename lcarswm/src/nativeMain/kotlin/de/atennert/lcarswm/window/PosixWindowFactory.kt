@@ -1,6 +1,8 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarsde.comm.MessageQueue
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.ColorSet
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
@@ -11,7 +13,6 @@ import de.atennert.lcarswm.drawing.FontProvider
 import de.atennert.lcarswm.drawing.IFrameDrawer
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.keys.KeyManager
-import de.atennert.lcarswm.log.Logger
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.system.*
 import kotlinx.cinterop.*
@@ -20,13 +21,13 @@ import kotlin.experimental.ExperimentalNativeApi
 
 @ExperimentalForeignApi
 private const val clientEventMask = PropertyChangeMask or StructureNotifyMask or ColormapChangeMask
+
 @ExperimentalForeignApi
 private const val clientNoPropagateMask = ButtonPressMask or ButtonReleaseMask or ButtonMotionMask
 
 @ExperimentalForeignApi
 @ExperimentalNativeApi
 class PosixWindowFactory(
-    private val logger: Logger,
     private val display: CPointer<Display>?,
     private val screen: Screen,
     private val colorFactory: ColorFactory,
@@ -42,6 +43,7 @@ class PosixWindowFactory(
     private val frameDrawer: IFrameDrawer,
     private val windowListMessageQueue: MessageQueue,
 ) : WindowFactory<Window> {
+    private val logger by inject<Logger>()
 
     override fun createButton(
         text: String,
@@ -53,7 +55,7 @@ class PosixWindowFactory(
         onClick: () -> Unit
     ): PosixButton {
         return PosixButton(
-            logger, display, screen, colorFactory, fontProvider, monitorManager, keyManager, eventStore,
+            display, screen, colorFactory, fontProvider, monitorManager, keyManager, eventStore,
             text, colorSet, x, y, width, height, onClick
         )
     }
@@ -117,7 +119,6 @@ class PosixWindowFactory(
                 val (type, isTransient, transientFor) = determineTransienceAndType(id)
                 if (isTransient) {
                     PosixTransientWindow(
-                        logger,
                         display,
                         screen,
                         atomLibrary,
@@ -130,7 +131,6 @@ class PosixWindowFactory(
                     )
                 } else {
                     PosixWindow(
-                        logger,
                         display,
                         screen,
                         atomLibrary,
@@ -164,7 +164,7 @@ class PosixWindowFactory(
         }
         nativeHeap.free(transientWindow)
 
-        val windowTypeList = WindowType.values()
+        val windowTypeList = WindowType.entries
             .map { Pair(it, atomLibrary[WINDOW_TYPE_ATOM_MAP.getValue(it)]) }
 
         val windowTypeProperties =

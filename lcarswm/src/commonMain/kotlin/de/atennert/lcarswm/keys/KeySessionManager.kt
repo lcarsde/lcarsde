@@ -1,13 +1,15 @@
 package de.atennert.lcarswm.keys
 
+import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarswm.Environment
-import de.atennert.lcarswm.log.Logger
+import de.atennert.lcarsde.log.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 
 @ExperimentalForeignApi
-class KeySessionManager(private val logger: Logger, private val env: Environment) {
+class KeySessionManager(private val env: Environment) {
     private val listeners = mutableListOf<KeySessionListener>()
+    private val logger by inject<Logger>()
 
     private var keyCodes = mutableSetOf<UInt>()
     private var keyMaskCodes = mutableListOf<List<UInt>>()
@@ -28,26 +30,32 @@ class KeySessionManager(private val logger: Logger, private val env: Environment
                     keySyms.add(keyShiftL)
                     keySyms.add(keyShiftR)
                 }
+
                 Modifiers.CONTROL -> {
                     keySyms.add(keyControlL)
                     keySyms.add(keyControlR)
                 }
+
                 Modifiers.SUPER -> {
                     keySyms.add(keySuperL)
                     keySyms.add(keySuperR)
                 }
+
                 Modifiers.HYPER -> {
                     keySyms.add(keyHyperL)
                     keySyms.add(keyHyperR)
                 }
+
                 Modifiers.META -> {
                     keySyms.add(keyMetaL)
                     keySyms.add(keyMetaR)
                 }
+
                 Modifiers.ALT -> {
                     keySyms.add(keyAltL)
                     keySyms.add(keyAltR)
                 }
+
                 else -> throw IllegalArgumentException("Unsupported modifier: $modifier")
             }
         }
