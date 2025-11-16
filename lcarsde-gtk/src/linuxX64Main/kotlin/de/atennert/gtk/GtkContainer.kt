@@ -1,6 +1,7 @@
 package de.atennert.gtk
 
 import gtk.gtk_container_add
+import gtk.gtk_container_remove
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.reinterpret
@@ -12,6 +13,6 @@ open class GtkContainer(private val container: CPointer<gtk.GtkWidget>?) : GtkWi
     }
 
     fun remove(child: GtkWidget) {
-        gtk_container_add(this.container?.reinterpret(), child.widget)
+        gtk_container_remove(this.container?.reinterpret(), child.widget)
     }
 }

@@ -3,6 +3,8 @@ package de.atennert.lcarsde.menu
 import de.atennert.gtk.*
 import de.atennert.lcarsde.comm.MessageQueue
 import de.atennert.lcarsde.menu.Menu.Companion.STYLE_PATH
+import gtk.GtkOrientation
+import gtk.GtkPolicyType
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.experimental.ExperimentalNativeApi
 
@@ -12,7 +14,7 @@ private val CSS_PROVIDER = CssProvider.fromPath(STYLE_PATH)
 @OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
 class Menu(private val window: GtkWindow, private val sendQ: MessageQueue) {
     private val scrollContainer = GtkScrollContainer()
-    private val appContainer = GtkBox(gtk.GtkOrientation.GTK_ORIENTATION_VERTICAL, 8)
+    private val appContainer = GtkBox(GtkOrientation.GTK_ORIENTATION_VERTICAL, 8)
 
     private var windowEntries: List<WindowEntry> = emptyList()
         set(value) {
@@ -25,7 +27,7 @@ class Menu(private val window: GtkWindow, private val sendQ: MessageQueue) {
     init {
         window.setStyling(CSS_PROVIDER, "window")
 
-        scrollContainer.setPolicy(gtk.GtkPolicyType.GTK_POLICY_NEVER, gtk.GtkPolicyType.GTK_POLICY_AUTOMATIC)
+        scrollContainer.setPolicy(GtkPolicyType.GTK_POLICY_NEVER, GtkPolicyType.GTK_POLICY_AUTOMATIC)
 
         val spacer = GtkLabel("")
         spacer.setStyling(CSS_PROVIDER, "spacer")
@@ -113,7 +115,7 @@ class GtkWindowEntry(
     isActive: Boolean,
     onSelect: () -> Unit,
     onClose: () -> Unit
-) : GtkBox(gtk.GtkOrientation.GTK_ORIENTATION_HORIZONTAL, Menu.GAP_SIZE) {
+) : GtkBox(GtkOrientation.GTK_ORIENTATION_HORIZONTAL, Menu.GAP_SIZE) {
     private val shortenedName = if (name.take(15) == name) name else "${name.take(15)}…"
 
     private val selectButton = GtkButton(shortenedName)
