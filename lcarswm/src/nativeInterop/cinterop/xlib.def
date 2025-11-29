@@ -2,16 +2,17 @@ headers = X11/Xlib.h \
     X11/keysym.h \
     X11/keysymdef.h \
     X11/Xutil.h \
-    X11/xpm.h \
     X11/extensions/Xrandr.h \
     X11/XF86keysym.h \
     X11/cursorfont.h \
     pango/pango.h \
     pango/pangoxft.h \
+    cairo-xlib.h \
     libxml/parser.h
 compilerOpts = -I/usr/include \
 	-I/usr/include/x86_64-linux-gnu \
     -I/usr/include/pango-1.0 \
+    -I/usr/include/cairo \
     -I/usr/include/glib-2.0 \
     -I/usr/lib/glib-2.0/include \
     -I/usr/lib64/glib-2.0/include \
@@ -19,4 +20,4 @@ compilerOpts = -I/usr/include \
     -I/usr/include/harfbuzz \
     -I/usr/include/freetype2 \
     -I/usr/include/libxml2
-linkerOpts = -L/usr/lib -L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lX11 -lglib-2.0 -lXpm -lXrandr -lpango-1.0 -lpangoxft-1.0 -lXft -lxml2
+linkerOpts = -L/usr/lib -L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lX11 -lglib-2.0 -lXrandr -lpango-1.0 -lpangoxft-1.0 -lcairo -lXft -lxml2

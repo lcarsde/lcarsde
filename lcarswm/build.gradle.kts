@@ -3,7 +3,8 @@ import java.io.ByteArrayOutputStream
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.kotestMultiplatform)
+    alias(libs.plugins.kotest)
+    alias(libs.plugins.ksp)
 }
 
 group = "de.atennert"
@@ -19,18 +20,21 @@ kotlin {
                 os.toString().trim()
             }
             when {
-                architecture == "x86_64" -> linuxX64("native")
-                architecture.startsWith("arm64") -> linuxArm64("native")
-                architecture.startsWith("aarch64") -> linuxArm64("native")
-                else -> throw GradleException("Host CPU architecture not supported: $architecture.\n" +
-                        "If you think, it should work, please:\n" +
-                        "1. check your CPU architecture with \"uname -a\",\n" +
-                        "2. find the corresponding target in this list: https://kotlinlang.org/docs/mpp-dsl-reference.html#targets,\n" +
-                        "3. add a it to the architectures in build.gradle.kts,\n" +
-                        "4. run the build and\n" +
-                        "5. if it works, please create a ticket with the changes on https://github.com/lcarsde/lcarsde/issues to have it added permanently.")
+                architecture == "x86_64" -> linuxX64()
+                architecture.startsWith("arm64") -> linuxArm64("linuxX64")
+                architecture.startsWith("aarch64") -> linuxArm64("linuxX64")
+                else -> throw GradleException(
+                    "Host CPU architecture not supported: $architecture.\n" +
+                            "If you think, it should work, please:\n" +
+                            "1. check your CPU architecture with \"uname -a\",\n" +
+                            "2. find the corresponding target in this list: https://kotlinlang.org/docs/mpp-dsl-reference.html#targets,\n" +
+                            "3. add a it to the architectures in build.gradle.kts,\n" +
+                            "4. run the build and\n" +
+                            "5. if it works, please create a ticket with the changes on https://github.com/lcarsde/lcarsde/issues to have it added permanently."
+                )
             }
         }
+
         else -> throw GradleException("Host OS is not supported.")
     }
 
@@ -53,14 +57,12 @@ kotlin {
         }
         commonTest {
             dependencies {
-                implementation("io.kotest:kotest-assertions-core:5.4.1")
-                implementation("io.kotest:kotest-framework-engine:5.4.1")
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
+                implementation(libs.kotest.framework)
+                implementation(libs.kotest.assertions.core)
             }
         }
-        val nativeMain by getting
-        val nativeTest by getting
+        val linuxX64Main by getting
+        val linuxX64Test by getting
     }
 }
 
@@ -75,8 +77,8 @@ tasks.named<Copy>("installDist") {
 
     into("build/install")
 
-    from(file("src/nativeMain/resources"))
-    from(file("build/bin/native/releaseExecutable")) {
+    from(file("src/linuxX64Main/resources"))
+    from(file("build/bin/linuxX64/releaseExecutable")) {
         into("/usr/bin/")
     }
 }

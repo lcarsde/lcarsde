@@ -1,2 +1,5 @@
 25.2
 * Removed replacement of old packages in Debian configuration. UPGRADE VIA VERSION 25.1 IF YOU HAVE AN OLD INSTALLATION WITH SEPARATE PACKAGES!
+* Removed usage of XPM and use cairo instead. Also use cairo for drawing WM layout.
+* Logo is now expected to be a PNG.
+* Fixed lcarswm folder structure to KPM default.

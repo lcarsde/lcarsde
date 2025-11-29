@@ -16,7 +16,9 @@ data class Color(val redSpec: Int, val greenSpec: Int, val blueSpec: Int, val op
         opacity
     )
 
-    val red = (redSpec * 257 * opacity).toInt()
-    val green = (greenSpec * 257 * opacity).toInt()
-    val blue = (blueSpec * 257 * opacity).toInt()
+    val redOp = (redSpec * 257 * opacity).toInt()
+    val greenOp = (greenSpec * 257 * opacity).toInt()
+    val blueOp = (blueSpec * 257 * opacity).toInt()
+
+    val base1 get() = Triple(redSpec / 255.0, greenSpec / 255.0, blueSpec / 255.0)
 }

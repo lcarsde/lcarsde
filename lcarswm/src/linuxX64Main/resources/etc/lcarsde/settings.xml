@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lcarswm>
+  <key-config>
+    <!-- keys for executing programs -->
+    <binding>
+      <keys>Lin+T</keys>
+      <exec>xterm</exec>
+    </binding>
+    <binding>
+      <keys>Lin+B</keys>
+      <exec>firefox</exec>
+    </binding>
+    <binding>
+      <keys>XF86AudioMute</keys>
+      <exec>amixer -D pulse set Master toggle</exec>
+    </binding>
+    <binding>
+      <keys>XF86AudioRaiseVolume</keys>
+      <exec>amixer -D pulse set Master 3%+</exec>
+    </binding>
+    <binding>
+      <keys>XF86AudioLowerVolume</keys>
+      <exec>amixer -D pulse set Master 3%-</exec>
+    </binding>
+
+    <!-- Window manager action keys ... only edit the following when you know what you're doing -->
+    <binding>
+      <keys>Alt+Tab</keys>
+      <action>window-toggle-forward</action>
+    </binding>
+    <binding>
+      <keys>Alt+Shift+Tab</keys>
+      <action>window-toggle-forward</action>
+    </binding>
+    <binding>
+      <keys>Alt+Lin+Up</keys>
+      <action>window-move-previous</action>
+    </binding>
+    <binding>
+      <keys>Alt+Lin+Down</keys>
+      <action>window-move-next</action>
+    </binding>
+    <binding>
+      <keys>Alt+F4</keys>
+      <action>window-close</action>
+    </binding>
+    <binding>
+      <keys>Lin+M</keys>
+      <action>screen-mode-toggle</action>
+    </binding>
+    <binding>
+      <keys>Lin+Q</keys>
+      <action>lcarswm-quit</action>
+    </binding>
+    <binding>
+      <keys>Lin+Ctrl+Up</keys>
+      <action>window-split-up</action>
+    </binding>
+    <binding>
+      <keys>Lin+Ctrl+Down</keys>
+      <action>window-split-down</action>
+    </binding>
+    <binding>
+      <keys>Lin+Ctrl+Left</keys>
+      <action>window-split-left</action>
+    </binding>
+    <binding>
+      <keys>Lin+Ctrl+Right</keys>
+      <action>window-split-right</action>
+    </binding>
+    <binding>
+      <keys>Lin+Ctrl+Shift+Up</keys>
+      <action>window-combine-up</action>
+    </binding>
+    <binding>
+      <keys>Lin+Ctrl+Shift+Down</keys>
+      <action>window-combine-down</action>
+    </binding>
+    <binding>
+      <keys>Lin+Ctrl+Shift+Left</keys>
+      <action>window-combine-left</action>
+    </binding>
+    <binding>
+      <keys>Lin+Ctrl+Shift+Right</keys>
+      <action>window-combine-right</action>
+    </binding>
+  </key-config>
+  <general>
+    <title>LCARS</title><!-- Will be shown when there's no title image -->
+    <!--<title-image>/usr/share/pixmaps/lcarswm.png</title-image>-->
+    <font>Ubuntu Condensed</font>
+  </general>
+</lcarswm>
