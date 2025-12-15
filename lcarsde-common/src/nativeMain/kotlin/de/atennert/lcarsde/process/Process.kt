@@ -1,5 +1,7 @@
 package de.atennert.lcarsde.process
 
+import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import kotlinx.cinterop.*
 import platform.posix.*
 import kotlin.system.exitProcess
@@ -7,10 +9,11 @@ import kotlin.system.exitProcess
 class Process(val directory: String?, val command: List<String>) {
     private val pid: Int
     private var isRunning = false
+    private val logger by inject<Logger>()
 
     init {
         if (command.isEmpty()) {
-            throw IllegalArgumentException("No command given")
+            throw IllegalArgumentException("Process::init::No command given")
         }
 
         pid = start()
@@ -29,6 +32,7 @@ class Process(val directory: String?, val command: List<String>) {
 
                 exitProcess(0)
             }
+
             else -> return forkResult
         }
     }
@@ -38,14 +42,14 @@ class Process(val directory: String?, val command: List<String>) {
             return
         }
         if (chdir(directory) != 0) {
-            perror("Failed to change directory to $directory")
+            logger.logError("Process::changeDirectory::Failed to change directory to $directory")
             exitProcess(1)
         }
     }
 
     private fun createSession() {
         if (setsid() == -1) {
-            println("setsid failed")
+            logger.logError("Process::createSession::setsid failed")
             exitProcess(2)
         }
     }
@@ -55,11 +59,16 @@ class Process(val directory: String?, val command: List<String>) {
         val byteArgs = command.map { it.encodeToByteArray().pin() }
         val convertedArgs = nativeHeap.allocArrayOfPointersTo(byteArgs.map { it.addressOf(0).pointed })
 
-        if (execvp(command[0], convertedArgs) == -1) {
-            println("execvp failed")
-            byteArgs.map { it.unpin() }
-            exitProcess(1)
+        try {
+            if (execvp(command[0], convertedArgs) == -1) {
+                strerror(errno)?.toKString()?.let { reason ->
+                    logger.logError("Process::runCommand::execvp failed: $reason")
+                }
+                exitProcess(1)
+            }
+        } finally {
+            byteArgs.forEach { it.unpin() }
+            nativeHeap.free(convertedArgs)
         }
-        byteArgs.map { it.unpin() }
     }
 }

@@ -9,8 +9,6 @@ import de.atennert.lcarswm.*
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.NumberAtomReader
 import de.atennert.lcarswm.atom.TextAtomReader
-import de.atennert.lcarswm.command.Commander
-import de.atennert.lcarswm.command.PosixCommander
 import de.atennert.lcarswm.drawing.ColorFactory
 import de.atennert.lcarswm.drawing.FontProvider
 import de.atennert.lcarswm.drawing.FrameDrawer
@@ -56,7 +54,6 @@ private const val XRANDR_MASK = RRScreenChangeNotifyMask or RROutputChangeNotify
 fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeResources? {
     val logger by inject<Logger>()
     val eventStore = EventStore()
-    val commander = PosixCommander()
     val files = resourceGenerator.createFiles()
     val environment = resourceGenerator.createEnvironment()
     val fileFactory = resourceGenerator.createFileFactory()
@@ -285,7 +282,6 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
         screenChangeHandler,
         keyConfiguration,
         windowList,
-        commander,
         screen.root,
         modeButton
     )
@@ -299,7 +295,7 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
 
     val xEventResources = XEventResources(eventManager, eventTime, eventBuffer)
     val appMenuResources = AppMenuResources(appMenuMessageHandler, appMenuMessageQueue)
-    val platformResources = PlatformResources(commander, fileFactory, files, monitorManager, environment)
+    val platformResources = PlatformResources(fileFactory, files, monitorManager, environment)
 
     return RuntimeResources(xEventResources, appMenuResources, platformResources)
 }
@@ -411,7 +407,6 @@ private fun createEventManager(
     screenChangeHandler: XEventHandler,
     keyConfiguration: KeyConfiguration,
     windowList: WindowList,
-    commander: Commander,
     rootWindowId: Window,
     modeButton: Button<Window>,
 ): EventDistributor {
@@ -438,8 +433,7 @@ private fun createEventManager(
                 keyManager,
                 keyConfiguration,
                 toggleSessionManager,
-                atomLibrary,
-                commander
+                atomLibrary
             )
         )
         .addEventHandler(MapRequestHandler(eventStore))

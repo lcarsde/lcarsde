@@ -1,10 +1,10 @@
 package de.atennert.lcarswm.events
 
 import de.atennert.lcarsde.lifecycle.inject
-import de.atennert.lcarswm.atom.AtomLibrary
-import de.atennert.lcarswm.command.Commander
-import de.atennert.lcarswm.keys.*
 import de.atennert.lcarsde.log.Logger
+import de.atennert.lcarswm.atom.AtomLibrary
+import de.atennert.lcarswm.drivenPorts.process.ProcessBuilderFactory
+import de.atennert.lcarswm.keys.*
 import de.atennert.lcarswm.system.api.SystemApi
 import de.atennert.lcarswm.window.WindowFocusHandler
 import de.atennert.lcarswm.window.closeWindow
@@ -23,8 +23,7 @@ class KeyReleaseHandler(
     private val keyManager: KeyManager,
     private val keyConfiguration: KeyConfiguration,
     private val toggleSessionManager: KeySessionManager,
-    private val atomLibrary: AtomLibrary,
-    private val commander: Commander
+    private val atomLibrary: AtomLibrary
 ) :
     XEventHandler {
     private val logger: Logger by inject()
@@ -43,7 +42,8 @@ class KeyReleaseHandler(
                 logger.logDebug("KeyReleaseHandler::handleEvent::run command: ${keyBinding.command}")
                 return when (keyBinding) {
                     is KeyExecution -> {
-                        commander.run(keyBinding.command)
+                        inject<ProcessBuilderFactory>().value.create()
+                            .command(keyBinding.command).start()
                         false
                     }
 

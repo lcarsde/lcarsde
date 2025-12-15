@@ -7,13 +7,14 @@ import de.atennert.lcarswm.AppMenuMessageHandler
 import de.atennert.lcarswm.Environment
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
-import de.atennert.lcarswm.command.Commander
+import de.atennert.lcarswm.drivenPorts.process.ProcessBuilderFactory
 import de.atennert.lcarswm.keys.*
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.system.SystemCallMocker
 import de.atennert.lcarswm.system.SystemFacadeMock
 import de.atennert.lcarswm.window.WindowFocusHandler
 import de.atennert.lcarswm.window.WindowList
+import de.atennert.mock.process.MockProcessBuilder
 import kotlinx.cinterop.*
 import xlib.*
 import kotlin.test.*
@@ -29,10 +30,13 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
         KeyAction("Lin+Q", WmAction.WM_QUIT)
     )
 
+    private val mockProcessBuilder = MockProcessBuilder
+
     @BeforeTest
     override fun setup() {
         super.setup()
         ServiceLocator.provide<Logger> { LoggerMock() }
+        ServiceLocator.provide<ProcessBuilderFactory> { MockProcessBuilder.Factory }
     }
 
     @AfterTest
@@ -66,8 +70,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            atomLibrary,
-            FakeCommander()
+            atomLibrary
         )
 
         assertEquals(
@@ -108,8 +111,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            atomLibrary,
-            FakeCommander()
+            atomLibrary
         )
 
         val shutdownValue = keyReleaseHandler.handleEvent(keyReleaseEvent)
@@ -156,8 +158,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            atomLibrary,
-            FakeCommander()
+            atomLibrary
         )
 
         systemApi.functionCalls.clear()
@@ -221,8 +222,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            atomLibrary,
-            FakeCommander()
+            atomLibrary
         )
 
         systemApi.functionCalls.clear()
@@ -277,8 +277,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            atomLibrary,
-            FakeCommander()
+            atomLibrary
         )
 
         systemApi.functionCalls.clear()
@@ -341,7 +340,6 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             systemApi.rootWindowId
         )
         val atomLibrary = AtomLibrary(systemApi)
-        val commander = FakeCommander()
         focusHandler.setFocusedWindow(windowId)
 
         val keyReleaseHandler = KeyReleaseHandler(
@@ -350,8 +348,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            atomLibrary,
-            commander
+            atomLibrary
         )
 
         systemApi.functionCalls.clear()
@@ -365,16 +362,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
 
         assertFalse(shutdownValue, "The window manager should not shut down on Ctrl+F4")
 
-        assertContains(commander.calls, listOf("command", "arg1", "arg2"))
-    }
-
-    private class FakeCommander : Commander() {
-        val calls = mutableListOf<List<String>>()
-
-        override fun run(command: List<String>): Boolean {
-            calls.add(command)
-            return true
-        }
+        assertContains(mockProcessBuilder.calls, listOf("command", "arg1", "arg2"))
     }
 
     private fun getMask(keyManager: KeyManager, l: List<Modifiers>): UInt {

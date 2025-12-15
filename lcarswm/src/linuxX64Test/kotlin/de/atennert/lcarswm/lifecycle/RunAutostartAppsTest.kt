@@ -3,16 +3,23 @@ package de.atennert.lcarswm.lifecycle
 import de.atennert.lcarsde.file.AccessMode
 import de.atennert.lcarsde.file.File
 import de.atennert.lcarsde.file.Files
+import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarsde.log.PrintLogger
 import de.atennert.lcarswm.HOME_CONFIG_DIR_PROPERTY
-import de.atennert.lcarswm.command.Commander
+import de.atennert.lcarswm.drivenPorts.process.ProcessBuilderFactory
 import de.atennert.lcarswm.environment.Environment
 import de.atennert.lcarswm.file.Directory
 import de.atennert.lcarswm.file.FileFactory
+import de.atennert.mock.process.MockProcessBuilder
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertContains
 
 class RunAutostartAppsTest {
+    private val mockProcessBuilder = MockProcessBuilder
+
     private fun createFakeFileFactory(dirFilesMap: Map<String, Set<String>> = emptyMap()): FileFactory {
         return object : FileFactory {
             override fun getDirectory(path: String): Directory? {
@@ -28,15 +35,6 @@ class RunAutostartAppsTest {
             override fun getFile(path: String, accessMode: AccessMode): File {
                 throw NotImplementedError()
             }
-        }
-    }
-
-    private class FakeCommander : Commander() {
-        val calls = mutableListOf<List<String>>()
-
-        override fun run(command: List<String>): Boolean {
-            calls.add(command)
-            return true
         }
     }
 
@@ -65,6 +63,17 @@ class RunAutostartAppsTest {
         override fun set(name: String, value: String): Boolean = false
     }
 
+    @BeforeTest
+    fun setup() {
+        ServiceLocator.provide<ProcessBuilderFactory> { MockProcessBuilder.Factory }
+    }
+
+    @AfterTest
+    fun teardown() {
+        closeClosables()
+        ServiceLocator.clear()
+    }
+
     @Test
     fun `run apps from user desktop file`() {
         val lines = mapOf(
@@ -77,11 +86,9 @@ class RunAutostartAppsTest {
             )
         )
 
-        val commander = FakeCommander()
+        runAutostartApps(FakeEnvironment(), fakeFactory, FakeFiles(listOf(), lines), PrintLogger())
 
-        runAutostartApps(FakeEnvironment(), fakeFactory, commander, FakeFiles(listOf(), lines), PrintLogger())
-
-        assertContains(commander.calls, listOf("dex", "/home/me/config/autostart/runMe.desktop"))
+        assertContains(mockProcessBuilder.calls, listOf("dex", "/home/me/config/autostart/runMe.desktop"))
     }
 
     @Test
@@ -96,10 +103,8 @@ class RunAutostartAppsTest {
             )
         )
 
-        val commander = FakeCommander()
+        runAutostartApps(FakeEnvironment(), fakeFactory, FakeFiles(listOf(), lines), PrintLogger())
 
-        runAutostartApps(FakeEnvironment(), fakeFactory, commander, FakeFiles(listOf(), lines), PrintLogger())
-
-        assertContains(commander.calls, listOf("dex", "/etc/xdg/autostart/runMe.desktop"))
+        assertContains(mockProcessBuilder.calls, listOf("dex", "/etc/xdg/autostart/runMe.desktop"))
     }
 }

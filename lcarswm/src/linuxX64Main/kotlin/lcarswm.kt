@@ -1,4 +1,5 @@
 import de.atennert.drivenAdapters.drawing.CairoDrawFactory
+import de.atennert.drivenAdapters.process.ProcessBuilderAdapter
 import de.atennert.lcarsde.file.PosixFiles
 import de.atennert.lcarsde.lifecycle.ServiceLocator
 import de.atennert.lcarsde.lifecycle.inject
@@ -9,6 +10,7 @@ import de.atennert.lcarswm.LOG_FILE_PATH
 import de.atennert.lcarswm.PosixResourceGenerator
 import de.atennert.lcarswm.ResourceGenerator
 import de.atennert.lcarswm.drivenPorts.drawing.DrawFactory
+import de.atennert.lcarswm.drivenPorts.process.ProcessBuilderFactory
 import de.atennert.lcarswm.lifecycle.*
 import de.atennert.lcarswm.log.createLogger
 import de.atennert.lcarswm.system.SystemFacade
@@ -43,6 +45,7 @@ fun main() = runBlocking {
     val resourceGenerator = PosixResourceGenerator()
     ServiceLocator.provide<Logger> { createLogger(PosixFiles, cacheDirPath, PosixTime) }
     ServiceLocator.provide<DrawFactory> { CairoDrawFactory }
+    ServiceLocator.provide<ProcessBuilderFactory> { ProcessBuilderAdapter.Factory }
 
     runWindowManager(system, resourceGenerator)
 
@@ -75,7 +78,6 @@ suspend fun runWindowManager(system: SystemApi, resourceGenerator: ResourceGener
                     runAutostartApps(
                         rr.platform.environment,
                         rr.platform.fileFactory,
-                        rr.platform.commander,
                         rr.platform.files,
                         logger
                     )

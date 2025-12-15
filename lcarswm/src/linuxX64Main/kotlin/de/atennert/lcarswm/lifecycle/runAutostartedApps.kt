@@ -1,9 +1,10 @@
 package de.atennert.lcarswm.lifecycle
 
 import de.atennert.lcarsde.file.Files
+import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.HOME_CONFIG_DIR_PROPERTY
-import de.atennert.lcarswm.command.Commander
+import de.atennert.lcarswm.drivenPorts.process.ProcessBuilderFactory
 import de.atennert.lcarswm.environment.Environment
 import de.atennert.lcarswm.file.FileFactory
 
@@ -24,7 +25,7 @@ private fun readDesktopFiles(directoryPath: String, dirFactory: FileFactory): Li
 /**
  * Read the data from *.desktop file, check if we can/should autostart it and do so.
  */
-private fun checkAndExecute(path: String, files: Files, commander: Commander, logger: Logger) {
+private fun checkAndExecute(path: String, files: Files, logger: Logger) {
     val autoStart = try {
         Autostart().apply { files.readLines(path) { line -> this.readLine(line) } }
     } catch (e: Error) {
@@ -34,7 +35,8 @@ private fun checkAndExecute(path: String, files: Files, commander: Commander, lo
 
     if (!autoStart.hidden && !autoStart.excludeByShow) {
         logger.logDebug("run $path")
-        commander.run("dex $path")
+        inject<ProcessBuilderFactory>().value.create()
+            .command("dex", path).start()
     }
 }
 
@@ -71,7 +73,6 @@ private class Autostart {
 fun runAutostartApps(
     environment: Environment,
     dirFactory: FileFactory,
-    commander: Commander,
     files: Files,
     logger: Logger
 ) {
@@ -84,11 +85,11 @@ fun runAutostartApps(
         ?.let { readDesktopFiles(it, dirFactory) }
         ?.also { localApps = it }
         ?.map { "$localAutostart/$it" }
-        ?.forEach { checkAndExecute(it, files, commander, logger) }
+        ?.forEach { checkAndExecute(it, files, logger) }
 
     readDesktopFiles(globalAutostart, dirFactory)
         // local definitions override global definitions
         .filterNot { localApps.contains(it) }
         .map { "$globalAutostart/$it" }
-        .forEach { checkAndExecute(it, files, commander, logger) }
+        .forEach { checkAndExecute(it, files, logger) }
 }

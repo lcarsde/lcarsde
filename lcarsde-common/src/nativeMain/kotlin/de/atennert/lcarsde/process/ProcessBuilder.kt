@@ -16,6 +16,7 @@ class ProcessBuilder {
     }
 
     fun directory(directory: String): ProcessBuilder {
+        this.directory = directory
         return this
     }
 
