@@ -1,6 +1,6 @@
 package de.atennert.mock.drawing
 
-import de.atennert.lcarswm.drawing.Surface
+import de.atennert.lcarswm.drivenPorts.drawing.Surface
 
 object MockSurface : Surface {
     override fun setSize(width: Int, height: Int) {}

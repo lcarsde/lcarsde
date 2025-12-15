@@ -1,3 +1,4 @@
+import de.atennert.drivenAdapters.drawing.CairoDrawFactory
 import de.atennert.lcarsde.file.PosixFiles
 import de.atennert.lcarsde.lifecycle.ServiceLocator
 import de.atennert.lcarsde.lifecycle.inject
@@ -7,8 +8,7 @@ import de.atennert.lcarswm.HOME_CACHE_DIR_PROPERTY
 import de.atennert.lcarswm.LOG_FILE_PATH
 import de.atennert.lcarswm.PosixResourceGenerator
 import de.atennert.lcarswm.ResourceGenerator
-import de.atennert.lcarswm.drawing.CairoDrawFactory
-import de.atennert.lcarswm.drawing.DrawFactory
+import de.atennert.lcarswm.drivenPorts.drawing.DrawFactory
 import de.atennert.lcarswm.lifecycle.*
 import de.atennert.lcarswm.log.createLogger
 import de.atennert.lcarswm.system.SystemFacade

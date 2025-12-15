@@ -1,5 +1,6 @@
-package de.atennert.lcarswm.drawing
+package de.atennert.lcarswm.drivenPorts.drawing
 
+import de.atennert.lcarswm.drawing.Color
 import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.Display
@@ -30,13 +31,15 @@ interface Session {
         bgColor: Color? = null
     )
 
-    fun drawBarEndLeft(x: Double, y: Double, color: Color)
+    fun drawBarEndLeft(x: Double, y: Double, width: Double, height: Double, color: Color)
 
-    fun drawBarEndLeft(x: Int, y: Int, color: Color) = drawBarEndLeft(x.toDouble(), y.toDouble(), color)
+    fun drawBarEndLeft(x: Int, y: Int, width: Int, height: Int, color: Color) =
+        drawBarEndLeft(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble(), color)
 
-    fun drawBarEndRight(x: Double, y: Double, color: Color)
+    fun drawBarEndRight(x: Double, y: Double, width: Double, height: Double, color: Color)
 
-    fun drawBarEndRight(x: Int, y: Int, color: Color) = drawBarEndRight(x.toDouble(), y.toDouble(), color)
+    fun drawBarEndRight(x: Int, y: Int, width: Int, height: Int, color: Color) =
+        drawBarEndRight(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble(), color)
 
     fun drawRectangle(x: Int, y: Int, width: Int, height: Int, color: Color)
 

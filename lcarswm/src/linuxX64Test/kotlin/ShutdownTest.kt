@@ -8,7 +8,7 @@ import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.HOME_CACHE_DIR_PROPERTY
 import de.atennert.lcarswm.HOME_CONFIG_DIR_PROPERTY
 import de.atennert.lcarswm.ResourceGenerator
-import de.atennert.lcarswm.drawing.DrawFactory
+import de.atennert.lcarswm.drivenPorts.drawing.DrawFactory
 import de.atennert.lcarswm.environment.Environment
 import de.atennert.lcarswm.file.Directory
 import de.atennert.lcarswm.file.FileFactory

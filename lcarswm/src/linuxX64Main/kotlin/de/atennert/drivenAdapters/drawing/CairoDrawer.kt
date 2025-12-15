@@ -1,16 +1,15 @@
-package de.atennert.lcarswm.drawing
+package de.atennert.drivenAdapters.drawing
 
-import de.atennert.lcarswm.BAR_HEIGHT
-import de.atennert.lcarswm.COLOR_LOGO
+import de.atennert.lcarswm.drawing.Color
+import de.atennert.lcarswm.drivenPorts.drawing.*
 import kotlinx.cinterop.*
 import platform.posix.M_PI
 import xlib.*
 
 private object Arc {
-    val `0` = 0.0
-    val `90` = 90 * (M_PI / 180)
-    val `180` = 180 * (M_PI / 180)
-    val `270` = 270 * (M_PI / 180)
+    const val DOWN = 90 * (M_PI / 180)
+    const val LEFT = 180 * (M_PI / 180)
+    const val UP = 270 * (M_PI / 180)
 }
 
 @OptIn(ExperimentalForeignApi::class)
@@ -33,7 +32,7 @@ class CairoSession(internal val cr: CPointer<cairo_t>?) : Session {
     override fun drawImage(image: Image, x: Int, y: Int) {
         if (image !is CairoImage) throw NotImplementedError("Only CairoImage is supported")
 
-        cairo_set_source_surface(cr, image.cairoImageSurface, x.toDouble() + 8, y.toDouble())
+        cairo_set_source_surface(cr, image.cairoImageSurface, x.toDouble(), y.toDouble())
         cairo_paint(cr)
     }
 
@@ -83,34 +82,34 @@ class CairoSession(internal val cr: CPointer<cairo_t>?) : Session {
             )
         }
 
-        cairo_set_source_color(cr, COLOR_LOGO)
+        cairo_set_source_color(cr, textColor)
         cairo_move_to(cr, textX.toDouble(), y + height.toDouble())
         cairo_show_text(cr, text)
     }
 
-    override fun drawBarEndLeft(x: Double, y: Double, color: Color) {
-        val halfBarHeight = BAR_HEIGHT / 2.0
-        val rectWidth = 12.0
+    override fun drawBarEndLeft(x: Double, y: Double, width: Double, height: Double, color: Color) {
+        val halfBarHeight = height / 2
+        val rectWidth = width - halfBarHeight
 
         cairo_set_source_color(cr, color)
         cairo_move_to(cr, x + halfBarHeight + rectWidth, y)
-        cairo_rel_line_to(cr, 0.0, BAR_HEIGHT.toDouble())
+        cairo_rel_line_to(cr, 0.0, height)
         cairo_rel_line_to(cr, -rectWidth, 0.0)
-        cairo_arc(cr, x + halfBarHeight, y + halfBarHeight, halfBarHeight, Arc.`90`, Arc.`270`)
+        cairo_arc(cr, x + halfBarHeight, y + halfBarHeight, halfBarHeight, Arc.DOWN, Arc.UP)
         cairo_close_path(cr)
         cairo_fill(cr)
     }
 
-    override fun drawBarEndRight(x: Double, y: Double, color: Color) {
-        val halfBarHeight = BAR_HEIGHT / 2.0
-        val rectWidth = 12.0
+    override fun drawBarEndRight(x: Double, y: Double, width: Double, height: Double, color: Color) {
+        val halfBarHeight = height / 2
+        val rectWidth = width - halfBarHeight
 
         cairo_set_source_color(cr, color)
         cairo_move_to(cr, x + rectWidth, y)
         cairo_rel_line_to(cr, -rectWidth, 0.0)
-        cairo_rel_line_to(cr, 0.0, BAR_HEIGHT.toDouble())
+        cairo_rel_line_to(cr, 0.0, height)
         cairo_rel_line_to(cr, rectWidth, 0.0)
-        cairo_arc(cr, x + rectWidth, y + halfBarHeight, halfBarHeight, Arc.`270`, Arc.`90`)
+        cairo_arc(cr, x + rectWidth, y + halfBarHeight, halfBarHeight, Arc.UP, Arc.DOWN)
         cairo_close_path(cr)
         cairo_fill(cr)
     }
@@ -148,8 +147,8 @@ class CairoSession(internal val cr: CPointer<cairo_t>?) : Session {
             x + sideWidth + rInner.toDouble(),
             y + height - rInner - barHeight.toDouble(),
             rInner.toDouble(),
-            Arc.`180`,
-            Arc.`90`
+            Arc.LEFT,
+            Arc.DOWN
         )
         cairo_rel_line_to(cr, width - sideWidth - rInner.toDouble(), 0.0)
         cairo_rel_line_to(cr, 0.0, barHeight.toDouble())
@@ -159,8 +158,8 @@ class CairoSession(internal val cr: CPointer<cairo_t>?) : Session {
             x + rOuter.toDouble(),
             y + height - rOuter.toDouble(),
             rOuter.toDouble(),
-            Arc.`90`,
-            Arc.`180`
+            Arc.DOWN,
+            Arc.LEFT
         )
         cairo_close_path(cr)
 
@@ -188,8 +187,8 @@ class CairoSession(internal val cr: CPointer<cairo_t>?) : Session {
             x + sideWidth + rInner.toDouble(),
             y + rInner + barHeight.toDouble(),
             rInner.toDouble(),
-            Arc.`180`,
-            Arc.`270`
+            Arc.LEFT,
+            Arc.UP
         )
         cairo_rel_line_to(cr, width - sideWidth - rInner.toDouble(), 0.0)
         cairo_rel_line_to(cr, 0.0, -barHeight.toDouble())
@@ -199,8 +198,8 @@ class CairoSession(internal val cr: CPointer<cairo_t>?) : Session {
             x + rOuter.toDouble(),
             y + rOuter.toDouble(),
             rOuter.toDouble(),
-            Arc.`270`,
-            Arc.`180`
+            Arc.UP,
+            Arc.LEFT
         )
         cairo_close_path(cr)
 

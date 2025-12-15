@@ -1,9 +1,9 @@
 package de.atennert.mock.drawing
 
 import de.atennert.lcarswm.drawing.Color
-import de.atennert.lcarswm.drawing.Image
-import de.atennert.lcarswm.drawing.Session
-import de.atennert.lcarswm.drawing.TextAlignment
+import de.atennert.lcarswm.drivenPorts.drawing.Image
+import de.atennert.lcarswm.drivenPorts.drawing.Session
+import de.atennert.lcarswm.drivenPorts.drawing.TextAlignment
 
 object MockSession : Session {
     override fun drawImage(image: Image, x: Int, y: Int) {}
@@ -20,9 +20,9 @@ object MockSession : Session {
     ) {
     }
 
-    override fun drawBarEndLeft(x: Double, y: Double, color: Color) {}
+    override fun drawBarEndLeft(x: Double, y: Double, width: Double, height: Double, color: Color) {}
 
-    override fun drawBarEndRight(x: Double, y: Double, color: Color) {}
+    override fun drawBarEndRight(x: Double, y: Double, width: Double, height: Double, color: Color) {}
 
     override fun drawRectangle(x: Int, y: Int, width: Int, height: Int, color: Color) {}
 

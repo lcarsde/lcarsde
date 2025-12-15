@@ -3,6 +3,10 @@ package de.atennert.lcarswm.drawing
 import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarswm.*
+import de.atennert.lcarswm.drivenPorts.drawing.DrawFactory
+import de.atennert.lcarswm.drivenPorts.drawing.Session
+import de.atennert.lcarswm.drivenPorts.drawing.Surface
+import de.atennert.lcarswm.drivenPorts.drawing.TextAlignment
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.settings.GeneralSetting
@@ -93,10 +97,16 @@ class RootWindowDrawer(
     private fun drawMaximizedFrame(monitor: Monitor<*>, cr: Session) {
         clearScreen(monitor, cr)
 
-        cr.drawBarEndLeft(monitor.x, monitor.y, COLOR_BAR_ENDS)
-        cr.drawBarEndLeft(monitor.x, monitor.y + monitor.height - BAR_HEIGHT, COLOR_BAR_ENDS)
-        cr.drawBarEndRight(monitor.x + monitor.width - 32, monitor.y, COLOR_BAR_ENDS)
-        cr.drawBarEndRight(monitor.x + monitor.width - 32, monitor.y + monitor.height - BAR_HEIGHT, COLOR_BAR_ENDS)
+        cr.drawBarEndLeft(monitor.x, monitor.y, BAR_END_WIDTH, BAR_HEIGHT, COLOR_BAR_ENDS)
+        cr.drawBarEndLeft(monitor.x, monitor.y + monitor.height - BAR_HEIGHT, BAR_END_WIDTH, BAR_HEIGHT, COLOR_BAR_ENDS)
+        cr.drawBarEndRight(monitor.x + monitor.width - 32, monitor.y, BAR_END_WIDTH, BAR_HEIGHT, COLOR_BAR_ENDS)
+        cr.drawBarEndRight(
+            monitor.x + monitor.width - 32,
+            monitor.y + monitor.height - BAR_HEIGHT,
+            BAR_END_WIDTH,
+            BAR_HEIGHT,
+            COLOR_BAR_ENDS
+        )
 
         cr.drawRectangle(
             if (monitor.isPrimary)
