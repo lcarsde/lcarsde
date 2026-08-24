@@ -183,14 +183,21 @@ class KeyManager(private val inputApi: InputApi) {
 
         if (keyCode.convert<Int>() != 0) {
             grabbedKeys[keyCode] = keySym
-            lockMasks.forEach { lockMask ->
-                inputApi.grabKey(keyCode.convert(), (modifiers or lockMask).convert(), rootWindowId, GrabModeAsync)
+            if (modifiers == AnyModifier) {
+                // AnyModifier must be passed alone; X11 rejects it combined with other modifier bits (BadValue)
+                inputApi.grabKey(keyCode.convert(), AnyModifier.convert(), rootWindowId, GrabModeAsync)
+            } else {
+                lockMasks.forEach { lockMask ->
+                    inputApi.grabKey(keyCode.convert(), (modifiers or lockMask).convert(), rootWindowId, GrabModeAsync)
+                }
             }
         }
     }
 
     fun grabButton(button: UInt, modifiers: Int, windowId: Window, mask: UInt, pointerMode: Int, cursor: Cursor) {
-        lockMasks.forEach { lockMask ->
+        // AnyModifier must be passed alone; X11 rejects it combined with other modifier bits (BadValue)
+        val effectiveLockMasks = if (modifiers == AnyModifier) listOf(0) else lockMasks
+        effectiveLockMasks.forEach { lockMask ->
             inputApi.grabButton(
                 button,
                 (modifiers or lockMask).convert(),
