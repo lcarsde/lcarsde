@@ -4,7 +4,6 @@ import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.settings.GeneralSetting
 import de.atennert.lcarswm.system.api.FontApi
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.nativeHeap
 import xlib.*
 
 @ExperimentalForeignApi
@@ -47,8 +46,8 @@ class FontProvider(
     }
 
     private fun close() {
-        layout?.let { nativeHeap.free(it.rawValue) }
+        layout?.let { g_object_unref(it) }
         fontApi.freeFontDescription(font)
-        pango?.let { nativeHeap.free(it.rawValue) }
+        pango?.let { g_object_unref(it) }
     }
 }
