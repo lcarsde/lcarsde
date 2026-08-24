@@ -6,6 +6,10 @@ const val HOME_CONFIG_DIR_PROPERTY = "XDG_CONFIG_HOME"
 
 const val HOME_CACHE_DIR_PROPERTY = "XDG_CACHE_HOME"
 
+const val GLOBAL_AUTOSTART_DIR_PROPERTY = "LCARSWM_AUTOSTART_DIR"
+
+const val DEFAULT_GLOBAL_AUTOSTART_DIR = "/etc/xdg/autostart"
+
 const val LCARS_DE_DIR = "lcarsde"
 
 const val LOG_FILE_PATH = "/$LCARS_DE_DIR/lcarswm.log"
