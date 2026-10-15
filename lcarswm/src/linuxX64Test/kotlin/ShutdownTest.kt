@@ -410,7 +410,7 @@ class ShutdownTest : SystemCallMocker() {
 
         checkThatTheLoggerIsClosed()
         checkFinalizingSync(functionCalls)
-        checkClosingOfAppMenuMessageQueues(functionCalls)
+        checkClosingOfSideBarMessageQueues(functionCalls)
         checkWindowPropertyRemoval(functionCalls, testFacade.atomMap, "_NET_SUPPORTED")
         checkSelectInputSetting(functionCalls, NoEventMask)
         checkThatSupportWindowWasDestroyed(functionCalls)
@@ -473,7 +473,7 @@ class ShutdownTest : SystemCallMocker() {
 
         checkThatTheLoggerIsClosed()
         checkFinalizingSync(functionCalls)
-        checkClosingOfAppMenuMessageQueues(functionCalls)
+        checkClosingOfSideBarMessageQueues(functionCalls)
         checkWindowPropertyRemoval(functionCalls, testFacade.atomMap, "_NET_SUPPORTED")
         checkSelectInputSetting(functionCalls, NoEventMask)
         checkThatSupportWindowWasDestroyed(functionCalls)
@@ -561,15 +561,15 @@ class ShutdownTest : SystemCallMocker() {
         )
     }
 
-    private fun checkClosingOfAppMenuMessageQueues(functionCalls: MutableList<FunctionCall>) {
+    private fun checkClosingOfSideBarMessageQueues(functionCalls: MutableList<FunctionCall>) {
         // TODO uses wrappers now
 //        // send info queue
-//        assertEquals("mqClose", functionCalls.removeAt(0).name, "the app menu message queue needs to be closed on shutdown")
-//        assertEquals("mqUnlink", functionCalls.removeAt(0).name, "the app menu message queue needs to be unlinked on shutdown")
+//        assertEquals("mqClose", functionCalls.removeAt(0).name, "the Side Bar message queue needs to be closed on shutdown")
+//        assertEquals("mqUnlink", functionCalls.removeAt(0).name, "the Side Bar message queue needs to be unlinked on shutdown")
 //
 //        // receive info queue
-//        assertEquals("mqClose", functionCalls.removeAt(0).name, "the app menu message queue needs to be closed on shutdown")
-//        assertEquals("mqUnlink", functionCalls.removeAt(0).name, "the app menu message queue needs to be unlinked on shutdown")
+//        assertEquals("mqClose", functionCalls.removeAt(0).name, "the Side Bar message queue needs to be closed on shutdown")
+//        assertEquals("mqUnlink", functionCalls.removeAt(0).name, "the Side Bar message queue needs to be unlinked on shutdown")
     }
 
     private fun checkThatKeyBindingsWereFreed(

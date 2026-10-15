@@ -11,7 +11,7 @@ import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 
 @ExperimentalForeignApi
-class AppMenuMessageHandler(
+class SideBarMessageHandler(
     private val systemApi: SystemApi,
     private val atomLibrary: AtomLibrary,
     private val windowList: WindowList,
@@ -31,12 +31,12 @@ class AppMenuMessageHandler(
         val messageContent = messageLines.drop(1)
 
         messageHandlers[messageType]?.invoke(messageContent)
-            ?: logger.logWarning("AppMenuMessageHandler::handleMessage::unknown message type $messageType")
+            ?: logger.logWarning("SideBarMessageHandler::handleMessage::unknown message type $messageType")
     }
 
     private fun handleClose(message: List<String>) {
         val targetWindowId = message[0].toULong()
-        logger.logDebug("AppMenuMessageHandler::handleClose::$targetWindowId")
+        logger.logDebug("SideBarMessageHandler::handleClose::$targetWindowId")
 
         if (windowList.isManaged(targetWindowId)) {
             closeWindow(logger, systemApi, atomLibrary, targetWindowId)
@@ -45,7 +45,7 @@ class AppMenuMessageHandler(
 
     private fun handleSelection(message: List<String>) {
         val targetWindow = message[0].toULong()
-        logger.logDebug("AppMenuMessageHandler::handleSelection::$targetWindow")
+        logger.logDebug("SideBarMessageHandler::handleSelection::$targetWindow")
 
         selectAppSj.next(targetWindow)
     }

@@ -1,4 +1,4 @@
-package de.atennert.lcarsde.menu
+package de.atennert.lcarsde.sideBar
 
 data class WindowEntry(val id: String, var name: String, var isActive: Boolean) {
     override fun equals(other: Any?): Boolean {

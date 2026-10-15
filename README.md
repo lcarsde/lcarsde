@@ -10,7 +10,7 @@ mimics the LCARS interface.
 
 * [lcarswm - LCARS Window Manager](lcarswm/readme.md)
 * [logout - tool for loging out and shutting computer down](logout/readme.md)
-* [menu - sidebar menu application for selecting and closing open windows](menu/readme.md)
+* [side-bar - Side Bar application for selecting and closing open windows](side-bar/readme.md)
 * [status-bar - status bar tool application for general information display and controls](status-bar/readme.md)
 * [app-selector - application for opening installed programs](app-selector/readme.md)
 * [lcarsde-common](lcarsde-common/readme.md)
@@ -43,8 +43,8 @@ mimics the LCARS interface.
     * Pressed state coloring for the buttons
     * GTK-Theme (if I can't find one)
     * Detailed documentation for communication between lcarsde applications
-        * Message pipes between lcarswm and the application menu
-        * Special atoms for the application menu and status bar
+        * Message pipes between lcarswm and the Side Bar
+        * Special atoms for the Side Bar and status bar
     * lcarsde settings application
     * lcarsde file manager
     * polkit agent

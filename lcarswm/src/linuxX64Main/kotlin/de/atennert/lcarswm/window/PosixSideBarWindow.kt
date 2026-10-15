@@ -23,7 +23,7 @@ import kotlin.experimental.ExperimentalNativeApi
 
 @ExperimentalNativeApi
 @ExperimentalForeignApi
-class PosixAppMenuWindow(
+class PosixSideBarWindow(
     private val display: CPointer<Display>?,
     private val rootWindowId: Window,
     monitorManager: MonitorManager<RROutput>,
@@ -252,7 +252,7 @@ class PosixAppMenuWindow(
     }
 
     companion object {
-        fun isAppMenu(display: CPointer<Display>?, atomLibrary: AtomLibrary, windowId: Window): Boolean {
+        fun isSideBar(display: CPointer<Display>?, atomLibrary: AtomLibrary, windowId: Window): Boolean {
             val textProperty = nativeHeap.alloc<XTextProperty>()
             val result = wrapXGetTextProperty(display, windowId, textProperty.ptr, atomLibrary[Atoms.LCARSDE_APP_MENU])
             wrapXFree(textProperty.value)

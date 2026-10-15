@@ -2,7 +2,7 @@ import de.atennert.gtk.GtkWindow
 import de.atennert.gtk.gtkApplication
 import de.atennert.lcarsde.comm.MessageQueue
 import de.atennert.lcarsde.lifecycle.closeClosables
-import de.atennert.lcarsde.menu.Menu
+import de.atennert.lcarsde.sideBar.SideBar
 import gtk.g_idle_add
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.StableRef
@@ -20,11 +20,11 @@ fun main() = gtkApplication {
     val sendQ = MessageQueue("/lcarswm-app-menu-messages", MessageQueue.Mode.WRITE, false)
 
     val window = GtkWindow()
-    window.setTitle("Menu")
-    val menu = Menu(window, sendQ)
+    window.setTitle("Side Bar")
+    val sideBar = SideBar(window, sendQ)
     window.showAll()
 
-    val job = readWindowUpdates(windowListQ, menu)
+    val job = readWindowUpdates(windowListQ, sideBar)
 
     window.connect("destroy", this) { _, app -> app.mainQuit() }
     main()
@@ -33,15 +33,15 @@ fun main() = gtkApplication {
     closeClosables()
 }
 
-class MessageEvent(private val message: String, private val menu: Menu) {
-    fun updateWindowList() = menu.updateWindowList(message)
+class MessageEvent(private val message: String, private val sideBar: SideBar) {
+    fun updateWindowList() = sideBar.updateWindowList(message)
 }
 
 @OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
-private fun CoroutineScope.readWindowUpdates(windowListQ: MessageQueue, menu: Menu) = launch {
+private fun CoroutineScope.readWindowUpdates(windowListQ: MessageQueue, sideBar: SideBar) = launch {
     while (true) {
         windowListQ.receive()?.let { message ->
-            val messageEventRef = StableRef.create(MessageEvent(message, menu))
+            val messageEventRef = StableRef.create(MessageEvent(message, sideBar))
             g_idle_add(
                 staticCFunction { dataPointer ->
                     val messageEvent = dataPointer?.asStableRef<MessageEvent>()?.get()

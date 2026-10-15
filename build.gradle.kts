@@ -22,7 +22,7 @@ tasks.named<Copy>("combineRelease") {
         projDir.dir("app-selector/build/install"),
         projDir.dir("lcarswm/build/install"),
         projDir.dir("logout/build/install"),
-        projDir.dir("menu/build/install"),
+        projDir.dir("side-bar/build/install"),
         projDir.dir("status-bar/build/install"),
     )
     into(layout.buildDirectory.dir("release").get().asFile)

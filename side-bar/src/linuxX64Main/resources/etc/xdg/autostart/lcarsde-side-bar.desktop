@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=lcarsde side bar
+Exec=/usr/bin/lcarsde-side-bar.kexe
+OnlyShowIn=lcarsde;

@@ -1,7 +1,7 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarsde.lifecycle.closeWith
-import de.atennert.lcarswm.AppMenuMessageHandler
+import de.atennert.lcarswm.SideBarMessageHandler
 import de.atennert.lcarswm.keys.KeySessionManager
 import de.atennert.rx.NextObserver
 import de.atennert.rx.ReplaySubject
@@ -17,7 +17,7 @@ typealias FocusObserver = (Window?, Window?, Boolean) -> Unit
 data class WindowFocusEvent(val newWindow: Window?, val oldWindow: Window?, val toggleSessionActive: Boolean)
 
 @ExperimentalForeignApi
-class WindowFocusHandler(windowList: WindowList, appMenuMessageHandler: AppMenuMessageHandler) {
+class WindowFocusHandler(windowList: WindowList, sideBarMessageHandler: SideBarMessageHandler) {
     private val windowFocusEventSj = ReplaySubject<WindowFocusEvent>(0)
     val windowFocusEventObs = windowFocusEventSj.asObservable()
 
@@ -42,7 +42,7 @@ class WindowFocusHandler(windowList: WindowList, appMenuMessageHandler: AppMenuM
             })
             .closeWith { this.unsubscribe() }
 
-        appMenuMessageHandler.selectAppObs
+        sideBarMessageHandler.selectAppObs
             .withLatestFrom(windowList.windowsObs)
             .filter { (selectedWindowId, windows) ->
                 windows.find { it.id == selectedWindowId && (it !is PosixTransientWindow || !it.isTransientForRoot) } != null
