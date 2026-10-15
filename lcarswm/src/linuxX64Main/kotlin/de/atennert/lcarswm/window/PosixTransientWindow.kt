@@ -11,11 +11,11 @@ import de.atennert.lcarswm.conversion.toUByteArray
 import de.atennert.lcarswm.events.sendConfigureNotify
 import de.atennert.lcarswm.keys.KeyManager
 import de.atennert.lcarswm.system.*
+import gtk.*
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.toCValues
-import xlib.*
 
 @ExperimentalForeignApi
 private const val frameEventMask = SubstructureRedirectMask or FocusChangeMask or ButtonPressMask or ButtonReleaseMask

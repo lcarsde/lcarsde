@@ -1,11 +1,11 @@
 package de.atennert.lcarswm.keys
 
 import de.atennert.lcarswm.system.SystemFacadeMock
+import gtk.ControlMask
+import gtk.LockMask
+import gtk.ShiftMask
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
-import xlib.ControlMask
-import xlib.LockMask
-import xlib.ShiftMask
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

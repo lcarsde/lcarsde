@@ -1,13 +1,13 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarsde.lifecycle.inject
-import de.atennert.lcarswm.events.EventTime
 import de.atennert.lcarsde.log.Logger
+import de.atennert.lcarswm.events.EventTime
 import de.atennert.lcarswm.system.api.InputApi
+import gtk.RevertToNone
+import gtk.RevertToPointerRoot
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.RevertToNone
-import xlib.RevertToPointerRoot
-import xlib.Window
 
 /**
  * Sets the input focus based on the current window focus.

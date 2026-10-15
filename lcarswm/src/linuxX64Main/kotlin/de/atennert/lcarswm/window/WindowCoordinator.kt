@@ -1,9 +1,9 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.monitor.Monitor
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.RROutput
-import xlib.Window
 
 /**
  * Interface for class that manages the mapping of windows to monitors

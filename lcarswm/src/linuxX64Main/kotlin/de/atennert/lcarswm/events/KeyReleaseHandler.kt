@@ -8,10 +8,10 @@ import de.atennert.lcarswm.keys.*
 import de.atennert.lcarswm.system.api.SystemApi
 import de.atennert.lcarswm.window.WindowFocusHandler
 import de.atennert.lcarswm.window.closeWindow
+import gtk.KeyRelease
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
-import xlib.KeyRelease
-import xlib.XEvent
 
 /**
  * Handles key release events. This covers a few internal codes as well as configured key bindings.

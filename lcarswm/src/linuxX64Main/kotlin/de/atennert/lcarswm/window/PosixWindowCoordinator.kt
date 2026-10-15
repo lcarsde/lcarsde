@@ -2,10 +2,10 @@ package de.atennert.lcarswm.window
 
 import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.drawing.UIDrawing
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.events.ReparentEvent
-import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.system.wrapXConfigureWindow
@@ -13,6 +13,7 @@ import de.atennert.lcarswm.system.wrapXSendEvent
 import de.atennert.rx.*
 import de.atennert.rx.operators.*
 import de.atennert.rx.util.Tuple
+import gtk.*
 import kotlinx.cinterop.*
 import xlib.*
 

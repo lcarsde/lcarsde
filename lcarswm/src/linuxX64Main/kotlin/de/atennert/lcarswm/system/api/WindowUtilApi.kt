@@ -1,7 +1,7 @@
 package de.atennert.lcarswm.system.api
 
+import gtk.*
 import kotlinx.cinterop.*
-import xlib.*
 
 /**
  *
@@ -23,15 +23,32 @@ interface WindowUtilApi {
 
     fun ungrabServer(): Int
 
-    fun queryTree(window: Window, rootReturn: CValuesRef<WindowVar>, parentReturn: CValuesRef<WindowVar>, childrenReturn: CValuesRef<CPointerVar<WindowVar>>, childrenReturnCounts: CValuesRef<UIntVar>): Int
+    fun queryTree(
+        window: Window,
+        rootReturn: CValuesRef<WindowVar>,
+        parentReturn: CValuesRef<WindowVar>,
+        childrenReturn: CValuesRef<CPointerVar<WindowVar>>,
+        childrenReturnCounts: CValuesRef<UIntVar>
+    ): Int
 
-    fun getWMProtocols(window: Window, protocolsReturn: CPointer<CPointerVar<AtomVar>>, protocolCountReturn: CPointer<IntVar>): Int
+    fun getWMProtocols(
+        window: Window,
+        protocolsReturn: CPointer<CPointerVar<AtomVar>>,
+        protocolCountReturn: CPointer<IntVar>
+    ): Int
 
     fun setErrorHandler(handler: XErrorHandler): XErrorHandler?
 
     fun internAtom(name: String, onlyIfExists: Boolean = false): Atom
 
-    fun changeProperty(window: Window, propertyAtom: Atom, typeAtom: Atom, data: UByteArray?, format: Int, mode: Int = PropModeReplace): Int
+    fun changeProperty(
+        window: Window,
+        propertyAtom: Atom,
+        typeAtom: Atom,
+        data: UByteArray?,
+        format: Int,
+        mode: Int = PropModeReplace
+    ): Int
 
     fun deleteProperty(window: Window, propertyAtom: Atom): Int
 
@@ -49,7 +66,14 @@ interface WindowUtilApi {
 
     fun killClient(window: Window): Int
 
-    fun createWindow(parentWindow: Window, measurements: List<Int>, depth: Int, visual: CPointer<Visual>?, attributeMask: ULong, attributes: CPointer<XSetWindowAttributes>): Window
+    fun createWindow(
+        parentWindow: Window,
+        measurements: List<Int>,
+        depth: Int,
+        visual: CPointer<Visual>?,
+        attributeMask: ULong,
+        attributes: CPointer<XSetWindowAttributes>
+    ): Window
 
     fun getSelectionOwner(atom: Atom): Window
 

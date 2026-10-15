@@ -1,13 +1,13 @@
 package de.atennert.lcarswm.events
 
 import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.keys.KeyConfiguration
 import de.atennert.lcarswm.keys.KeyManager
-import de.atennert.lcarsde.log.Logger
+import gtk.MappingNotify
+import gtk.Window
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.MappingNotify
-import xlib.Window
-import xlib.XEvent
 
 @ExperimentalForeignApi
 class MappingNotifyHandler(

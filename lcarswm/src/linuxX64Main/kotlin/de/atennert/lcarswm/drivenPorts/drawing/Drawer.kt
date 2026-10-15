@@ -1,11 +1,11 @@
 package de.atennert.lcarswm.drivenPorts.drawing
 
 import de.atennert.lcarswm.drawing.Color
+import gtk.Display
+import gtk.Drawable
+import gtk.Visual
 import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.Display
-import xlib.Drawable
-import xlib.Visual
 
 enum class TextAlignment {
     LEFT, RIGHT

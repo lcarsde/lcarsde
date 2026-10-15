@@ -1,6 +1,7 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarsde.lifecycle.inject
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.BAR_HEIGHT_WITH_OFFSET
 import de.atennert.lcarswm.ScreenMode
 import de.atennert.lcarswm.atom.AtomLibrary
@@ -11,13 +12,12 @@ import de.atennert.lcarswm.conversion.toUByteArray
 import de.atennert.lcarswm.drawing.IFrameDrawer
 import de.atennert.lcarswm.events.sendConfigureNotify
 import de.atennert.lcarswm.keys.KeyManager
-import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.system.*
+import gtk.*
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.toCValues
-import xlib.*
 
 @ExperimentalForeignApi
 private const val frameEventMask = SubstructureRedirectMask or FocusChangeMask or ButtonPressMask or ButtonReleaseMask

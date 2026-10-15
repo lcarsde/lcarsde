@@ -2,10 +2,10 @@ package de.atennert.lcarswm.events
 
 import de.atennert.lcarswm.Predicate
 import de.atennert.lcarswm.system.api.EventApi
+import gtk.QueuedAfterFlush
+import gtk.Success
+import gtk.XEvent
 import kotlinx.cinterop.*
-import xlib.QueuedAfterFlush
-import xlib.Success
-import xlib.XEvent
 
 /**
  * Buffers events in an internal queue.

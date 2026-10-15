@@ -1,14 +1,14 @@
 package de.atennert.lcarswm
 
 import de.atennert.lcarsde.lifecycle.inject
-import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarsde.log.Logger
+import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.system.api.SystemApi
 import de.atennert.lcarswm.window.WindowList
 import de.atennert.lcarswm.window.closeWindow
 import de.atennert.rx.Subject
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.Window
 
 @ExperimentalForeignApi
 class AppMenuMessageHandler(

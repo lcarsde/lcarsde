@@ -1,11 +1,11 @@
 package de.atennert.lcarswm.system
 
+import gtk.*
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.linux.mq_close
 import platform.linux.mq_receive
 import platform.linux.mq_send
 import platform.linux.mq_unlink
-import xlib.*
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
@@ -32,10 +32,7 @@ open class SystemCallMocker {
         wrapXMoveResizeWindow = ::mockXMoveResizeWindow
         wrapXSetWindowBorderWidth = ::mockXSetWindowBorderWidth
         wrapXFlush = ::mockXFlush
-        wrapXCreatePixmap = ::mockXCreatePixmap
-        wrapXFreePixmap = ::mockXFreePixmap
         wrapXFree = ::mockXFree
-        wrapXSetWindowBackgroundPixmap = ::mockXSetWindowBackgroundPixmap
         wrapXGetTransientForHint = ::mockXGetTransientForHint
         wrapXSendEvent = ::mockXSendEvent
         wrapXConfigureWindow = ::mockXConfigureWindow
@@ -43,14 +40,6 @@ open class SystemCallMocker {
         wrapXAddToSaveSet = ::mockXAddToSaveSet
         wrapXRemoveFromSaveSet = ::mockXRemoveFromSaveSet
         wrapXKeysymToKeycode = ::mockXKeysymToKeycode
-        wrapXftDrawCreate = ::mockXftDrawCreate
-        wrapXftDrawDestroy = ::mockXftDrawDestroy
-        wrapXftDrawRect = ::mockXftDrawRect
-        wrapPangoLayoutSetText = ::mockPangoLayoutSetText
-        wrapPangoLayoutSetWidth = ::mockPangoLayoutSetWidth
-        wrapPangoLayoutGetPixelExtents = ::mockPangoLayoutGetPixelExtents
-        wrapPangoLayoutGetLineReadonly = ::mockPangoLayoutGetLineReadonly
-        wrapPangoXftRenderLayoutLine = ::mockPangoXftRenderLayoutLine
         wrapMqOpen = ::mockMqOpen
         wrapMqClose = ::mockMqClose
         wrapMqSend = ::mockMqSend
@@ -79,10 +68,7 @@ open class SystemCallMocker {
         wrapXMoveResizeWindow = ::XMoveResizeWindow
         wrapXSetWindowBorderWidth = ::XSetWindowBorderWidth
         wrapXFlush = ::XFlush
-        wrapXCreatePixmap = ::XCreatePixmap
-        wrapXFreePixmap = ::XFreePixmap
         wrapXFree = ::XFree
-        wrapXSetWindowBackgroundPixmap = ::XSetWindowBackgroundPixmap
         wrapXGetTransientForHint = ::XGetTransientForHint
         wrapXSendEvent = ::XSendEvent
         wrapXConfigureWindow = ::XConfigureWindow
@@ -90,14 +76,6 @@ open class SystemCallMocker {
         wrapXAddToSaveSet = ::XAddToSaveSet
         wrapXRemoveFromSaveSet = ::XRemoveFromSaveSet
         wrapXKeysymToKeycode = ::XKeysymToKeycode
-        wrapXftDrawCreate = ::XftDrawCreate
-        wrapXftDrawDestroy = ::XftDrawDestroy
-        wrapXftDrawRect = ::XftDrawRect
-        wrapPangoLayoutSetText = ::pango_layout_set_text
-        wrapPangoLayoutSetWidth = ::pango_layout_set_width
-        wrapPangoLayoutGetPixelExtents = ::pango_layout_get_pixel_extents
-        wrapPangoLayoutGetLineReadonly = ::pango_layout_get_line_readonly
-        wrapPangoXftRenderLayoutLine = ::pango_xft_render_layout_line
         wrapMqOpen = ::mqWrapper
         wrapMqClose = ::mq_close
         wrapMqSend = ::mq_send

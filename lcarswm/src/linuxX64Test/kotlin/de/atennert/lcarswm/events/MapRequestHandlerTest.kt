@@ -4,14 +4,14 @@ import de.atennert.lcarsde.lifecycle.ServiceLocator
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.rx.NextObserver
+import gtk.MapRequest
+import gtk.Window
+import gtk.XEvent
 import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.nativeHeap
-import xlib.MapRequest
-import xlib.Window
-import xlib.XEvent
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

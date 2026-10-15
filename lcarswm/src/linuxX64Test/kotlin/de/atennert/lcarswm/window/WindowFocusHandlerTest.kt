@@ -5,9 +5,9 @@ import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.AppMenuMessageHandler
 import de.atennert.lcarswm.atom.AtomLibrary
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
-import xlib.Window
 import kotlin.test.*
 
 @ExperimentalForeignApi

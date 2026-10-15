@@ -2,9 +2,9 @@ package de.atennert.lcarswm.events
 
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
+import gtk.ConfigureRequest
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.ConfigureRequest
-import xlib.XEvent
 
 /**
  * Depending on whether we know or don't know the window of the configure request event, we adjust the windows

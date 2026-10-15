@@ -2,9 +2,9 @@ package de.atennert.lcarswm.events
 
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
+import gtk.LeaveNotify
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.LeaveNotify
-import xlib.XEvent
 
 class LeaveNotifyHandler(
     private val eventStore: EventStore,

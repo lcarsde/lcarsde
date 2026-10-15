@@ -3,11 +3,11 @@ package de.atennert.lcarswm.keys
 import de.atennert.lcarswm.events.EventTime
 import de.atennert.lcarswm.system.api.InputApi
 import de.atennert.lcarswm.window.FocusObserver
+import gtk.CurrentTime
+import gtk.Time
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
-import xlib.CurrentTime
-import xlib.Time
-import xlib.Window
 
 /**
  * Used to grab the key during a focus toggle session

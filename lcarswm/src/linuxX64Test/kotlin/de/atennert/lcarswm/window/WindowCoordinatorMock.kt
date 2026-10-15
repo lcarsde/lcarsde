@@ -2,9 +2,9 @@ package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.system.FunctionCall
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.RROutput
-import xlib.Window
 
 class WindowCoordinatorMock : WindowCoordinator {
     val functionCalls = mutableListOf<FunctionCall>()

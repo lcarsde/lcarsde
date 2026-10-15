@@ -8,15 +8,15 @@ import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
 import de.atennert.lcarswm.atom.NumberAtomReader
 import de.atennert.lcarswm.atom.TextAtomReader
-import de.atennert.lcarswm.drawing.ColorFactory
-import de.atennert.lcarswm.drawing.FontProvider
 import de.atennert.lcarswm.drawing.IFrameDrawer
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.keys.KeyManager
 import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.settings.GeneralSetting
 import de.atennert.lcarswm.system.*
+import gtk.*
 import kotlinx.cinterop.*
-import xlib.*
+import xlib.RROutput
 import kotlin.experimental.ExperimentalNativeApi
 
 @ExperimentalForeignApi
@@ -30,8 +30,6 @@ private const val clientNoPropagateMask = ButtonPressMask or ButtonReleaseMask o
 class PosixWindowFactory(
     private val display: CPointer<Display>?,
     private val screen: Screen,
-    private val colorFactory: ColorFactory,
-    private val fontProvider: FontProvider,
     private val keyManager: KeyManager,
     private val monitorManager: MonitorManager<RROutput>,
     private val atomLibrary: AtomLibrary,
@@ -42,6 +40,7 @@ class PosixWindowFactory(
     private val numberAtomReader: NumberAtomReader,
     private val frameDrawer: IFrameDrawer,
     private val windowListMessageQueue: MessageQueue,
+    private val settings: Map<GeneralSetting, String>,
 ) : WindowFactory<Window> {
     private val logger by inject<Logger>()
 
@@ -55,8 +54,8 @@ class PosixWindowFactory(
         onClick: () -> Unit
     ): PosixButton {
         return PosixButton(
-            display, screen, colorFactory, fontProvider, monitorManager, keyManager, eventStore,
-            text, colorSet, x, y, width, height, onClick
+            display, screen, monitorManager, keyManager, eventStore,
+            text, colorSet, x, y, width, height, settings, onClick
         )
     }
 

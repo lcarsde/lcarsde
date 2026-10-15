@@ -10,10 +10,10 @@ import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.monitor.MonitorManagerMock
 import de.atennert.lcarswm.system.FunctionCall
 import de.atennert.lcarswm.system.SystemCallMocker
+import gtk.Display
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.cinterop.*
-import xlib.Display
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

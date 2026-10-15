@@ -7,8 +7,8 @@ import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.system.SystemFacadeMock
+import gtk.*
 import kotlinx.cinterop.*
-import xlib.*
 import kotlin.test.*
 
 @ExperimentalForeignApi

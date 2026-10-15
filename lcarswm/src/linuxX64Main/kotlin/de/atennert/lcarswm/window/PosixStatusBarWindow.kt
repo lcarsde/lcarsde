@@ -15,8 +15,9 @@ import de.atennert.rx.ReplaySubject
 import de.atennert.rx.Subscription
 import de.atennert.rx.operators.*
 import de.atennert.rx.util.Tuple2
+import gtk.*
 import kotlinx.cinterop.*
-import xlib.*
+import xlib.RROutput
 
 @ExperimentalForeignApi
 class PosixStatusBarWindow(

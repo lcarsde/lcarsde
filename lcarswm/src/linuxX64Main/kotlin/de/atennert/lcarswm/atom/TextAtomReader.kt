@@ -1,9 +1,9 @@
 package de.atennert.lcarswm.atom
 
 import de.atennert.lcarswm.system.api.SystemApi
+import gtk.Window
+import gtk.XTextProperty
 import kotlinx.cinterop.*
-import xlib.Window
-import xlib.XTextProperty
 
 @ExperimentalForeignApi
 class TextAtomReader(private val system: SystemApi, private val atomLibrary: AtomLibrary) {
@@ -26,9 +26,11 @@ class TextAtomReader(private val system: SystemApi, private val atomLibrary: Ato
                 }
                 ByteArray(readBytes[0].convert()) { utfBytes[it] }.toKString()
             }
+
             atomLibrary[Atoms.UTF_STRING] -> {
                 getByteArray(textProperty).toKString()
             }
+
             atomLibrary[Atoms.STRING] -> {
                 val latinString = getByteArray(textProperty).takeWhile { c ->
                     // filter forbidden control characters
@@ -47,14 +49,15 @@ class TextAtomReader(private val system: SystemApi, private val atomLibrary: Ato
                 }
                 ByteArray(readBytes[0].convert()) { utfBytes[it] }.toKString()
             }
+
             else -> ""
         }
         system.xFree(textProperty.value)
         nativeHeap.free(textProperty)
 
         return name.trim()
-                .ifEmpty { NO_NAME }
-                .uppercase()
+            .ifEmpty { NO_NAME }
+            .uppercase()
     }
 
     private fun hasCorrectEncoding(textProperty: XTextProperty): Boolean {

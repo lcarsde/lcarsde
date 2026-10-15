@@ -1,5 +1,3 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
@@ -12,13 +10,9 @@ group = "de.atennert"
 kotlin {
     val nativeTarget = when (System.getProperty("os.name")) {
         "Linux" -> {
-            val architecture: String = ByteArrayOutputStream().use { os ->
-                project.exec {
-                    commandLine("uname", "-m")
-                    standardOutput = os
-                }
-                os.toString().trim()
-            }
+            val architecture: String = providers.exec {
+                commandLine("uname", "-m")
+            }.standardOutput.asText.get().trim()
             when {
                 architecture == "x86_64" -> linuxX64()
                 architecture.startsWith("arm64") -> linuxArm64("linuxX64")
@@ -45,13 +39,14 @@ kotlin {
             }
         }
         compilations.getByName("main") {
-            val xlib by cinterops.creating
+            cinterops.create("xlib")
         }
     }
     sourceSets {
         commonMain {
             dependencies {
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(project(":lcarsde-gtk"))
                 implementation(project(":lcarsde-common"))
             }
         }
@@ -61,8 +56,6 @@ kotlin {
                 implementation(libs.kotest.assertions.core)
             }
         }
-        val linuxX64Main by getting
-        val linuxX64Test by getting
     }
 }
 

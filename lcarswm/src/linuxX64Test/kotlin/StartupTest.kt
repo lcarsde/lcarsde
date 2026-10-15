@@ -9,12 +9,12 @@ import de.atennert.lcarswm.environment.Environment
 import de.atennert.lcarswm.file.Directory
 import de.atennert.lcarswm.file.FileFactory
 import de.atennert.lcarswm.signal.Signal
+import gtk.*
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.pointed
 import kotlinx.coroutines.runBlocking
-import xlib.*
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.test.*
 

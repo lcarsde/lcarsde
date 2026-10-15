@@ -1,11 +1,11 @@
 package de.atennert.lcarswm.keys
 
 import de.atennert.lcarswm.system.api.InputApi
+import gtk.AnyModifier
+import gtk.KeySym
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
-import xlib.AnyModifier
-import xlib.KeySym
-import xlib.Window
 
 /**
  * Loads the key configuration of the users and provides the corresponding key bindings.
@@ -49,7 +49,8 @@ class KeyConfiguration(
             keySymCommands[Pair(keySym, mask)] = keyBinding
 
             if (keyBinding is KeyAction && (keyBinding.action == WmAction.WINDOW_TOGGLE_FWD ||
-                        keyBinding.action == WmAction.WINDOW_TOGGLE_BWD)) {
+                        keyBinding.action == WmAction.WINDOW_TOGGLE_BWD)
+            ) {
                 toggleSessionManager.addModifiers(modifiers, keySym.convert(), mask)
             }
         }

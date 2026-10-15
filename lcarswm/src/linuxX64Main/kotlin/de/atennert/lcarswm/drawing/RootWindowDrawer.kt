@@ -15,9 +15,9 @@ import de.atennert.rx.NextObserver
 import de.atennert.rx.Subject
 import de.atennert.rx.operators.map
 import de.atennert.rx.operators.withLatestFrom
+import gtk.Screen
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.RROutput
-import xlib.Screen
 
 /**
  * Class for drawing the root window decorations.

@@ -7,8 +7,8 @@ import de.atennert.rx.NextObserver
 import de.atennert.rx.ReplaySubject
 import de.atennert.rx.operators.filter
 import de.atennert.rx.operators.withLatestFrom
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.Window
 
 @ExperimentalForeignApi
 typealias FocusObserver = (Window?, Window?, Boolean) -> Unit

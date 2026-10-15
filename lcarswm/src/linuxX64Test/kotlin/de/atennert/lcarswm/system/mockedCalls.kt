@@ -2,11 +2,16 @@
 
 package de.atennert.lcarswm.system
 
+import gtk.*
 import kotlinx.cinterop.*
 import platform.linux.mq_attr
 import platform.linux.mqd_t
+import platform.posix.mode_t
 import platform.posix.size_t
-import xlib.*
+import platform.posix.ssize_t
+import xlib.XF86XK_AudioLowerVolume
+import xlib.XF86XK_AudioMute
+import xlib.XF86XK_AudioRaiseVolume
 
 @ExperimentalForeignApi
 fun mockXGrabServer(display: CValuesRef<Display>?) = 0
@@ -112,18 +117,6 @@ fun mockXSetWindowBorderWidth(display: CValuesRef<Display>?, window: Window, bor
 fun mockXFlush(display: CValuesRef<Display>?) = 0
 
 @ExperimentalForeignApi
-fun mockXCreatePixmap(
-    display: CValuesRef<Display>?,
-    drawable: Drawable,
-    width: UInt,
-    height: UInt,
-    depth: UInt
-): Pixmap = 0.toULong()
-
-@ExperimentalForeignApi
-fun mockXFreePixmap(display: CValuesRef<Display>?, pixmap: Pixmap): Int = 0
-
-@ExperimentalForeignApi
 fun mockXFree(arg: CValuesRef<*>?): Int = 0
 
 @ExperimentalForeignApi
@@ -214,62 +207,6 @@ fun mockXKeysymToKeycode(display: CValuesRef<Display>?, keySym: KeySym): KeyCode
         ?: error("keySym not found")
 }
 
-@ExperimentalForeignApi
-fun mockXftDrawCreate(
-    display: CValuesRef<Display>?,
-    drawable: Drawable,
-    visual: CValuesRef<Visual>?,
-    colormap: Colormap
-): CPointer<XftDraw>? {
-    return nativeHeap.allocPointerTo<XftDraw>().value
-}
-
-@ExperimentalForeignApi
-fun mockXftDrawDestroy(xftDraw: CValuesRef<XftDraw>?) {
-    if (xftDraw != null) {
-        nativeHeap.free(xftDraw.objcPtr())
-    }
-}
-
-@ExperimentalForeignApi
-fun mockXftDrawRect(
-    xftDraw: CValuesRef<XftDraw>?,
-    color: CValuesRef<XftColor>?,
-    x: Int,
-    y: Int,
-    width: UInt,
-    height: UInt
-) {
-}
-
-@ExperimentalForeignApi
-fun mockPangoLayoutSetText(layout: CValuesRef<PangoLayout>?, text: String?, length: Int) {
-}
-
-@ExperimentalForeignApi
-fun mockPangoLayoutSetWidth(layout: CValuesRef<PangoLayout>?, width: Int) {
-}
-
-@ExperimentalForeignApi
-fun mockPangoLayoutGetPixelExtents(
-    layout: CValuesRef<PangoLayout>?,
-    inkRect: CValuesRef<PangoRectangle>?,
-    logicalRect: CValuesRef<PangoRectangle>?
-) {
-}
-
-@ExperimentalForeignApi
-fun mockPangoLayoutGetLineReadonly(layout: CValuesRef<PangoLayout>?, line: Int): CPointer<PangoLayoutLine>? = null
-
-@ExperimentalForeignApi
-fun mockPangoXftRenderLayoutLine(
-    xftDraw: CValuesRef<XftDraw>?,
-    color: CValuesRef<XftColor>?,
-    layoutLine: CValuesRef<PangoLayoutLine>?,
-    x: Int,
-    y: Int
-) {
-}
 
 @ExperimentalForeignApi
 fun mockMqOpen(name: String?, oflag: Int, permissions: mode_t, attributes: mq_attr): mqd_t = 1

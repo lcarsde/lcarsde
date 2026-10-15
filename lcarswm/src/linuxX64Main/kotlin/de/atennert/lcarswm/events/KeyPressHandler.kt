@@ -1,15 +1,15 @@
 package de.atennert.lcarswm.events
 
 import de.atennert.lcarsde.lifecycle.inject
-import de.atennert.lcarswm.keys.*
 import de.atennert.lcarsde.log.Logger
+import de.atennert.lcarswm.keys.*
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.window.WindowCoordinator
 import de.atennert.lcarswm.window.WindowFocusHandler
+import gtk.KeyPress
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
-import xlib.KeyPress
-import xlib.XEvent
 
 @ExperimentalForeignApi
 class KeyPressHandler(

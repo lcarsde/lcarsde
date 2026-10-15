@@ -2,8 +2,8 @@ package de.atennert.lcarswm.events
 
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.XEvent
 
 /**
  * Distributes events to registered XEventHandlers. Which handler is called depends on

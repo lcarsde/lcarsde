@@ -1,5 +1,3 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
 }
@@ -9,13 +7,9 @@ group = "de.atennert"
 kotlin {
     val linuxTarget = when (System.getProperty("os.name")) {
         "Linux" -> {
-            val architecture: String = ByteArrayOutputStream().use { os ->
-                project.exec {
-                    commandLine("uname", "-m")
-                    standardOutput = os
-                }
-                os.toString().trim()
-            }
+            val architecture: String = providers.exec {
+                commandLine("uname", "-m")
+            }.standardOutput.asText.get().trim()
             when {
                 architecture == "x86_64" -> linuxX64()
                 architecture.startsWith("arm64") -> linuxArm64("linuxX64")
@@ -33,7 +27,7 @@ kotlin {
     }
     linuxTarget.apply {
         compilations.getByName("main") {
-            val gtk by cinterops.creating
+            cinterops.create("gtk")
         }
     }
 

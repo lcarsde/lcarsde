@@ -1,41 +1,43 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarsde.lifecycle.closeWith
+import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarswm.*
-import de.atennert.lcarswm.drawing.ColorFactory
-import de.atennert.lcarswm.drawing.FontProvider
+import de.atennert.lcarswm.drivenPorts.drawing.DrawFactory
+import de.atennert.lcarswm.drivenPorts.drawing.Surface
+import de.atennert.lcarswm.drivenPorts.drawing.TextAlignment
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.keys.KeyManager
 import de.atennert.lcarswm.monitor.Monitor
 import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.settings.GeneralSetting
 import de.atennert.lcarswm.system.*
 import de.atennert.rx.NextObserver
 import de.atennert.rx.Subscription
 import de.atennert.rx.operators.filter
+import gtk.*
 import kotlinx.cinterop.*
-import xlib.*
+import xlib.RROutput
 
 @ExperimentalForeignApi
 class PosixButton(
     private val display: CPointer<Display>?,
-    private val screen: Screen,
-    private val colorFactory: ColorFactory,
-    private val fontProvider: FontProvider,
+    screen: Screen,
     monitorManager: MonitorManager<RROutput>,
     keyManager: KeyManager,
     eventStore: EventStore,
     private val text: String,
-    colorSet: ColorSet,
+    private val colorSet: ColorSet,
     private var x: Int,
     private var y: Int,
     private val width: Int,
     private val height: Int,
+    settings: Map<GeneralSetting, String>,
     private val onClick: () -> Unit,
 ) : Button<Window> {
-    private val normalColorXft = colorFactory.createXftColor(colorSet.base)
-    private val hoverColorXft = colorFactory.createXftColor(colorSet.light)
-    private val pressedColorXft = colorFactory.createXftColor(colorSet.dark)
-    private val textColorXft = colorFactory.createXftColor(BLACK)
+    private val drawFactory by inject<DrawFactory>()
+
+    private val fontFamily = settings[GeneralSetting.FONT]
 
     override val id: Window = wrapXCreateSimpleWindow(
         display,
@@ -49,7 +51,18 @@ class PosixButton(
         0.convert(),
     )
 
+    val cairoSurface = drawFactory.createSurface(
+        Surface.Configuration(
+            display,
+            id,
+            screen.root_visual,
+            width,
+            height,
+        )
+    )
+
     private val borderSpace = 4
+    private val textH = 11
 
     private var xOffset = 0
 
@@ -88,20 +101,20 @@ class PosixButton(
     init {
         subscription.add(
             eventStore.enterNotifyObs
-            .filter { it == id }
-            .subscribe(NextObserver {
-                isHovered = true
-                draw()
-            })
+                .filter { it == id }
+                .subscribe(NextObserver {
+                    isHovered = true
+                    draw()
+                })
         )
 
         subscription.add(
             eventStore.leaveNotifyObs
-            .filter { it == id }
-            .subscribe(NextObserver {
-                isHovered = false
-                draw()
-            })
+                .filter { it == id }
+                .subscribe(NextObserver {
+                    isHovered = false
+                    draw()
+                })
         )
 
         closeWith(PosixButton::cleanup)
@@ -121,6 +134,7 @@ class PosixButton(
 
         wrapXMapWindow(display, id)
 
+        cairoSurface.setSize(width, height)
         draw()
 
         subscription.add(
@@ -135,37 +149,27 @@ class PosixButton(
     }
 
     private fun draw() {
-        val pixmap =
-            wrapXCreatePixmap(display, screen.root, width.convert(), height.convert(), screen.root_depth.convert())
-        val xftDraw = wrapXftDrawCreate(display, pixmap, screen.root_visual!!, colorFactory.colorMapId)
+        val cr = cairoSurface.createSession()
+
         val backgroundColor = when {
-            isPressed -> pressedColorXft
-            isHovered -> hoverColorXft
-            else -> normalColorXft
+            isPressed -> colorSet.dark
+            isHovered -> colorSet.light
+            else -> colorSet.base
         }
 
-        wrapXftDrawRect(xftDraw, backgroundColor.ptr, 0, 0, width.convert(), height.convert())
+        cr.drawRectangle(0, 0, width, height, backgroundColor)
 
-        val textW = width - 2 * borderSpace
-        val textH = 11
-        val (ascent, descent) = fontProvider.getAscDsc(textH, PANGO_WEIGHT_NORMAL)
-        val textY = 25 + (((textH * PANGO_SCALE)
-                - (ascent + descent))
-                / 2 + ascent) / PANGO_SCALE
-        wrapPangoLayoutSetText(fontProvider.layout, text, text.length)
-        wrapPangoLayoutSetWidth(fontProvider.layout, textW * PANGO_SCALE)
-        val rect = nativeHeap.alloc<PangoRectangle>()
-        wrapPangoLayoutGetPixelExtents(fontProvider.layout, null, rect.ptr)
-        val textX = textW + borderSpace - rect.width
-        val line = wrapPangoLayoutGetLineReadonly(fontProvider.layout, 0)
-        wrapPangoXftRenderLayoutLine(xftDraw, textColorXft.ptr, line, textX * PANGO_SCALE, textY * PANGO_SCALE)
+        cr.drawText(
+            text,
+            fontFamily,
+            width - borderSpace,
+            height - textH - borderSpace,
+            textH,
+            TextAlignment.RIGHT,
+            BLACK
+        )
 
-        wrapXSetWindowBackgroundPixmap(display, id, pixmap)
-        wrapXClearWindow(display, id)
-        wrapXftDrawDestroy(xftDraw)
-        wrapXFreePixmap(display, pixmap)
-
-        nativeHeap.free(rect.rawPtr)
+        cr.dispose()
     }
 
     override fun changePosition(x: Int, y: Int) {
@@ -185,6 +189,7 @@ class PosixButton(
 
     private fun cleanup() {
         subscription.unsubscribe()
+        cairoSurface.dispose()
         wrapXUnmapWindow(display, id)
         wrapXDestroyWindow(display, id)
     }

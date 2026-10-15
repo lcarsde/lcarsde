@@ -4,9 +4,9 @@ import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
+import gtk.ClientMessage
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.ClientMessage
-import xlib.XEvent
 
 @ExperimentalForeignApi
 class ClientMessageHandler(private val atomLibrary: AtomLibrary) : XEventHandler {

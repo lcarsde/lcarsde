@@ -5,8 +5,12 @@ import de.atennert.lcarswm.system.api.RandrApi
 import de.atennert.rx.BehaviorSubject
 import de.atennert.rx.operators.combineLatestWith
 import de.atennert.rx.operators.map
+import gtk.Window
 import kotlinx.cinterop.*
-import xlib.*
+import xlib.RRCrtc
+import xlib.RROutput
+import xlib.XRROutputInfo
+import xlib.XRRScreenResources
 import kotlin.math.max
 
 @ExperimentalForeignApi
@@ -52,18 +56,18 @@ class MonitorManagerImpl(private val randrApi: RandrApi, private val rootWindowI
 
         lastMonitorBuildersSj.next(
             activeMonitorInfos
-            .map { (monitorId, _) -> monitorId }
-            .zip(monitorNames)
-            .map { (id, name) -> Monitor.Builder(id, name, id == primary) }
-            .zip(activeMonitorInfos.map { it.second })
-            .map { (monitor, outputInfo) ->
-                addMeasurementToMonitor(
-                    monitor,
-                    outputInfo!!.pointed.crtc,
-                    monitorData
-                )
-            }
-            .sortedBy { (it.y + it.height).toULong().shl(32) + it.x.toULong() })
+                .map { (monitorId, _) -> monitorId }
+                .zip(monitorNames)
+                .map { (id, name) -> Monitor.Builder(id, name, id == primary) }
+                .zip(activeMonitorInfos.map { it.second })
+                .map { (monitor, outputInfo) ->
+                    addMeasurementToMonitor(
+                        monitor,
+                        outputInfo!!.pointed.crtc,
+                        monitorData
+                    )
+                }
+                .sortedBy { (it.y + it.height).toULong().shl(32) + it.x.toULong() })
     }
 
     private fun getMonitorData(): CPointer<XRRScreenResources> {

@@ -7,11 +7,11 @@ import de.atennert.lcarswm.keys.*
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.system.SystemCallMocker
 import de.atennert.lcarswm.system.SystemFacadeMock
+import gtk.MappingNotify
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.nativeHeap
-import xlib.MappingNotify
-import xlib.XEvent
 import kotlin.test.*
 
 @ExperimentalForeignApi

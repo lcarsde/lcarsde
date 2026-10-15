@@ -2,9 +2,9 @@ package de.atennert.lcarswm.events
 
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
+import gtk.SelectionClear
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.SelectionClear
-import xlib.XEvent
 
 class SelectionClearHandler : XEventHandler {
     private val logger by inject<Logger>()

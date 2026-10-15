@@ -4,6 +4,8 @@ import de.atennert.lcarswm.X_FALSE
 import de.atennert.lcarswm.X_TRUE
 import de.atennert.lcarswm.signal.Signal
 import de.atennert.lcarswm.system.api.SystemApi
+import de.atennert.lcarswm.toX
+import gtk.*
 import kotlinx.cinterop.*
 import platform.posix.sigaction
 import platform.posix.sigemptyset
@@ -67,7 +69,7 @@ class SystemFacade : SystemApi {
     }
 
     override fun internAtom(name: String, onlyIfExists: Boolean): Atom {
-        return XInternAtom(display, name, convertToXBoolean(onlyIfExists))
+        return XInternAtom(display, name, onlyIfExists.toX())
     }
 
     override fun changeProperty(
@@ -159,7 +161,7 @@ class SystemFacade : SystemApi {
     }
 
     override fun synchronize(sync: Boolean) {
-        XSynchronize(display, convertToXBoolean(sync))
+        XSynchronize(display, sync.toX())
     }
 
     override fun xFree(xObject: CPointer<*>?) {
@@ -167,7 +169,7 @@ class SystemFacade : SystemApi {
     }
 
     override fun sync(discardQueuedEvents: Boolean): Int {
-        return XSync(display, convertToXBoolean(discardQueuedEvents))
+        return XSync(display, discardQueuedEvents.toX())
     }
 
     override fun sendEvent(
@@ -179,7 +181,7 @@ class SystemFacade : SystemApi {
         event.pointed.xconfigure.display = display
         event.pointed.xclient.display = display
 
-        return XSendEvent(display, window, convertToXBoolean(propagate), eventMask, event)
+        return XSendEvent(display, window, propagate.toX(), eventMask, event)
     }
 
     override fun nextEvent(event: CPointer<XEvent>): Int {
@@ -267,7 +269,7 @@ class SystemFacade : SystemApi {
             button,
             modifiers,
             window,
-            convertToXBoolean(ownerEvents),
+            ownerEvents.toX(),
             mask,
             pointerMode,
             keyboardMode,
@@ -364,212 +366,5 @@ class SystemFacade : SystemApi {
         crtc: RRCrtc
     ): CPointer<XRRCrtcInfo>? {
         return XRRGetCrtcInfo(display, resources, crtc)
-    }
-
-    override fun fillRectangle(
-        drawable: Drawable,
-        graphicsContext: GC,
-        x: Int,
-        y: Int,
-        width: UInt,
-        height: UInt
-    ): Int {
-        return XFillRectangle(display, drawable, graphicsContext, x, y, width, height)
-    }
-
-    override fun fillRectangles(
-        drawable: Drawable,
-        graphicsContext: GC,
-        rects: CValuesRef<XRectangle>,
-        rectCount: Int
-    ): Int {
-        return XFillRectangles(display, drawable, graphicsContext, rects, rectCount)
-    }
-
-    override fun drawPoint(drawable: Drawable, graphicsContext: GC, x: Int, y: Int): Int {
-        return XDrawPoint(display, drawable, graphicsContext, x, y)
-    }
-
-    override fun putImage(
-        drawable: Drawable,
-        graphicsContext: GC,
-        image: CValuesRef<XImage>,
-        x: Int,
-        y: Int,
-        width: UInt,
-        height: UInt
-    ): Int {
-        return XPutImage(display, drawable, graphicsContext, image, 0, 0, x, y, width, height)
-    }
-
-    override fun createGC(
-        drawable: Drawable,
-        mask: ULong,
-        gcValues: CValuesRef<XGCValues>?
-    ): GC? {
-        return XCreateGC(display, drawable, mask, gcValues)
-    }
-
-    override fun freeGC(graphicsContext: GC): Int {
-        return XFreeGC(display, graphicsContext)
-    }
-
-    override fun createColormap(
-        window: Window,
-        visual: CValuesRef<Visual>,
-        alloc: Int
-    ): Colormap {
-        return XCreateColormap(display, window, visual, alloc)
-    }
-
-    override fun allocColor(colorMap: Colormap, color: CPointer<XColor>): Int {
-        return XAllocColor(display, colorMap, color)
-    }
-
-    override fun freeColors(
-        colorMap: Colormap,
-        pixels: CValuesRef<ULongVar>,
-        pixelCount: Int
-    ): Int {
-        return XFreeColors(display, colorMap, pixels, pixelCount, 0.convert())
-    }
-
-    override fun freeColormap(colorMap: Colormap): Int {
-        return XFreeColormap(display, colorMap)
-    }
-
-    override fun createPixmap(drawable: Drawable, width: UInt, height: UInt, depth: UInt): Pixmap {
-        return XCreatePixmap(display, drawable, width, height, depth)
-    }
-
-    override fun xftDrawCreate(drawable: Drawable, visual: CValuesRef<Visual>, colorMap: Colormap): CPointer<XftDraw>? {
-        return XftDrawCreate(display, drawable, visual, colorMap)
-    }
-
-    override fun xftDrawRect(
-        xftDraw: CPointer<XftDraw>?,
-        color: CPointer<XftColor>,
-        x: Int,
-        y: Int,
-        width: UInt,
-        height: UInt
-    ) {
-        XftDrawRect(xftDraw, color, x, y, width, height)
-    }
-
-    override fun setWindowBackgroundPixmap(window: Window, pixmap: Pixmap) {
-        XSetWindowBackgroundPixmap(display, window, pixmap)
-    }
-
-    override fun clearWindow(window: Window) {
-        XClearWindow(display, window)
-    }
-
-    override fun freePixmap(pixmap: Pixmap) {
-        XFreePixmap(display, pixmap)
-    }
-
-    override fun xftGetContext(screen: Int): CPointer<PangoContext>? {
-        return pango_xft_get_context(display, screen)
-    }
-
-    override fun newLayout(pango: CPointer<PangoContext>?): CPointer<PangoLayout>? {
-        return pango_layout_new(pango)
-    }
-
-    override fun getFontDescription(): CPointer<PangoFontDescription>? {
-        return pango_font_description_new()
-    }
-
-    override fun getDefaultLanguage(): CPointer<PangoLanguage>? {
-        return pango_language_get_default()
-    }
-
-    override fun setFontDescriptionFamily(font: CPointer<PangoFontDescription>?, family: String) {
-        pango_font_description_set_family(font, family)
-    }
-
-    override fun setFontDescriptionWeight(font: CPointer<PangoFontDescription>?, weight: PangoWeight) {
-        pango_font_description_set_weight(font, weight)
-    }
-
-    override fun setFontDescriptionStyle(font: CPointer<PangoFontDescription>?, style: PangoStyle) {
-        pango_font_description_set_style(font, style)
-    }
-
-    override fun setFontDescriptionSize(font: CPointer<PangoFontDescription>?, size: Int) {
-        pango_font_description_set_size(font, size)
-    }
-
-    override fun freeFontDescription(font: CPointer<PangoFontDescription>?) {
-        pango_font_description_free(font)
-    }
-
-    override fun setLayoutFontDescription(
-        layout: CPointer<PangoLayout>?,
-        fontDescription: CPointer<PangoFontDescription>?
-    ) {
-        pango_layout_set_font_description(layout, fontDescription)
-    }
-
-    override fun setLayoutWrapMode(layout: CPointer<PangoLayout>?, wrapMode: PangoWrapMode) {
-        pango_layout_set_wrap(layout, wrapMode)
-    }
-
-    override fun setLayoutText(layout: CPointer<PangoLayout>?, text: String) {
-        pango_layout_set_text(layout, text, text.length)
-    }
-
-    override fun setLayoutWidth(layout: CPointer<PangoLayout>?, width: Int) {
-        pango_layout_set_width(layout, width)
-    }
-
-    override fun setLayoutEllipsizeMode(layout: CPointer<PangoLayout>?, ellipsizeMode: PangoEllipsizeMode) {
-        pango_layout_set_ellipsize(layout, ellipsizeMode)
-    }
-
-    override fun setLayoutSingleParagraphMode(layout: CPointer<PangoLayout>?, setting: Boolean) {
-        pango_layout_set_single_paragraph_mode(layout, convertToXBoolean(setting))
-    }
-
-    override fun getLayoutPixelExtents(layout: CPointer<PangoLayout>?, logicalRectangle: CPointer<PangoRectangle>?) {
-        pango_layout_get_pixel_extents(layout, null, logicalRectangle)
-    }
-
-    override fun getLayoutLineReadonly(layout: CPointer<PangoLayout>?, line: Int): CPointer<PangoLayoutLine>? {
-        return pango_layout_get_line_readonly(layout, line)
-    }
-
-    override fun xftRenderLayoutLine(
-        draw: CPointer<XftDraw>?,
-        color: CPointer<XftColor>,
-        line: CPointer<PangoLayoutLine>?,
-        x: Int,
-        y: Int
-    ) {
-        pango_xft_render_layout_line(draw, color, line, x, y)
-    }
-
-    override fun getFontMetrics(
-        context: CPointer<PangoContext>?,
-        font: CPointer<PangoFontDescription>?,
-        language: CPointer<PangoLanguage>?
-    ): CPointer<PangoFontMetrics>? {
-        return pango_context_get_metrics(context, font, language)
-    }
-
-    override fun getFontAscentDescent(metrics: CPointer<PangoFontMetrics>?): Pair<Int, Int> {
-        val ascent = pango_font_metrics_get_ascent(metrics)
-        val descent = pango_font_metrics_get_descent(metrics)
-        return Pair(ascent, descent)
-    }
-
-    override fun freeFontMetrics(metrics: CPointer<PangoFontMetrics>?) {
-        pango_font_metrics_unref(metrics)
-    }
-
-    private fun convertToXBoolean(ownerEvents: Boolean): Int = when (ownerEvents) {
-        true -> X_TRUE
-        false -> X_FALSE
     }
 }

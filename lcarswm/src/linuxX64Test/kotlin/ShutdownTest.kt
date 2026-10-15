@@ -19,9 +19,9 @@ import de.atennert.lcarswm.system.FunctionCall
 import de.atennert.lcarswm.system.SystemCallMocker
 import de.atennert.lcarswm.system.SystemFacadeMock
 import de.atennert.mock.drawing.MockDrawFactory
+import gtk.*
 import kotlinx.cinterop.*
 import kotlinx.coroutines.runBlocking
-import xlib.*
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.test.*
 
@@ -411,8 +411,6 @@ class ShutdownTest : SystemCallMocker() {
         checkThatTheLoggerIsClosed()
         checkFinalizingSync(functionCalls)
         checkClosingOfAppMenuMessageQueues(functionCalls)
-        checkFreeingOfColors(functionCalls)
-        checkFreeingOfColorMap(functionCalls)
         checkWindowPropertyRemoval(functionCalls, testFacade.atomMap, "_NET_SUPPORTED")
         checkSelectInputSetting(functionCalls, NoEventMask)
         checkThatSupportWindowWasDestroyed(functionCalls)
@@ -476,8 +474,6 @@ class ShutdownTest : SystemCallMocker() {
         checkThatTheLoggerIsClosed()
         checkFinalizingSync(functionCalls)
         checkClosingOfAppMenuMessageQueues(functionCalls)
-        checkFreeingOfColors(functionCalls)
-        checkFreeingOfColorMap(functionCalls)
         checkWindowPropertyRemoval(functionCalls, testFacade.atomMap, "_NET_SUPPORTED")
         checkSelectInputSetting(functionCalls, NoEventMask)
         checkThatSupportWindowWasDestroyed(functionCalls)
@@ -574,18 +570,6 @@ class ShutdownTest : SystemCallMocker() {
 //        // receive info queue
 //        assertEquals("mqClose", functionCalls.removeAt(0).name, "the app menu message queue needs to be closed on shutdown")
 //        assertEquals("mqUnlink", functionCalls.removeAt(0).name, "the app menu message queue needs to be unlinked on shutdown")
-    }
-
-    private fun checkFreeingOfColors(functionCalls: MutableList<FunctionCall>) {
-        assertEquals("freeColors", functionCalls.removeAt(0).name, "the acquired colors need to be freed on shutdown")
-    }
-
-    private fun checkFreeingOfColorMap(functionCalls: MutableList<FunctionCall>) {
-        assertEquals(
-            "freeColormap",
-            functionCalls.removeAt(0).name,
-            "the acquired color map needs to be freed on shutdown"
-        )
     }
 
     private fun checkThatKeyBindingsWereFreed(

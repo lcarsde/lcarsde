@@ -1,5 +1,6 @@
 package de.atennert.lcarswm.system.api
 
+import gtk.Window
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.IntVar

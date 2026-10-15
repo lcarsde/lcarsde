@@ -1,14 +1,14 @@
 package de.atennert.lcarswm.window
 
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
 import de.atennert.lcarswm.conversion.toUByteArray
-import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.system.api.WindowUtilApi
 import de.atennert.rx.NextObserver
 import de.atennert.rx.operators.map
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.Window
 
 @ExperimentalForeignApi
 fun updateWindowListAtom(

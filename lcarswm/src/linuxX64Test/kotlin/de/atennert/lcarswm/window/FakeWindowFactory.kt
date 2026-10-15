@@ -1,8 +1,8 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.ColorSet
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.Window
 
 @ExperimentalForeignApi
 class FakeWindowFactory : WindowFactory<Window> {

@@ -4,10 +4,10 @@ import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.mouse.MoveWindowManager
 import de.atennert.lcarswm.window.Button
+import gtk.ButtonRelease
+import gtk.Window
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.ButtonRelease
-import xlib.Window
-import xlib.XEvent
 
 @ExperimentalForeignApi
 class ButtonReleaseHandler(

@@ -1,10 +1,10 @@
 package de.atennert.lcarswm.keys
 
+import gtk.AnyModifier
+import gtk.ControlMask
+import gtk.LockMask
+import gtk.ShiftMask
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.AnyModifier
-import xlib.ControlMask
-import xlib.LockMask
-import xlib.ShiftMask
 
 @ExperimentalForeignApi
 fun getMask(l: List<Modifiers>): Int {

@@ -3,11 +3,11 @@ package de.atennert.lcarswm.events
 import de.atennert.lcarsde.lifecycle.ServiceLocator
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.free
 import kotlinx.cinterop.nativeHeap
-import xlib.XEvent
 import kotlin.test.*
 
 @ExperimentalForeignApi

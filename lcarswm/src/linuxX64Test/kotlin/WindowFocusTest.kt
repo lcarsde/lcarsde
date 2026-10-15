@@ -1,12 +1,12 @@
 import de.atennert.lcarswm.system.FunctionCall
+import gtk.Above
+import gtk.CWStackMode
+import gtk.Window
+import gtk.XWindowChanges
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.pointed
-import xlib.Above
-import xlib.CWStackMode
-import xlib.Window
-import xlib.XWindowChanges
 import kotlin.test.assertEquals
 
 @ExperimentalForeignApi

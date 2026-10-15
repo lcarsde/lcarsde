@@ -2,8 +2,8 @@ package de.atennert.lcarswm.keys
 
 import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.system.api.InputApi
+import gtk.*
 import kotlinx.cinterop.*
-import xlib.*
 
 /**
  * This class handles the registration of keys for keyboard commands.
@@ -74,6 +74,7 @@ class KeyManager(private val inputApi: InputApi) {
                                     modifierMasks[Modifiers.NUM_LOCK] =
                                         modifierMasks.getOrElse(Modifiers.NUM_LOCK, { 0 }).or(mask)
                                 }
+
                                 XK_Scroll_Lock -> {
                                     modifierMasks[Modifiers.SCROLL_LOCK] =
                                         modifierMasks.getOrElse(Modifiers.SCROLL_LOCK, { 0 }).or(mask)
@@ -87,6 +88,7 @@ class KeyManager(private val inputApi: InputApi) {
                                         mask // overwrite any super-r stuff
                                     }
                                 }
+
                                 XK_Super_R -> {
                                     if (!superLUsed) {
                                         modifierMasks[Modifiers.SUPER] = modifierMasks.getOrElse(
@@ -100,6 +102,7 @@ class KeyManager(private val inputApi: InputApi) {
                                     hyperLUsed = true
                                     mask // overwrite any hyper-r stuff
                                 }
+
                                 XK_Hyper_R -> if (!hyperLUsed) {
                                     modifierMasks[Modifiers.HYPER] = modifierMasks.getOrElse(
                                         Modifiers.HYPER, { 0 }).or(mask)
@@ -111,6 +114,7 @@ class KeyManager(private val inputApi: InputApi) {
                                     altLUsed = true
                                     mask // overwrite any alt-r stuff
                                 }
+
                                 XK_Alt_R -> if (!altLUsed) {
                                     modifierMasks[Modifiers.ALT] = modifierMasks.getOrElse(
                                         Modifiers.ALT, { 0 }).or(mask)
@@ -122,6 +126,7 @@ class KeyManager(private val inputApi: InputApi) {
                                     metaLUsed = true
                                     mask // overwrite any meta-r stuff
                                 }
+
                                 XK_Meta_R -> if (!metaLUsed) {
                                     modifierMasks[Modifiers.META] = modifierMasks.getOrElse(
                                         Modifiers.META, { 0 }).or(mask)

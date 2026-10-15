@@ -4,11 +4,11 @@ import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.monitor.MonitorManager
 import de.atennert.lcarswm.system.api.SystemApi
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import xlib.RRScreenChangeNotify
-import xlib.XEvent
 
 @ExperimentalForeignApi
 class RandrHandlerFactory(systemApi: SystemApi) {

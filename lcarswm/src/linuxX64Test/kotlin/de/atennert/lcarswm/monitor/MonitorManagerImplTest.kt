@@ -3,6 +3,7 @@ package de.atennert.lcarswm.monitor
 import de.atennert.lcarswm.ScreenMode
 import de.atennert.lcarswm.system.SystemFacadeMock
 import de.atennert.rx.NextObserver
+import gtk.Window
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import kotlinx.cinterop.CPointer
@@ -10,7 +11,6 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.pointed
 import xlib.RROutput
-import xlib.Window
 import xlib.XRROutputInfo
 import xlib.XRRScreenResources
 import kotlin.test.Test

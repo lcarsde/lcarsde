@@ -1,8 +1,8 @@
 package de.atennert.lcarswm.system
 
 import de.atennert.lcarswm.system.api.WindowUtilApi
+import gtk.*
 import kotlinx.cinterop.*
-import xlib.*
 
 @ExperimentalForeignApi
 open class WindowUtilApiMock : WindowUtilApi {

@@ -2,9 +2,9 @@ package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.ScreenMode
 import de.atennert.lcarswm.system.FunctionCall
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
-import xlib.Window
 
 @ExperimentalForeignApi
 class FakeManagedWindow(

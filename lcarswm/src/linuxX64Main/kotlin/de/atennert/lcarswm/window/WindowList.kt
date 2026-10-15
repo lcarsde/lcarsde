@@ -2,28 +2,34 @@ package de.atennert.lcarswm.window
 
 import de.atennert.rx.BehaviorSubject
 import de.atennert.rx.Subject
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.Window
 
 @ExperimentalForeignApi
 sealed class WindowEvent(val window: ManagedWmWindow<Window>)
+
 @ExperimentalForeignApi
 class WindowAddedEvent(window: ManagedWmWindow<Window>) : WindowEvent(window)
+
 @ExperimentalForeignApi
 class WindowUpdatedEvent(window: ManagedWmWindow<Window>) : WindowEvent(window)
+
 @ExperimentalForeignApi
 class WindowRemovedEvent(window: ManagedWmWindow<Window>) : WindowEvent(window)
 
 class WindowList {
     @ExperimentalForeignApi
     private val windowsSj = BehaviorSubject<Set<ManagedWmWindow<Window>>>(emptySet())
+
     @ExperimentalForeignApi
     val windowsObs = windowsSj.asObservable()
+
     @ExperimentalForeignApi
     private var windows by windowsSj
 
     @ExperimentalForeignApi
     private val windowEventSj = Subject<WindowEvent>()
+
     @ExperimentalForeignApi
     val windowEventObs = windowEventSj.asObservable()
 

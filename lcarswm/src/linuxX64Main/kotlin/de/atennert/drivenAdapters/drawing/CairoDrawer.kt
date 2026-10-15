@@ -2,9 +2,11 @@ package de.atennert.drivenAdapters.drawing
 
 import de.atennert.lcarswm.drawing.Color
 import de.atennert.lcarswm.drivenPorts.drawing.*
+import gtk.*
 import kotlinx.cinterop.*
 import platform.posix.M_PI
-import xlib.*
+import xlib.cairo_xlib_surface_create
+import xlib.cairo_xlib_surface_set_size
 
 private object Arc {
     const val DOWN = 90 * (M_PI / 180)

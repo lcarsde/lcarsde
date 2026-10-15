@@ -2,9 +2,9 @@ package de.atennert.lcarswm.events
 
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
+import gtk.UnmapNotify
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.UnmapNotify
-import xlib.XEvent
 
 /**
  * Unregister known windows and redraw the root window on unmap notify.

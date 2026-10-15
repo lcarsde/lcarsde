@@ -4,11 +4,11 @@ import de.atennert.lcarswm.RootWindowPropertyHandler
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
 import de.atennert.lcarswm.system.api.WindowUtilApi
+import gtk.*
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.pointed
-import xlib.*
 
 /**
  * Tracks the time of events.
@@ -21,6 +21,7 @@ class EventTime(
     private val rootWindowPropertyHandler: RootWindowPropertyHandler
 ) {
     private var _lastEventTime: Time = CurrentTime.convert()
+
     /** The last known event time ... use to trigger other stuff */
     val lastEventTime: Time
         get() {
@@ -46,7 +47,7 @@ class EventTime(
      * Reset the known last event time.
      */
     fun resetEventTime() {
-        _lastEventTime == CurrentTime.convert<Time>()
+        _lastEventTime = CurrentTime.convert<Time>()
     }
 
     fun unsetEventTime() {

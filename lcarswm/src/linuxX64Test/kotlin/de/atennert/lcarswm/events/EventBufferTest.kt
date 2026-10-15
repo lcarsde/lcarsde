@@ -1,8 +1,8 @@
 package de.atennert.lcarswm.events
 
 import de.atennert.lcarswm.system.SystemFacadeMock
+import gtk.XEvent
 import kotlinx.cinterop.*
-import xlib.XEvent
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

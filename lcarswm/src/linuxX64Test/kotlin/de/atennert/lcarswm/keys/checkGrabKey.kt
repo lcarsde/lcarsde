@@ -1,8 +1,8 @@
 package de.atennert.lcarswm.keys
 
 import de.atennert.lcarswm.system.SystemFacadeMock
+import gtk.GrabModeAsync
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.GrabModeAsync
 import kotlin.test.assertEquals
 
 @ExperimentalForeignApi

@@ -3,9 +3,9 @@ package de.atennert.lcarswm.events
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.mouse.MoveWindowManager
+import gtk.MotionNotify
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.MotionNotify
-import xlib.XEvent
 
 class MotionNotifyHandler(
     private val moveWindowManager: MoveWindowManager

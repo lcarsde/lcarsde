@@ -1,8 +1,8 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.system.FunctionCall
+import gtk.StructureNotifyMask
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.StructureNotifyMask
 import kotlin.test.assertEquals
 
 @ExperimentalForeignApi

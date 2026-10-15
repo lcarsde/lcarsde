@@ -1,9 +1,11 @@
 package de.atennert.lcarswm.system.api
 
+import gtk.*
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.IntVar
-import xlib.*
+import xlib.xmlDocPtr
+import xlib.xmlNodePtr
 
 /**
  *
@@ -22,8 +24,10 @@ interface InputApi {
 
     fun ungrabKeyboard(time: Time)
 
-    fun grabButton(button: UInt, modifiers: UInt, window: Window, ownerEvents: Boolean,
-                   mask: UInt, pointerMode: Int, keyboardMode: Int, windowToConfineTo: Window, cursor: Cursor): Int
+    fun grabButton(
+        button: UInt, modifiers: UInt, window: Window, ownerEvents: Boolean,
+        mask: UInt, pointerMode: Int, keyboardMode: Int, windowToConfineTo: Window, cursor: Cursor
+    ): Int
 
     fun ungrabButton(button: UInt, modifiers: UInt, window: Window): Int
 
@@ -35,7 +39,11 @@ interface InputApi {
 
     fun getDisplayKeyCodeMinMaxCounts(): Pair<Int, Int>
 
-    fun getKeyboardMapping(firstKeyCode: KeyCode, keyCodeCount: Int, keySymsPerKeyCode: CPointer<IntVar>): CPointer<KeySymVar>?
+    fun getKeyboardMapping(
+        firstKeyCode: KeyCode,
+        keyCodeCount: Int,
+        keySymsPerKeyCode: CPointer<IntVar>
+    ): CPointer<KeySymVar>?
 
     fun keysymToKeycode(keySym: KeySym): KeyCode
 

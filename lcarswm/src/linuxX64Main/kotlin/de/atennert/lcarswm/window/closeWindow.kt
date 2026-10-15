@@ -1,14 +1,14 @@
 package de.atennert.lcarswm.window
 
+import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.Atoms
-import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.system.api.SystemApi
+import gtk.AtomVar
+import gtk.ClientMessage
+import gtk.Window
+import gtk.XEvent
 import kotlinx.cinterop.*
-import xlib.AtomVar
-import xlib.ClientMessage
-import xlib.Window
-import xlib.XEvent
 
 @ExperimentalForeignApi
 fun closeWindow(logger: Logger, systemApi: SystemApi, atomLibrary: AtomLibrary, windowId: Window) {

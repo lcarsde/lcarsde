@@ -2,6 +2,7 @@ import de.atennert.drivenAdapters.drawing.CairoDrawFactory
 import de.atennert.drivenAdapters.process.ProcessBuilderAdapter
 import de.atennert.lcarsde.file.PosixFiles
 import de.atennert.lcarsde.lifecycle.ServiceLocator
+import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarsde.time.PosixTime
@@ -46,6 +47,7 @@ fun main() = runBlocking {
     ServiceLocator.provide<Logger> { createLogger(PosixFiles, cacheDirPath, PosixTime) }
     ServiceLocator.provide<DrawFactory> { CairoDrawFactory }
     ServiceLocator.provide<ProcessBuilderFactory> { ProcessBuilderAdapter.Factory }
+    ServiceLocator.closeWith { clear() }
 
     runWindowManager(system, resourceGenerator)
 

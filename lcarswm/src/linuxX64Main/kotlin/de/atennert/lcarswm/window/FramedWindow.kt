@@ -1,9 +1,9 @@
 package de.atennert.lcarswm.window
 
 import de.atennert.lcarswm.atom.TextAtomReader
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
-import xlib.Window
 
 /**
  * POJO for registered windows.

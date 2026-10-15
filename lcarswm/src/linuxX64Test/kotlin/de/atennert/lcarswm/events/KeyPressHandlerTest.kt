@@ -14,11 +14,11 @@ import de.atennert.lcarswm.system.SystemFacadeMock
 import de.atennert.lcarswm.window.WindowCoordinatorMock
 import de.atennert.lcarswm.window.WindowFocusHandler
 import de.atennert.lcarswm.window.WindowList
+import gtk.*
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.nativeHeap
-import xlib.*
 import kotlin.test.*
 
 @ExperimentalForeignApi

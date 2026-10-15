@@ -1,7 +1,7 @@
 package de.atennert.lcarswm.events
 
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.XEvent
 
 /**
  * Interface for handlers of X events.

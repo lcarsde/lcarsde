@@ -3,11 +3,11 @@ package de.atennert.lcarswm.atom
 import de.atennert.lcarswm.conversion.toULongArray
 import de.atennert.lcarswm.system.wrapXFree
 import de.atennert.lcarswm.system.wrapXGetWindowProperty
+import gtk.Display
+import gtk.FALSE
+import gtk.Success
+import gtk.Window
 import kotlinx.cinterop.*
-import xlib.Display
-import xlib.FALSE
-import xlib.Success
-import xlib.Window
 
 @ExperimentalForeignApi
 class NumberAtomReader(private val display: CPointer<Display>?, private val atomLibrary: AtomLibrary) {

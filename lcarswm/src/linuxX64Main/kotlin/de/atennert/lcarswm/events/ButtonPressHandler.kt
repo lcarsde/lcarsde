@@ -8,11 +8,11 @@ import de.atennert.lcarswm.window.Button
 import de.atennert.lcarswm.window.PosixTransientWindow
 import de.atennert.lcarswm.window.WindowFocusHandler
 import de.atennert.lcarswm.window.WindowList
+import gtk.ButtonPress
+import gtk.ReplayPointer
+import gtk.Window
+import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
-import xlib.ButtonPress
-import xlib.ReplayPointer
-import xlib.Window
-import xlib.XEvent
 
 @ExperimentalForeignApi
 class ButtonPressHandler(

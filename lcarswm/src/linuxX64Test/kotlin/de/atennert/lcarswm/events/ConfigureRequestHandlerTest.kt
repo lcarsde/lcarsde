@@ -4,12 +4,12 @@ import de.atennert.lcarsde.lifecycle.ServiceLocator
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.rx.NextObserver
+import gtk.ConfigureRequest
+import gtk.Window
+import gtk.XConfigureRequestEvent
+import gtk.XEvent
 import io.kotest.matchers.shouldBe
 import kotlinx.cinterop.*
-import xlib.ConfigureRequest
-import xlib.Window
-import xlib.XConfigureRequestEvent
-import xlib.XEvent
 import kotlin.test.*
 
 /**

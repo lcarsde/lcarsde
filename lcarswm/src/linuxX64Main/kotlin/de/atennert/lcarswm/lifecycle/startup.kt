@@ -9,8 +9,6 @@ import de.atennert.lcarswm.*
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.atom.NumberAtomReader
 import de.atennert.lcarswm.atom.TextAtomReader
-import de.atennert.lcarswm.drawing.ColorFactory
-import de.atennert.lcarswm.drawing.FontProvider
 import de.atennert.lcarswm.drawing.FrameDrawer
 import de.atennert.lcarswm.drawing.RootWindowDrawer
 import de.atennert.lcarswm.environment.Environment
@@ -32,6 +30,7 @@ import de.atennert.rx.operators.map
 import de.atennert.rx.operators.withLatestFrom
 import de.atennert.rx.util.Tuple
 import exitState
+import gtk.*
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.cinterop.*
 import platform.posix.waitpid
@@ -151,8 +150,6 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
 
     val monitorManager = MonitorManagerImpl(system, screen.root)
 
-    val fontProvider = FontProvider(system, settings.generalSettings, system.defaultScreenNumber())
-    val colorHandler = ColorFactory(system, screen)
     val uiDrawer =
         RootWindowDrawer(
             system,
@@ -191,7 +188,7 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
 
     WindowStack(system.display, windowList, focusHandler)
 
-    val frameDrawer = FrameDrawer(system, system, fontProvider, colorHandler, screen)
+    val frameDrawer = FrameDrawer(system, screen, settings.generalSettings)
 
     val textAtomReader = TextAtomReader(system, atomLibrary)
     val numberAtomReader = NumberAtomReader(system.display, atomLibrary)
@@ -201,8 +198,6 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
     val windowFactory = PosixWindowFactory(
         system.display,
         screen,
-        colorHandler,
-        fontProvider,
         keyManager,
         monitorManager,
         atomLibrary,
@@ -212,7 +207,8 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
         textAtomReader,
         numberAtomReader,
         frameDrawer,
-        windowListMessageQueue
+        windowListMessageQueue,
+        settings.generalSettings
     )
 
     val windowCoordinator =

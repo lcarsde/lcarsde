@@ -2,8 +2,8 @@ package de.atennert.lcarswm.events
 
 import de.atennert.lcarswm.system.wrapXSendEvent
 import de.atennert.lcarswm.window.WindowMeasurements
+import gtk.*
 import kotlinx.cinterop.*
-import xlib.*
 
 @ExperimentalForeignApi
 fun sendConfigureNotify(

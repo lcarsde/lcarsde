@@ -1,13 +1,13 @@
 package de.atennert.lcarswm.window
 
+import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.conversion.toULongArray
-import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarswm.system.WindowUtilApiMock
+import gtk.Atom
+import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
-import xlib.Atom
-import xlib.Window
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

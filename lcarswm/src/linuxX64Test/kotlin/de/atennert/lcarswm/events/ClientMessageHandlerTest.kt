@@ -5,10 +5,10 @@ import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.log.LoggerMock
 import de.atennert.lcarswm.system.SystemFacadeMock
+import gtk.ClientMessage
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.nativeHeap
-import xlib.ClientMessage
 import kotlin.test.*
 
 @ExperimentalForeignApi

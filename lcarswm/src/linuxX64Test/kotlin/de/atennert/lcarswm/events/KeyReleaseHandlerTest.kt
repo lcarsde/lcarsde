@@ -15,8 +15,8 @@ import de.atennert.lcarswm.system.SystemFacadeMock
 import de.atennert.lcarswm.window.WindowFocusHandler
 import de.atennert.lcarswm.window.WindowList
 import de.atennert.mock.process.MockProcessBuilder
+import gtk.*
 import kotlinx.cinterop.*
-import xlib.*
 import kotlin.test.*
 
 /**
