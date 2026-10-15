@@ -1,3 +1,37 @@
+# lcarsde
+
+lcarsde is a desktop environment for X11 with an LCARS-like look: a window manager plus Tool Apps, all in Kotlin/Native (Kotlin Multiplatform, `linuxX64` target), in one Gradle build.
+
+Use the vocabulary in [`CONTEXT.md`](CONTEXT.md) (Window Manager, Tool App, Tool Window, Screen, Slot, …) in code, issues and docs. Prefer "lcarsde" over "LCARS" in names.
+
+## Modules
+
+- `lcarswm`: the Window Manager. Entry point `lcarswm/src/linuxX64Main/kotlin/lcarswm.kt`.
+- `lcarsde-common`: GTK-free code shared by all modules (Tool App Protocol transport, logging, processes, files, Rx, DI).
+- `lcarsde-gtk`: GTK binding for Tool Apps; becoming the lcarsde window toolkit (`lcarsde-window-toolkit`).
+- `menu`: the Side Bar Tool App (still named "app menu" in code).
+- `status-bar`: the Status Bar Tool App.
+- `app-selector`: the App Selector Tool App.
+- `logout`: the Logout Tool App.
+
+Module responsibilities: [Role of the shared libraries](docs/adr/adrs/role-of-shared-libraries.md). Several code names lag behind `CONTEXT.md`; follow `CONTEXT.md` for new code.
+
+## Build and test
+
+Needs JDK 17 and the native dev libraries listed in `.github/workflows/` (libx11, libgtk-3, libxrandr, libpango, libcairo, libxml2, libpulse, …).
+
+- `./gradlew build`: build everything.
+- `./gradlew allTests`: run all tests (what CI runs).
+- `./gradlew :lcarswm:allTests`: tests of one module.
+
+Tests exist for `lcarswm` and `lcarsde-common` only.
+
+## Read more
+
+- [`CONTEXT.md`](CONTEXT.md): domain glossary.
+- [`docs/adr/adr-index.md`](docs/adr/adr-index.md): architecture decisions and which modules they affect.
+- [`docs/arc42/`](docs/arc42/): architecture documentation. Partly outdated; treat it as background, not truth.
+
 ## Agent skills
 
 ### Issue tracker
