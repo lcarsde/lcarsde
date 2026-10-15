@@ -1,6 +1,6 @@
 package de.atennert.lcarsde.logout.definition
 
-import de.atennert.lcarsde.logout.LcarsColors
+import de.atennert.lcarsde.logout.LcarsdeColors
 import gtk.*
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -10,7 +10,7 @@ import kotlinx.cinterop.toKString
 @OptIn(ExperimentalForeignApi::class)
 class DBusDefinition(
     override val label: String,
-    override val color: LcarsColors,
+    override val color: LcarsdeColors,
     consoleKitMethod: String?,
     systemdMethod: String
 ) : LogoutOptionDefinition {

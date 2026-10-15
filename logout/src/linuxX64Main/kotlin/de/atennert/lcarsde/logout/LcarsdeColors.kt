@@ -1,6 +1,6 @@
-package de.atennert.lcarsde.appSelector
+package de.atennert.lcarsde.logout
 
-enum class LcarsColors(val color: String) {
+enum class LcarsdeColors(val color: String) {
     C_F90("f90"),
     C_C9C("c9c"),
     C_99C("99c"),

@@ -2,7 +2,7 @@ package de.atennert.lcarsde.logout.definition
 
 import de.atennert.lcarsde.file.list
 import de.atennert.lcarsde.file.read
-import de.atennert.lcarsde.logout.LcarsColors
+import de.atennert.lcarsde.logout.LcarsdeColors
 import de.atennert.rx.NextObserver
 import de.atennert.rx.operators.filter
 import de.atennert.rx.operators.first
@@ -13,7 +13,7 @@ import platform.posix.kill
 
 class LogoutDefinition : LogoutOptionDefinition {
     override val label = "Logout"
-    override val color = LcarsColors.C_F96
+    override val color = LcarsdeColors.C_F96
     override val isAvailable = true
 
     /**
