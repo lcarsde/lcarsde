@@ -29,7 +29,7 @@ dependencyResolutionManagement {
 }
 
 include(":lcarsde-common")
-include(":lcarsde-gtk")
+include(":lcarsde-window-toolkit")
 include(":lcarswm")
 include(":status-bar")
 include(":app-selector")

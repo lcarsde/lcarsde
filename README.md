@@ -14,7 +14,7 @@ mimics the LCARS interface.
 * [status-bar - status bar tool application for general information display and controls](status-bar/readme.md)
 * [app-selector - application for opening installed programs](app-selector/readme.md)
 * [lcarsde-common](lcarsde-common/readme.md)
-* [lcarsde-gtk](lcarsde-gtk/readme.md)
+* [lcarsde-window-toolkit](lcarsde-window-toolkit/readme.md)
 * [lcarsde.github.io - lcarsde website with news and instructions](https://github.com/lcarsde/lcarsde.github.io)
 
 ## Architecture Decision Records (ARDs)

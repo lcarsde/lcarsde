@@ -46,7 +46,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(project(":lcarsde-gtk"))
+                implementation(project(":lcarsde-window-toolkit"))
                 implementation(project(":lcarsde-common"))
             }
         }
