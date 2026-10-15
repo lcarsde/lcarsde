@@ -7,6 +7,8 @@ headers = X11/Xlib.h \
     X11/cursorfont.h \
     pango/pango.h \
     cairo-xlib.h \
+    cairo-ft.h \
+    fontconfig/fontconfig.h \
     libxml/parser.h \
     glib.h
 compilerOpts = -I/usr/include \
@@ -20,4 +22,4 @@ compilerOpts = -I/usr/include \
     -I/usr/include/harfbuzz \
     -I/usr/include/freetype2 \
     -I/usr/include/libxml2
-linkerOpts = -L/usr/lib -L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lX11 -lglib-2.0 -lgobject-2.0 -lXrandr -lpango-1.0 -lcairo -lxml2
+linkerOpts = -L/usr/lib -L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lX11 -lglib-2.0 -lgobject-2.0 -lXrandr -lpango-1.0 -lcairo -lfontconfig -lxml2

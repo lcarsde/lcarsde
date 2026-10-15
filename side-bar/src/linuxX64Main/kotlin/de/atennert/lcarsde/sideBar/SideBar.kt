@@ -102,7 +102,7 @@ class SideBar(private val window: GtkWindow, private val sendQ: MessageQueue) {
     }
 
     companion object {
-        const val STYLE_PATH = "/usr/share/lcarsde/side-bar/style.css"
+        val STYLE_PATH = dataPath("side-bar/style.css")
         const val LCARSDE_APP_MENU = "LCARSDE_APP_MENU"
         const val CELL_SIZE = 40
         const val GAP_SIZE = 8

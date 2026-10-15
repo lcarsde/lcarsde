@@ -17,6 +17,17 @@ mimics the LCARS interface.
 * [lcarsde-window-toolkit](lcarsde-window-toolkit/readme.md)
 * [lcarsde.github.io - lcarsde website with news and instructions](https://github.com/lcarsde/lcarsde.github.io)
 
+## Manual testing
+
+Run the whole desktop from the build output in a nested X server, without installing it:
+
+```bash
+sudo apt install xserver-xephyr dex
+./run-xephyr.sh
+```
+
+The session uses its own config, autostart and log directories in `build/xephyr-session/`. See `./run-xephyr.sh --help` for options. Alternatively, `./gradlew runXephyr` builds and starts the session (`-PxephyrSize=1920x1080` sets the screen size).
+
 ## Architecture Decision Records (ARDs)
 
 [Follow this link to the ADRs](docs/adr/adr-index.md)

@@ -21,7 +21,7 @@ fun callDefinition(def: LogoutOptionDefinition) {
     def.call()
 }
 
-private const val STYLE_PATH = "/usr/share/lcarsde/logout/style.css"
+private val STYLE_PATH = dataPath("logout/style.css")
 private val CSS_PROVIDER = CssProvider.fromPath(STYLE_PATH)
 
 @OptIn(ExperimentalForeignApi::class)

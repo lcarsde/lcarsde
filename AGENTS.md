@@ -26,6 +26,8 @@ Needs JDK 17 and the native dev libraries listed in `.github/workflows/` (libx11
 
 Tests exist for `lcarswm` and `lcarsde-common` only.
 
+`./run-xephyr.sh` runs the Window Manager and all Tool Apps from the debug build in a nested Xephyr window for manual testing (needs `xserver-xephyr` and `dex`). It uses an isolated session in `build/xephyr-session/`; the Window Manager log is in `build/xephyr-session/cache/lcarsde/lcarswm.log`. `./gradlew runXephyr` does the same through Gradle (`-PxephyrSize=WxH` sets the screen size).
+
 ## Read more
 
 - [`CONTEXT.md`](CONTEXT.md): domain glossary.

@@ -1,7 +1,8 @@
 
 .button {
   min-height: 38px;
-  font-family: 'Ubuntu Condensed', sans-serif;
+  font-family: 'Ubuntu Condensed', 'Ubuntu', sans-serif;
+  font-stretch: condensed;
   font-weight: 600;
   font-size: 18px;
   color: #000;

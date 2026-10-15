@@ -1,5 +1,6 @@
 * {
-    font-family: 'Ubuntu Condensed', sans-serif;
+    font-family: 'Ubuntu Condensed', 'Ubuntu', sans-serif;
+    font-stretch: condensed;
     font-weight: 600;
     letter-spacing: 0px;
     text-shadow: none;

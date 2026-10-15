@@ -53,7 +53,7 @@ abstract class TextWidget(widgetConfiguration: WidgetConfiguration, cssProvider:
             cairo_set_source_rgb(context, 1.0, 0.6, 0.0)
             val layout = pango_cairo_create_layout(context)!!
 
-            val fontDescription = pango_font_description_from_string("Ubuntu Condensed, 40")
+            val fontDescription = createFontDescription(40)
             pango_layout_set_font_description(layout, fontDescription)
             pango_layout_set_text(layout, text, text.length)
 

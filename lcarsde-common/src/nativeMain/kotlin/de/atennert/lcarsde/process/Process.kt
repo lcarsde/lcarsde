@@ -56,19 +56,16 @@ class Process(val directory: String?, val command: List<String>) {
 
     @OptIn(ExperimentalForeignApi::class)
     private fun runCommand() {
-        val byteArgs = command.map { it.encodeToByteArray().pin() }
-        val convertedArgs = nativeHeap.allocArrayOfPointersTo(byteArgs.map { it.addressOf(0).pointed })
+        memScoped {
+            // execvp needs NUL-terminated strings in a NULL-terminated array
+            val args = allocArrayOf(command.map { it.cstr.ptr } + null)
 
-        try {
-            if (execvp(command[0], convertedArgs) == -1) {
+            if (execvp(command[0], args) == -1) {
                 strerror(errno)?.toKString()?.let { reason ->
                     logger.logError("Process::runCommand::execvp failed: $reason")
                 }
                 exitProcess(1)
             }
-        } finally {
-            byteArgs.forEach { it.unpin() }
-            nativeHeap.free(convertedArgs)
         }
     }
 }

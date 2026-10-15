@@ -88,6 +88,6 @@
   <general>
     <title>LCARS</title><!-- Will be shown when there's no title image -->
     <!--<title-image>/usr/share/pixmaps/lcarswm.png</title-image>-->
-    <font>Ubuntu Condensed</font>
+    <font>Ubuntu Condensed,Ubuntu:width=75</font><!-- fontconfig pattern -->
   </general>
 </lcarswm>

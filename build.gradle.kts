@@ -41,3 +41,24 @@ tasks.named<Delete>("clean") {
 
     delete(layout.buildDirectory)
 }
+
+tasks.register<Exec>("runXephyr")
+tasks.named<Exec>("runXephyr") {
+    description = "Runs the Window Manager and Tool Apps from the debug build in a nested Xephyr window"
+    group = "verification"
+    dependsOn(
+        ":lcarswm:linkDebugExecutableLinuxX64",
+        ":status-bar:linkLcarsde-status-barDebugExecutableLinuxX64",
+        ":side-bar:linkLcarsde-side-barDebugExecutableLinuxX64",
+        ":app-selector:linkLcarsde-app-selectorDebugExecutableLinuxX64",
+        ":logout:linkLcarsde-logoutDebugExecutableLinuxX64",
+    )
+
+    val projDir = layout.projectDirectory
+    val size = providers.gradleProperty("xephyrSize")
+    workingDir = projDir.asFile
+    commandLine(
+        listOf(projDir.file("run-xephyr.sh").asFile.absolutePath, "--no-build") +
+            (size.orNull?.let { listOf("--size", it) } ?: emptyList())
+    )
+}

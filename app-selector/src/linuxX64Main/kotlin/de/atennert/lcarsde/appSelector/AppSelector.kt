@@ -5,7 +5,7 @@ import de.atennert.gtk.lcarsde.LabelWithRoundedBoxes
 import kotlinx.cinterop.ExperimentalForeignApi
 
 @OptIn(ExperimentalForeignApi::class)
-private const val STYLE_PATH = "/usr/share/lcarsde/appSelector/style.css"
+private val STYLE_PATH = dataPath("appSelector/style.css")
 private val CSS_PROVIDER = CssProvider.fromPath(STYLE_PATH)
 
 @OptIn(ExperimentalForeignApi::class)

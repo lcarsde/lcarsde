@@ -5,6 +5,14 @@ import de.atennert.lcarswm.drivenPorts.drawing.*
 import gtk.*
 import kotlinx.cinterop.*
 import platform.posix.M_PI
+import xlib.FC_WEIGHT
+import xlib.FC_WEIGHT_BOLD
+import xlib.FcNameParse
+import xlib.FcPatternAddInteger
+import xlib.FcPatternDestroy
+import xlib.FcPatternGetInteger
+import xlib.FcResult
+import xlib.cairo_ft_font_face_create_for_pattern
 import xlib.cairo_xlib_surface_create
 import xlib.cairo_xlib_surface_set_size
 
@@ -29,6 +37,28 @@ object CairoDrawFactory : DrawFactory {
     override fun createImageFromFile(path: String) = CairoImage(path)
 }
 
+/**
+ * Font faces by font setting. The font setting is a fontconfig pattern, e.g. "Ubuntu Condensed,Ubuntu:width=75",
+ * so it can name fallback families and a width. The text is bold unless the pattern sets a weight.
+ */
+@OptIn(ExperimentalForeignApi::class)
+private val fontFaces = mutableMapOf<String, CPointer<cairo_font_face_t>?>()
+
+@OptIn(ExperimentalForeignApi::class)
+private fun getFontFace(font: String): CPointer<cairo_font_face_t>? = fontFaces.getOrPut(font) {
+    val pattern = memScoped { FcNameParse(font.cstr.ptr.reinterpret()) } ?: return@getOrPut null
+    memScoped {
+        val weight = alloc<IntVar>()
+        if (FcPatternGetInteger(pattern, FC_WEIGHT, 0, weight.ptr) != FcResult.FcResultMatch) {
+            FcPatternAddInteger(pattern, FC_WEIGHT, FC_WEIGHT_BOLD)
+        }
+    }
+    // cairo keeps its own copy of the pattern and resolves it with fontconfig when the font is used
+    val fontFace = cairo_ft_font_face_create_for_pattern(pattern)
+    FcPatternDestroy(pattern)
+    fontFace?.reinterpret()
+}
+
 @OptIn(ExperimentalForeignApi::class)
 class CairoSession(internal val cr: CPointer<cairo_t>?) : Session {
     override fun drawImage(image: Image, x: Int, y: Int) {
@@ -50,12 +80,17 @@ class CairoSession(internal val cr: CPointer<cairo_t>?) : Session {
     ) {
         val imageBorderX = if (bgColor == null) 0 else 8
 
-        cairo_select_font_face(
-            cr,
-            font,
-            _cairo_font_slant.CAIRO_FONT_SLANT_NORMAL,
-            _cairo_font_weight.CAIRO_FONT_WEIGHT_BOLD
-        )
+        val fontFace = font?.let(::getFontFace)
+        if (fontFace != null) {
+            cairo_set_font_face(cr, fontFace)
+        } else {
+            cairo_select_font_face(
+                cr,
+                font,
+                _cairo_font_slant.CAIRO_FONT_SLANT_NORMAL,
+                _cairo_font_weight.CAIRO_FONT_WEIGHT_BOLD
+            )
+        }
         // approximate target size
         cairo_set_font_size(cr, height.toDouble())
 
