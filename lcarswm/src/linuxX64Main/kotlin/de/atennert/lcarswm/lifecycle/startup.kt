@@ -176,15 +176,15 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
 
     val windowList = WindowList()
 
-    val appMenuMessageQueue = MessageQueue("/lcarswm-app-menu-messages", MessageQueue.Mode.READ, true)
+    val sideBarMessageQueue = MessageQueue("/lcarswm-app-menu-messages", MessageQueue.Mode.READ, true)
 
-    val appMenuMessageHandler = AppMenuMessageHandler(
+    val sideBarMessageHandler = SideBarMessageHandler(
         system,
         atomLibrary,
         windowList,
     )
 
-    val focusHandler = WindowFocusHandler(windowList, appMenuMessageHandler)
+    val focusHandler = WindowFocusHandler(windowList, sideBarMessageHandler)
 
     WindowStack(system.display, windowList, focusHandler)
 
@@ -290,10 +290,10 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
     )
 
     val xEventResources = XEventResources(eventManager, eventTime, eventBuffer)
-    val appMenuResources = AppMenuResources(appMenuMessageHandler, appMenuMessageQueue)
+    val sideBarResources = SideBarResources(sideBarMessageHandler, sideBarMessageQueue)
     val platformResources = PlatformResources(fileFactory, files, monitorManager, environment)
 
-    return RuntimeResources(xEventResources, appMenuResources, platformResources)
+    return RuntimeResources(xEventResources, sideBarResources, platformResources)
 }
 
 /**

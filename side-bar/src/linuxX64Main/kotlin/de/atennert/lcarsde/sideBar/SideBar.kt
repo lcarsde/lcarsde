@@ -1,8 +1,8 @@
-package de.atennert.lcarsde.menu
+package de.atennert.lcarsde.sideBar
 
 import de.atennert.gtk.*
 import de.atennert.lcarsde.comm.MessageQueue
-import de.atennert.lcarsde.menu.Menu.Companion.STYLE_PATH
+import de.atennert.lcarsde.sideBar.SideBar.Companion.STYLE_PATH
 import gtk.GtkOrientation
 import gtk.GtkPolicyType
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -12,7 +12,7 @@ import kotlin.experimental.ExperimentalNativeApi
 private val CSS_PROVIDER = CssProvider.fromPath(STYLE_PATH)
 
 @OptIn(ExperimentalForeignApi::class, ExperimentalNativeApi::class)
-class Menu(private val window: GtkWindow, private val sendQ: MessageQueue) {
+class SideBar(private val window: GtkWindow, private val sendQ: MessageQueue) {
     private val scrollContainer = GtkScrollContainer()
     private val appContainer = GtkBox(GtkOrientation.GTK_ORIENTATION_VERTICAL, 8)
 
@@ -102,7 +102,7 @@ class Menu(private val window: GtkWindow, private val sendQ: MessageQueue) {
     }
 
     companion object {
-        const val STYLE_PATH = "/usr/share/lcarsde/menu/style.css"
+        const val STYLE_PATH = "/usr/share/lcarsde/side-bar/style.css"
         const val LCARSDE_APP_MENU = "LCARSDE_APP_MENU"
         const val CELL_SIZE = 40
         const val GAP_SIZE = 8
@@ -115,14 +115,14 @@ class GtkWindowEntry(
     isActive: Boolean,
     onSelect: () -> Unit,
     onClose: () -> Unit
-) : GtkBox(GtkOrientation.GTK_ORIENTATION_HORIZONTAL, Menu.GAP_SIZE) {
+) : GtkBox(GtkOrientation.GTK_ORIENTATION_HORIZONTAL, SideBar.GAP_SIZE) {
     private val shortenedName = if (name.take(15) == name) name else "${name.take(15)}…"
 
     private val selectButton = GtkButton(shortenedName)
     private val closeButton = GtkButton()
 
     init {
-        selectButton.setSize(184, Menu.CELL_SIZE)
+        selectButton.setSize(184, SideBar.CELL_SIZE)
         selectButton.setAlignment(1f, 1f)
         var selectButtonClasses = arrayOf("select_button")
         if (isActive) {
@@ -132,7 +132,7 @@ class GtkWindowEntry(
         selectButton.onClick(onSelect) { _, f -> f.invoke() }
         packStart(selectButton, false, false, 0u)
 
-        closeButton.setSize(32, Menu.CELL_SIZE)
+        closeButton.setSize(32, SideBar.CELL_SIZE)
         closeButton.setStyling(CSS_PROVIDER, "close_button")
         closeButton.onClick(onClose) { _, f -> f.invoke() }
         packStart(closeButton, false, false, 0u)

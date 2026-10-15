@@ -38,6 +38,11 @@ echo ""
 ./gradlew installDist
 ./gradlew combineRelease
 
+# remove artefacts of previous versions
+rm -f "/usr/bin/lcarsde-menu.kexe"
+rm -f "/etc/xdg/autostart/lcarsde-app-menu.desktop"
+rm -rf "/usr/share/lcarsde/menu"
+
 cp -r "./build/release/usr/*" "/usr/"
 cp -r "./build/release/etc/*" "/etc/"
 

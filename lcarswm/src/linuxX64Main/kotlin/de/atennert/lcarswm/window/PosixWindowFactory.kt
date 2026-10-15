@@ -91,7 +91,7 @@ class PosixWindowFactory(
         wrapXChangeWindowAttributes(display, id, (CWEventMask or CWDontPropagate).convert(), attributeSet.ptr)
 
         val window = when {
-            PosixAppMenuWindow.isAppMenu(display, atomLibrary, id) -> PosixAppMenuWindow(
+            PosixSideBarWindow.isSideBar(display, atomLibrary, id) -> PosixSideBarWindow(
                 display,
                 screen.root,
                 monitorManager,

@@ -28,13 +28,13 @@ kotlin {
 
     linuxTarget.apply {
         binaries {
-            executable("lcarsde-menu") {
+            executable("lcarsde-side-bar") {
                 entryPoint = "main"
 
             }
         }
         compilations.getByName("main") {
-            cinterops.create("menu")
+            cinterops.create("sideBar")
         }
     }
     sourceSets {
@@ -73,7 +73,7 @@ tasks.named<Copy>("installDist") {
     into("build/install")
 
     from(file("src/linuxX64Main/resources"))
-    from(file("build/bin/linuxX64/lcarsde-menuReleaseExecutable")) {
+    from(file("build/bin/linuxX64/lcarsde-side-barReleaseExecutable")) {
         into("/usr/bin/")
     }
 }

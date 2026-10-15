@@ -4,4 +4,4 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.RROutput
 
 @ExperimentalForeignApi
-data class RuntimeResources(val xEvent: XEventResources, val appMenu: AppMenuResources, val platform: PlatformResources<RROutput>)
+data class RuntimeResources(val xEvent: XEventResources, val sideBar: SideBarResources, val platform: PlatformResources<RROutput>)

@@ -14,15 +14,15 @@ suspend fun runEventLoops(
     runtimeResources: RuntimeResources
 ) = coroutineScope {
 
-    val appMenuJob = runAppMenuLoop(logger, runtimeResources.appMenu)
+    val sideBarJob = runSideBarLoop(logger, runtimeResources.sideBar)
     val xEventJob = runXEventLoop(logger, runtimeResources.xEvent)
 
     // When the X event loop goes down, so does everything else
     xEventJob.invokeOnCompletion {
-        appMenuJob.cancel()
+        sideBarJob.cancel()
     }
 
-    appMenuJob.join()
+    sideBarJob.join()
     logger.logDebug("::eventLoop::finished event loops")
 }
 
@@ -62,22 +62,22 @@ private fun CoroutineScope.runXEventLoop(
 
 @ExperimentalNativeApi
 @ExperimentalForeignApi
-private fun CoroutineScope.runAppMenuLoop(
+private fun CoroutineScope.runSideBarLoop(
     logger: Logger,
-    appMenuResources: AppMenuResources
+    sideBarResources: SideBarResources
 ): Job {
-    val appMenuMessageQueue = appMenuResources.messageQueue
-    val appMenuMessageHandler = appMenuResources.messageHandler
+    val sideBarMessageQueue = sideBarResources.messageQueue
+    val sideBarMessageHandler = sideBarResources.messageHandler
 
-    val appMenuJob = launch {
-        logger.logDebug("::runAppMenuLoop::running app menu job")
+    val sideBarJob = launch {
+        logger.logDebug("::runSideBarLoop::running Side Bar job")
         while (true) {
-            appMenuMessageQueue.receive()?.let {
-                appMenuMessageHandler.handleMessage(it)
+            sideBarMessageQueue.receive()?.let {
+                sideBarMessageHandler.handleMessage(it)
             }
             delay(100)
         }
     }
-    appMenuJob.invokeOnCompletion { logger.logDebug("::runAppMenuLoop::app menu job completed") }
-    return appMenuJob
+    sideBarJob.invokeOnCompletion { logger.logDebug("::runSideBarLoop::Side Bar job completed") }
+    return sideBarJob
 }

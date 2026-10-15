@@ -18,7 +18,7 @@ cp -r lcarsde-common "build/deb/${NAME}-${TAG}/lcarsde-common"
 cp -r lcarsde-window-toolkit "build/deb/${NAME}-${TAG}/lcarsde-window-toolkit"
 cp -r lcarswm "build/deb/${NAME}-${TAG}/lcarswm"
 cp -r logout "build/deb/${NAME}-${TAG}/logout"
-cp -r menu "build/deb/${NAME}-${TAG}/menu"
+cp -r side-bar "build/deb/${NAME}-${TAG}/side-bar"
 cp -r status-bar "build/deb/${NAME}-${TAG}/status-bar"
 
 cp build.gradle.kts "build/deb/${NAME}-${TAG}/"

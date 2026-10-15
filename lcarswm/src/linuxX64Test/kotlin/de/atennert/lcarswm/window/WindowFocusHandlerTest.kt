@@ -3,7 +3,7 @@ package de.atennert.lcarswm.window
 import de.atennert.lcarsde.lifecycle.ServiceLocator
 import de.atennert.lcarsde.lifecycle.closeClosables
 import de.atennert.lcarsde.log.Logger
-import de.atennert.lcarswm.AppMenuMessageHandler
+import de.atennert.lcarswm.SideBarMessageHandler
 import de.atennert.lcarswm.atom.AtomLibrary
 import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -28,7 +28,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val windowFocusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
 
         assertNull(windowFocusHandler.getFocusedWindow(), "There is no focused window")
 
@@ -44,7 +44,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val windowFocusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
         val testWindow1 = 21.convert<Window>()
         val testWindow2 = 22.convert<Window>()
         var newWindow: Window? = 42.convert()
@@ -68,7 +68,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
 
         windowList.add(FakeManagedWindow(id = 1.convert()))
 
@@ -82,7 +82,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
 
         windowList.add(FakeManagedWindow(id = 1.convert()))
         windowList.add(FakeManagedWindow(id = 2.convert()))
@@ -98,7 +98,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
 
         windowList.add(FakeManagedWindow(id = 1.convert()))
         windowList.add(FakeManagedWindow(id = 2.convert()))
@@ -116,7 +116,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
 
         windowList.add(FakeManagedWindow(id = 1.convert()))
         windowList.add(FakeManagedWindow(id = 2.convert()))
@@ -132,7 +132,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
         val window1: Window = 1.convert()
         val window2: Window = 2.convert()
         val window3: Window = 3.convert()
@@ -156,7 +156,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
         val window1: Window = 1.convert()
         val window2: Window = 2.convert()
         val window3: Window = 3.convert()
@@ -182,7 +182,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
         val window1: Window = 1.convert()
         val window2: Window = 2.convert()
         val window3: Window = 3.convert()
@@ -206,7 +206,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
         val window1: Window = 1.convert()
         val window2: Window = 2.convert()
         val window3: Window = 3.convert()
@@ -232,7 +232,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
         val window1: Window = 1.convert()
         val window2: Window = 2.convert()
         val window3: Window = 3.convert()
@@ -267,7 +267,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
         val window1: Window = 1.convert()
         val window2: Window = 2.convert()
         val window3: Window = 3.convert()
@@ -304,7 +304,7 @@ class WindowFocusHandlerTest {
         val systemApi = _root_ide_package_.de.atennert.lcarswm.system.SystemFacadeMock()
         val windowList = WindowList()
         val focusHandler =
-            WindowFocusHandler(windowList, AppMenuMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
+            WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
 
         focusHandler.toggleWindowFocusForward()
 
