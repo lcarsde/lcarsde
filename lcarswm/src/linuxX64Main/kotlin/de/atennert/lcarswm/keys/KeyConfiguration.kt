@@ -15,7 +15,7 @@ class KeyConfiguration(
     private val inputApi: InputApi,
     private val keyConfiguration: Set<KeyBinding>,
     private val keyManager: KeyManager,
-    private val toggleSessionManager: KeySessionManager,
+    private val windowCyclingManager: WindowCyclingManager,
     private val rootWindowId: Window
 ) {
 
@@ -35,7 +35,7 @@ class KeyConfiguration(
     }
 
     fun reloadConfig() {
-        toggleSessionManager.resetKeyCodes()
+        windowCyclingManager.resetKeyCodes()
 
         for (keyBinding in keyConfiguration) {
             val (modifierStrings, keyString) = separateKeySymAndModifiers(keyBinding.keys)
@@ -51,7 +51,7 @@ class KeyConfiguration(
             if (keyBinding is KeyAction && (keyBinding.action == WmAction.WINDOW_TOGGLE_FWD ||
                         keyBinding.action == WmAction.WINDOW_TOGGLE_BWD)
             ) {
-                toggleSessionManager.addModifiers(modifiers, keySym.convert(), mask)
+                windowCyclingManager.addModifiers(modifiers, keySym.convert(), mask)
             }
         }
     }

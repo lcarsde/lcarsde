@@ -20,8 +20,8 @@ class InputFocusHandler(
 ) : FocusObserver {
     private val logger by inject<Logger>()
 
-    override fun invoke(activeWindow: Window?, oldWindow: Window?, toggleSessionActive: Boolean) {
-        if (!toggleSessionActive) {
+    override fun invoke(activeWindow: Window?, oldWindow: Window?, cyclingActive: Boolean) {
+        if (!cyclingActive) {
             if (activeWindow != null) {
                 logger.logDebug("::startup::set input focus to $activeWindow")
                 inputApi.setInputFocus(activeWindow, RevertToNone, eventTime.lastEventTime)

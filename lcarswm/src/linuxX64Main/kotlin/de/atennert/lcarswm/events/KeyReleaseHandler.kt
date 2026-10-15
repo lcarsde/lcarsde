@@ -22,7 +22,7 @@ class KeyReleaseHandler(
     private val focusHandler: WindowFocusHandler,
     private val keyManager: KeyManager,
     private val keyConfiguration: KeyConfiguration,
-    private val toggleSessionManager: KeySessionManager,
+    private val windowCyclingManager: WindowCyclingManager,
     private val atomLibrary: AtomLibrary
 ) :
     XEventHandler {
@@ -35,7 +35,7 @@ class KeyReleaseHandler(
         val keyMask = keyManager.filterMask(event.xkey.state)
 
         logger.logDebug("KeyReleaseHandler::handleEvent::key code: $keyCode, key mask: $keyMask")
-        toggleSessionManager.releaseKeys(keyCode)
+        windowCyclingManager.releaseKeys(keyCode)
 
         keyManager.getKeySym(keyCode.convert())?.let { keySym ->
             keyConfiguration.getBindingForKey(keySym, keyMask)?.let { keyBinding ->

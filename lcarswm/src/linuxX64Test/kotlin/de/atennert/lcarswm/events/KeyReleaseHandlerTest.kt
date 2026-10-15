@@ -54,12 +54,12 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
         val focusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
         val keyManager = KeyManager(systemApi)
-        val keySessionManager = KeySessionManager(env)
+        val windowCyclingManager = WindowCyclingManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
             keySetting,
             keyManager,
-            keySessionManager,
+            windowCyclingManager,
             systemApi.rootWindowId
         )
         val atomLibrary = AtomLibrary(systemApi)
@@ -69,7 +69,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             focusHandler,
             keyManager,
             keyConfiguration,
-            keySessionManager,
+            windowCyclingManager,
             atomLibrary
         )
 
@@ -88,12 +88,12 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
         val focusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
         val keyManager = KeyManager(systemApi)
-        val keySessionManager = KeySessionManager(env)
+        val windowCyclingManager = WindowCyclingManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
             keySetting,
             keyManager,
-            keySessionManager,
+            windowCyclingManager,
             systemApi.rootWindowId
         )
         val atomLibrary = AtomLibrary(systemApi)
@@ -110,7 +110,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             focusHandler,
             keyManager,
             keyConfiguration,
-            keySessionManager,
+            windowCyclingManager,
             atomLibrary
         )
 
@@ -136,12 +136,12 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList)
         )
         val windowId = systemApi.getNewWindowId()
-        val keySessionManager = KeySessionManager(env)
+        val windowCyclingManager = WindowCyclingManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
             keySetting,
             keyManager,
-            keySessionManager,
+            windowCyclingManager,
             systemApi.rootWindowId
         )
         val atomLibrary = AtomLibrary(systemApi)
@@ -157,7 +157,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             focusHandler,
             keyManager,
             keyConfiguration,
-            keySessionManager,
+            windowCyclingManager,
             atomLibrary
         )
 
@@ -200,12 +200,12 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList)
         )
         val windowId = systemApi.getNewWindowId()
-        val keySessionManager = KeySessionManager(env)
+        val windowCyclingManager = WindowCyclingManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
             keySetting,
             keyManager,
-            keySessionManager,
+            windowCyclingManager,
             systemApi.rootWindowId
         )
         val atomLibrary = AtomLibrary(systemApi)
@@ -221,7 +221,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             focusHandler,
             keyManager,
             keyConfiguration,
-            keySessionManager,
+            windowCyclingManager,
             atomLibrary
         )
 
@@ -255,12 +255,12 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList)
         )
         val windowId = systemApi.getNewWindowId()
-        val keySessionManager = KeySessionManager(env)
+        val windowCyclingManager = WindowCyclingManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
             keySetting,
             keyManager,
-            keySessionManager,
+            windowCyclingManager,
             systemApi.rootWindowId
         )
         val atomLibrary = AtomLibrary(systemApi)
@@ -276,7 +276,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             focusHandler,
             keyManager,
             keyConfiguration,
-            keySessionManager,
+            windowCyclingManager,
             atomLibrary
         )
 
@@ -331,12 +331,12 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList)
         )
         val windowId = systemApi.getNewWindowId()
-        val keySessionManager = KeySessionManager(env)
+        val windowCyclingManager = WindowCyclingManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
             keySetting,
             keyManager,
-            keySessionManager,
+            windowCyclingManager,
             systemApi.rootWindowId
         )
         val atomLibrary = AtomLibrary(systemApi)
@@ -347,7 +347,7 @@ class KeyReleaseHandlerTest : SystemCallMocker() {
             focusHandler,
             keyManager,
             keyConfiguration,
-            keySessionManager,
+            windowCyclingManager,
             atomLibrary
         )
 

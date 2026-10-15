@@ -15,7 +15,7 @@ import kotlinx.cinterop.convert
 class KeyPressHandler(
     private val keyManager: KeyManager,
     private val keyConfiguration: KeyConfiguration,
-    private val toggleSessionManager: KeySessionManager,
+    private val windowCyclingManager: WindowCyclingManager,
     private val screenManager: ScreenManager<*>,
     private val windowCoordinator: WindowCoordinator,
     private val windowFocusHandler: WindowFocusHandler
@@ -29,7 +29,7 @@ class KeyPressHandler(
         val keyMask = keyManager.filterMask(event.xkey.state)
 
         logger.logDebug("KeyPressHandler::handleEvent::key code: $keyCode, key mask: $keyMask")
-        toggleSessionManager.pressKeys(keyCode, keyMask)
+        windowCyclingManager.pressKeys(keyCode, keyMask)
 
         keyManager.getKeySym(keyCode.convert())?.let { keySym ->
             keyConfiguration.getBindingForKey(keySym, keyMask)?.let { keyBinding ->

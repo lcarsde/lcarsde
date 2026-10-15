@@ -2,7 +2,7 @@ package de.atennert.lcarswm.window
 
 import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarswm.SideBarMessageHandler
-import de.atennert.lcarswm.keys.KeySessionManager
+import de.atennert.lcarswm.keys.WindowCyclingManager
 import de.atennert.rx.NextObserver
 import de.atennert.rx.ReplaySubject
 import de.atennert.rx.operators.filter
@@ -14,7 +14,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 typealias FocusObserver = (Window?, Window?, Boolean) -> Unit
 
 @ExperimentalForeignApi
-data class WindowFocusEvent(val newWindow: Window?, val oldWindow: Window?, val toggleSessionActive: Boolean)
+data class WindowFocusEvent(val newWindow: Window?, val oldWindow: Window?, val cyclingActive: Boolean)
 
 @ExperimentalForeignApi
 class WindowFocusHandler(windowList: WindowList, sideBarMessageHandler: SideBarMessageHandler) {
@@ -27,7 +27,7 @@ class WindowFocusHandler(windowList: WindowList, sideBarMessageHandler: SideBarM
 
     private val observers = mutableListOf<FocusObserver>()
 
-    private var toggleSessionActive = false
+    private var cyclingActive = false
 
     init {
         windowList.windowEventObs
@@ -51,12 +51,12 @@ class WindowFocusHandler(windowList: WindowList, sideBarMessageHandler: SideBarM
             .closeWith { this.unsubscribe() }
     }
 
-    val keySessionListener = object : KeySessionManager.KeySessionListener {
-        override fun stopSession() {
-            if (!toggleSessionActive) {
+    val windowCyclingListener = object : WindowCyclingManager.WindowCyclingListener {
+        override fun stopCycling() {
+            if (!cyclingActive) {
                 return
             }
-            toggleSessionActive = false
+            cyclingActive = false
             activeWindow?.let {
                 if (windowIdList[0] != it) {
                     putActiveWindowToFront()
@@ -88,8 +88,8 @@ class WindowFocusHandler(windowList: WindowList, sideBarMessageHandler: SideBarM
 
         val oldActiveWindow = this.activeWindow
         this.activeWindow = activeWindow
-        this.observers.forEach { it(activeWindow, oldActiveWindow, toggleSessionActive) }
-        windowFocusEventSj.next(WindowFocusEvent(activeWindow, oldActiveWindow, toggleSessionActive))
+        this.observers.forEach { it(activeWindow, oldActiveWindow, cyclingActive) }
+        windowFocusEventSj.next(WindowFocusEvent(activeWindow, oldActiveWindow, cyclingActive))
         if (!windowIdList.contains(activeWindow)) {
             windowIdList.add(activeWindow)
         }
@@ -108,7 +108,7 @@ class WindowFocusHandler(windowList: WindowList, sideBarMessageHandler: SideBarM
         if (activeWindow == null) {
             return
         }
-        toggleSessionActive = true
+        cyclingActive = true
         val focusIndex = getIndexOfFocusedWindow()
         val nextWindow = getNextWindowToFocus(focusIndex)
         setFocusedWindowInternal(nextWindow)
@@ -118,14 +118,14 @@ class WindowFocusHandler(windowList: WindowList, sideBarMessageHandler: SideBarM
         if (activeWindow == null) {
             return
         }
-        toggleSessionActive = true
+        cyclingActive = true
         val focusIndex = getIndexOfFocusedWindow()
         val previousWindow = getPreviousWindowToFocus(focusIndex)
         setFocusedWindowInternal(previousWindow)
     }
 
     /**
-     * When starting a new toggle session, the list should be ordered to that the active window is at the front.
+     * When starting a new Window Cycling, the list should be ordered to that the active window is at the front.
      */
     private fun putActiveWindowToFront() {
         activeWindow?.let {
