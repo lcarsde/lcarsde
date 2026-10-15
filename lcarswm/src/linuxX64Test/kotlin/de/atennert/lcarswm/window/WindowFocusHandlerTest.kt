@@ -168,11 +168,11 @@ class WindowFocusHandlerTest {
         focusHandler.toggleWindowFocusForward()
         assertEquals(window2, focusHandler.getFocusedWindow(), "The focus should toggle to window 2")
 
-        focusHandler.keySessionListener.stopSession()
+        focusHandler.windowCyclingListener.stopCycling()
         focusHandler.toggleWindowFocusForward()
         assertEquals(window3, focusHandler.getFocusedWindow(), "The focus should toggle to window 3")
 
-        focusHandler.keySessionListener.stopSession()
+        focusHandler.windowCyclingListener.stopCycling()
         focusHandler.toggleWindowFocusForward()
         assertEquals(window2, focusHandler.getFocusedWindow(), "The focus should toggle back to window 2")
     }
@@ -218,11 +218,11 @@ class WindowFocusHandlerTest {
         focusHandler.toggleWindowFocusBackward()
         assertEquals(window1, focusHandler.getFocusedWindow(), "The focus should toggle to window 1")
 
-        focusHandler.keySessionListener.stopSession()
+        focusHandler.windowCyclingListener.stopCycling()
         focusHandler.toggleWindowFocusBackward()
         assertEquals(window2, focusHandler.getFocusedWindow(), "The focus should toggle to window 2")
 
-        focusHandler.keySessionListener.stopSession()
+        focusHandler.windowCyclingListener.stopCycling()
         focusHandler.toggleWindowFocusBackward()
         assertEquals(window3, focusHandler.getFocusedWindow(), "The focus should toggle back to window 3")
     }
@@ -284,7 +284,7 @@ class WindowFocusHandlerTest {
         focusHandler.toggleWindowFocusForward()
         assertEquals(window2, focusHandler.getFocusedWindow(), "The focus should toggle to window 2")
 
-        focusHandler.keySessionListener.stopSession()
+        focusHandler.windowCyclingListener.stopCycling()
         focusHandler.toggleWindowFocusForward()
         assertEquals(window4, focusHandler.getFocusedWindow(), "The focus should toggle to window 2")
 
@@ -294,7 +294,7 @@ class WindowFocusHandlerTest {
         focusHandler.toggleWindowFocusBackward()
         assertEquals(window1, focusHandler.getFocusedWindow(), "The focus should toggle to window 1")
 
-        focusHandler.keySessionListener.stopSession()
+        focusHandler.windowCyclingListener.stopCycling()
         focusHandler.toggleWindowFocusBackward()
         assertEquals(window3, focusHandler.getFocusedWindow(), "The focus should toggle back to window 3")
     }

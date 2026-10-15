@@ -10,11 +10,11 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 
 /**
- * Used to grab the key during a focus toggle session
+ * Used to grab the key during a Window Cycling
  * so we also get key release events for modifier keys.
  */
 @ExperimentalForeignApi
-class FocusSessionKeyboardGrabber(
+class FocusCyclingKeyboardGrabber(
     private val inputApi: InputApi,
     private val eventTime: EventTime,
     private val ewmhSupportWindow: Window
@@ -22,11 +22,11 @@ class FocusSessionKeyboardGrabber(
     private var grabActive = false
     private var grabTime: Time = CurrentTime.convert()
 
-    override fun invoke(activeWindow: Window?, oldWindow: Window?, toggleSessionActive: Boolean) {
-        if (toggleSessionActive != grabActive) {
-            grabActive = toggleSessionActive
+    override fun invoke(activeWindow: Window?, oldWindow: Window?, cyclingActive: Boolean) {
+        if (cyclingActive != grabActive) {
+            grabActive = cyclingActive
 
-            if (toggleSessionActive) {
+            if (cyclingActive) {
                 grabTime = eventTime.lastEventTime
                 inputApi.grabKeyboard(ewmhSupportWindow, grabTime)
             } else {

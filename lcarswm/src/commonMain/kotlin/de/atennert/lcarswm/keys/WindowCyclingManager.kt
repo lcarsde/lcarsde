@@ -7,8 +7,8 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 
 @ExperimentalForeignApi
-class KeySessionManager(private val env: Environment) {
-    private val listeners = mutableListOf<KeySessionListener>()
+class WindowCyclingManager(private val env: Environment) {
+    private val listeners = mutableListOf<WindowCyclingListener>()
     private val logger by inject<Logger>()
 
     private var keyCodes = mutableSetOf<UInt>()
@@ -65,27 +65,27 @@ class KeySessionManager(private val env: Environment) {
         keyMaskCodes.add(keySyms.map { keysymToKeycode(env, it) })
     }
 
-    fun addListener(listener: KeySessionListener) {
+    fun addListener(listener: WindowCyclingListener) {
         listeners.add(listener)
     }
 
     fun pressKeys(keyCode: UInt, keyMask: Int) {
-        val isSameSession = keyMasks.contains(keyMask) and keyCodes.contains(keyCode)
-        if (!isSameSession) {
-            logger.logDebug("KeySessionManager::pressKeys::stop session")
-            listeners.forEach(KeySessionListener::stopSession)
+        val isSameCycle = keyMasks.contains(keyMask) and keyCodes.contains(keyCode)
+        if (!isSameCycle) {
+            logger.logDebug("WindowCyclingManager::pressKeys::stop cycling")
+            listeners.forEach(WindowCyclingListener::stopCycling)
         }
     }
 
     fun releaseKeys(keyCode: UInt) {
         val breaksAllMasks = keyMaskCodes.all { it.contains(keyCode.convert()) }
         if (breaksAllMasks) {
-            logger.logDebug("KeySessionManager::releaseKeys::stop session")
-            listeners.forEach(KeySessionListener::stopSession)
+            logger.logDebug("WindowCyclingManager::releaseKeys::stop cycling")
+            listeners.forEach(WindowCyclingListener::stopCycling)
         }
     }
 
-    interface KeySessionListener {
-        fun stopSession()
+    interface WindowCyclingListener {
+        fun stopCycling()
     }
 }

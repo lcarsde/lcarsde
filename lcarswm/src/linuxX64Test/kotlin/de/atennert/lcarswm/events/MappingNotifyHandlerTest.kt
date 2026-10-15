@@ -36,12 +36,12 @@ class MappingNotifyHandlerTest : SystemCallMocker() {
         val system = SystemFacadeMock()
         val env = Environment(system.display)
         val keyManager = KeyManager(system)
-        val keySessionManager = KeySessionManager(env)
+        val windowCyclingManager = WindowCyclingManager(env)
         val keyConfiguration = KeyConfiguration(
             system,
             keySetting,
             keyManager,
-            keySessionManager,
+            windowCyclingManager,
             system.rootWindowId
         )
         val mappingNotifyHandler = MappingNotifyHandler(keyManager, keyConfiguration, system.rootWindowId)
@@ -58,12 +58,12 @@ class MappingNotifyHandlerTest : SystemCallMocker() {
         val system = SystemFacadeMock()
         val env = Environment(system.display)
         val keyManager = KeyManager(system)
-        val keySessionManager = KeySessionManager(env)
+        val windowCyclingManager = WindowCyclingManager(env)
         val keyConfiguration = KeyConfiguration(
             system,
             keySetting,
             keyManager,
-            keySessionManager,
+            windowCyclingManager,
             system.rootWindowId
         )
         val mappingNotifyHandler = MappingNotifyHandler(keyManager, keyConfiguration, system.rootWindowId)

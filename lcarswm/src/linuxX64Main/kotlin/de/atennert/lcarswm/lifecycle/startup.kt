@@ -13,10 +13,10 @@ import de.atennert.lcarswm.drawing.FrameDrawer
 import de.atennert.lcarswm.drawing.RootWindowDrawer
 import de.atennert.lcarswm.environment.Environment
 import de.atennert.lcarswm.events.*
-import de.atennert.lcarswm.keys.FocusSessionKeyboardGrabber
+import de.atennert.lcarswm.keys.FocusCyclingKeyboardGrabber
 import de.atennert.lcarswm.keys.KeyConfiguration
 import de.atennert.lcarswm.keys.KeyManager
-import de.atennert.lcarswm.keys.KeySessionManager
+import de.atennert.lcarswm.keys.WindowCyclingManager
 import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.screen.ScreenManagerImpl
 import de.atennert.lcarswm.mouse.MoveWindowManager
@@ -162,13 +162,13 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
 
     val env = Environment(system.display)
 
-    val toggleSessionManager = KeySessionManager(env)
+    val windowCyclingManager = WindowCyclingManager(env)
 
     val keyConfiguration = KeyConfiguration(
         system,
         settings.keyBindings,
         keyManager,
-        toggleSessionManager,
+        windowCyclingManager,
         xScreen.root
     )
 
@@ -243,7 +243,7 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
     val moveWindowManager = MoveWindowManager(windowCoordinator, screenManager)
 
     focusHandler.registerObserver(
-        FocusSessionKeyboardGrabber(system, eventTime, rootWindowPropertyHandler.ewmhSupportWindow)
+        FocusCyclingKeyboardGrabber(system, eventTime, rootWindowPropertyHandler.ewmhSupportWindow)
     )
 
     focusHandler.registerObserver(InputFocusHandler(system, eventTime, xScreen.root))
@@ -263,7 +263,7 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
 
     updateWindowListAtom(xScreen.root, system, atomLibrary, windowList)
 
-    toggleSessionManager.addListener(focusHandler.keySessionListener)
+    windowCyclingManager.addListener(focusHandler.windowCyclingListener)
 
     val eventManager = createEventManager(
         eventStore,
@@ -273,7 +273,7 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
         focusHandler,
         keyManager,
         moveWindowManager,
-        toggleSessionManager,
+        windowCyclingManager,
         atomLibrary,
         screenChangeHandler,
         keyConfiguration,
@@ -398,7 +398,7 @@ private fun createEventManager(
     focusHandler: WindowFocusHandler,
     keyManager: KeyManager,
     moveWindowManager: MoveWindowManager,
-    toggleSessionManager: KeySessionManager,
+    windowCyclingManager: WindowCyclingManager,
     atomLibrary: AtomLibrary,
     screenChangeHandler: XEventHandler,
     keyConfiguration: KeyConfiguration,
@@ -416,7 +416,7 @@ private fun createEventManager(
             KeyPressHandler(
                 keyManager,
                 keyConfiguration,
-                toggleSessionManager,
+                windowCyclingManager,
                 screenManager,
                 windowCoordinator,
                 focusHandler
@@ -428,7 +428,7 @@ private fun createEventManager(
                 focusHandler,
                 keyManager,
                 keyConfiguration,
-                toggleSessionManager,
+                windowCyclingManager,
                 atomLibrary
             )
         )
