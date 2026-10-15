@@ -27,9 +27,9 @@ class AppDescriptor(private val filePath: String, data: List<String>) {
         )
 
         val BUTTON_COLORS = arrayOf(
-            LcarsColors.C_C9C,
-            LcarsColors.C_99C,
-            LcarsColors.C_F96
+            LcarsdeColors.C_C9C,
+            LcarsdeColors.C_99C,
+            LcarsdeColors.C_F96
         )
 
         fun getPreferredCategory(categories: List<String>?): String {

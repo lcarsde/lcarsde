@@ -9,10 +9,10 @@ import gtk.GtkAlign
 import kotlinx.cinterop.ExperimentalForeignApi
 
 private val definitions = arrayOf(
-    DBusDefinition("Shutdown", LcarsColors.C_C66, "Stop", "PowerOff"),
-    DBusDefinition("Reboot", LcarsColors.C_F96, "Restart", "Reboot"),
-    DBusDefinition("Suspend", LcarsColors.C_C9C, null, "Suspend"),
-    DBusDefinition("Hibernate", LcarsColors.C_C9C, null, "Hibernate"),
+    DBusDefinition("Shutdown", LcarsdeColors.C_C66, "Stop", "PowerOff"),
+    DBusDefinition("Reboot", LcarsdeColors.C_F96, "Restart", "Reboot"),
+    DBusDefinition("Suspend", LcarsdeColors.C_C9C, null, "Suspend"),
+    DBusDefinition("Hibernate", LcarsdeColors.C_C9C, null, "Hibernate"),
     LockScreenDefinition(),
     LogoutDefinition(),
 ).filter { it.isAvailable }
