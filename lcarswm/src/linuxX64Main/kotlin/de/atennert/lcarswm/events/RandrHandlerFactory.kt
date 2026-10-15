@@ -2,7 +2,7 @@ package de.atennert.lcarswm.events
 
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
-import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.system.api.SystemApi
 import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -33,14 +33,14 @@ class RandrHandlerFactory(systemApi: SystemApi) {
     }
 
     fun createScreenChangeHandler(
-        monitorManager: MonitorManager<*>
+        screenManager: ScreenManager<*>
     ): XEventHandler = object : XEventHandler {
         override val xEventType = randrEventBase + RRScreenChangeNotify
 
         override fun handleEvent(event: XEvent): Boolean {
             logger.logDebug("ScreenChangeHandler::handleEvent::screen changed")
 
-            monitorManager.updateMonitorList()
+            screenManager.updateScreenList()
 
             return false
         }

@@ -7,15 +7,15 @@ import de.atennert.lcarswm.drivenPorts.drawing.DrawFactory
 import de.atennert.lcarswm.drivenPorts.drawing.Session
 import de.atennert.lcarswm.drivenPorts.drawing.Surface
 import de.atennert.lcarswm.drivenPorts.drawing.TextAlignment
-import de.atennert.lcarswm.monitor.Monitor
-import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.screen.Screen
+import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.settings.GeneralSetting
 import de.atennert.lcarswm.system.api.WindowUtilApi
 import de.atennert.rx.NextObserver
 import de.atennert.rx.Subject
 import de.atennert.rx.operators.map
 import de.atennert.rx.operators.withLatestFrom
-import gtk.Screen
+import gtk.Screen as XScreen
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.RROutput
 
@@ -25,8 +25,8 @@ import xlib.RROutput
 @ExperimentalForeignApi
 class RootWindowDrawer(
     private val windowUtilApi: WindowUtilApi,
-    monitorManager: MonitorManager<RROutput>,
-    private val screen: Screen,
+    screenManager: ScreenManager<RROutput>,
+    private val xScreen: XScreen,
     settings: Map<GeneralSetting, String>
 ) : UIDrawing {
     private val drawFactory by inject<DrawFactory>()
@@ -43,11 +43,11 @@ class RootWindowDrawer(
 
     init {
         triggerDrawSj
-            .withLatestFrom(monitorManager.monitorsObs)
+            .withLatestFrom(screenManager.screensObs)
             .map { it.v2 }
-            .withLatestFrom(monitorManager.combinedScreenSizeObs)
-            .subscribe(NextObserver { (monitors, combinedScreenSize) ->
-                internalDrawWindowManagerFrame(monitors, combinedScreenSize)
+            .withLatestFrom(screenManager.combinedScreenSizeObs)
+            .subscribe(NextObserver { (screens, combinedScreenSize) ->
+                internalDrawWindowManagerFrame(screens, combinedScreenSize)
             })
             .closeWith {
                 this.unsubscribe()
@@ -60,14 +60,14 @@ class RootWindowDrawer(
         triggerDrawSj.next(Unit)
     }
 
-    private fun internalDrawWindowManagerFrame(monitors: List<Monitor<*>>, combinedScreenSize: Pair<Int, Int>) {
+    private fun internalDrawWindowManagerFrame(screens: List<Screen<*>>, combinedScreenSize: Pair<Int, Int>) {
         val (combinedWidth, combinedHeight) = combinedScreenSize
         if (cairoSurface == null) {
             cairoSurface = drawFactory.createSurface(
                 Surface.Configuration(
                     windowUtilApi.display,
-                    screen.root,
-                    screen.root_visual,
+                    xScreen.root,
+                    xScreen.root_visual,
                     combinedWidth,
                     combinedHeight,
                 )
@@ -76,7 +76,7 @@ class RootWindowDrawer(
         cairoSurface?.setSize(combinedWidth, combinedHeight)
 
         cairoSurface?.createSession()?.let { cr ->
-            monitors.forEach {
+            screens.forEach {
                 when (it.screenMode) { // -> with latest from
                     ScreenMode.NORMAL -> drawNormalFrame(it, cr)
                     ScreenMode.MAXIMIZED -> drawMaximizedFrame(it, cr)
@@ -94,53 +94,53 @@ class RootWindowDrawer(
         cr.drawImage(logo, x + 8, y)
     }
 
-    private fun drawMaximizedFrame(monitor: Monitor<*>, cr: Session) {
-        clearScreen(monitor, cr)
+    private fun drawMaximizedFrame(screen: Screen<*>, cr: Session) {
+        clearScreen(screen, cr)
 
-        cr.drawBarEndLeft(monitor.x, monitor.y, BAR_END_WIDTH, BAR_HEIGHT, COLOR_BAR_ENDS)
-        cr.drawBarEndLeft(monitor.x, monitor.y + monitor.height - BAR_HEIGHT, BAR_END_WIDTH, BAR_HEIGHT, COLOR_BAR_ENDS)
-        cr.drawBarEndRight(monitor.x + monitor.width - 32, monitor.y, BAR_END_WIDTH, BAR_HEIGHT, COLOR_BAR_ENDS)
+        cr.drawBarEndLeft(screen.x, screen.y, BAR_END_WIDTH, BAR_HEIGHT, COLOR_BAR_ENDS)
+        cr.drawBarEndLeft(screen.x, screen.y + screen.height - BAR_HEIGHT, BAR_END_WIDTH, BAR_HEIGHT, COLOR_BAR_ENDS)
+        cr.drawBarEndRight(screen.x + screen.width - 32, screen.y, BAR_END_WIDTH, BAR_HEIGHT, COLOR_BAR_ENDS)
         cr.drawBarEndRight(
-            monitor.x + monitor.width - 32,
-            monitor.y + monitor.height - BAR_HEIGHT,
+            screen.x + screen.width - 32,
+            screen.y + screen.height - BAR_HEIGHT,
             BAR_END_WIDTH,
             BAR_HEIGHT,
             COLOR_BAR_ENDS
         )
 
         cr.drawRectangle(
-            if (monitor.isPrimary)
-                (monitor.x + 2 * BAR_GAP_SIZE + BAR_END_WIDTH + SIDE_BAR_WIDTH)
+            if (screen.isPrimary)
+                (screen.x + 2 * BAR_GAP_SIZE + BAR_END_WIDTH + SIDE_BAR_WIDTH)
             else
-                (monitor.x + BAR_GAP_SIZE + BAR_END_WIDTH),
-            monitor.y,
-            if (monitor.isPrimary)
-                (monitor.width - 3 * BAR_GAP_SIZE - 2 * BAR_END_WIDTH - SIDE_BAR_WIDTH)
+                (screen.x + BAR_GAP_SIZE + BAR_END_WIDTH),
+            screen.y,
+            if (screen.isPrimary)
+                (screen.width - 3 * BAR_GAP_SIZE - 2 * BAR_END_WIDTH - SIDE_BAR_WIDTH)
             else
-                (monitor.width - 2 * (BAR_GAP_SIZE + BAR_END_WIDTH)),
+                (screen.width - 2 * (BAR_GAP_SIZE + BAR_END_WIDTH)),
             BAR_HEIGHT,
             COLOR_MAX_BAR_UP
         )
 
         cr.drawRectangle(
-            monitor.x + 40,
-            monitor.y + monitor.height - 40,
-            monitor.width - 80,
+            screen.x + 40,
+            screen.y + screen.height - 40,
+            screen.width - 80,
             BAR_HEIGHT,
             COLOR_MAX_BAR_DOWN
         )
         if (logo != null) {
             drawLogo(
                 cr,
-                monitor.x + monitor.width - 2 * BAR_GAP_SIZE - BAR_END_WIDTH - logo.width,
-                monitor.y
+                screen.x + screen.width - 2 * BAR_GAP_SIZE - BAR_END_WIDTH - logo.width,
+                screen.y
             )
         } else {
             cr.drawText(
                 logoText,
                 fontFamily,
-                monitor.x + monitor.width - BAR_GAP_SIZE - BAR_END_WIDTH,
-                monitor.y,
+                screen.x + screen.width - BAR_GAP_SIZE - BAR_END_WIDTH,
+                screen.y,
                 BAR_HEIGHT,
                 TextAlignment.RIGHT,
                 COLOR_LOGO,
@@ -149,52 +149,52 @@ class RootWindowDrawer(
         }
     }
 
-    private fun drawNormalFrame(monitor: Monitor<*>, cr: Session) {
-        clearScreen(monitor, cr)
+    private fun drawNormalFrame(screen: Screen<*>, cr: Session) {
+        clearScreen(screen, cr)
 
         // bottom bar
         cr.drawRectangle(
-            monitor.x + 320,
-            monitor.y + monitor.height - 40,
-            monitor.width - 320,
+            screen.x + 320,
+            screen.y + screen.height - 40,
+            screen.width - 320,
             40,
             COLOR_NORMAL_BAR_DOWN
         )
 
-        val middleSegmentWidth = (monitor.width - 240) / 8
+        val middleSegmentWidth = (screen.width - 240) / 8
         // upper middle bars
         cr.drawRectangle(
-            monitor.x + 232 + 32,
-            monitor.y + BAR_HEIGHT + INNER_CORNER_RADIUS + 2 * BAR_GAP_SIZE + DATA_BAR_HEIGHT,
+            screen.x + 232 + 32,
+            screen.y + BAR_HEIGHT + INNER_CORNER_RADIUS + 2 * BAR_GAP_SIZE + DATA_BAR_HEIGHT,
             (middleSegmentWidth * 6 - 32),
             16,
             COLOR_NORMAL_BAR_MIDDLE_1
         )
         cr.drawRectangle(
-            monitor.x + 240 + middleSegmentWidth * 6,
-            monitor.y + BAR_HEIGHT + INNER_CORNER_RADIUS + 2 * BAR_GAP_SIZE + DATA_BAR_HEIGHT,
+            screen.x + 240 + middleSegmentWidth * 6,
+            screen.y + BAR_HEIGHT + INNER_CORNER_RADIUS + 2 * BAR_GAP_SIZE + DATA_BAR_HEIGHT,
             middleSegmentWidth * 2,
             16,
             COLOR_NORMAL_BAR_MIDDLE_2
         )
         cr.drawRectangle(
-            monitor.x + 232 + 32,
-            monitor.y + BAR_HEIGHT + INNER_CORNER_RADIUS + 3 * BAR_GAP_SIZE + DATA_BAR_HEIGHT + BAR_HEIGHT_SMALL,
+            screen.x + 232 + 32,
+            screen.y + BAR_HEIGHT + INNER_CORNER_RADIUS + 3 * BAR_GAP_SIZE + DATA_BAR_HEIGHT + BAR_HEIGHT_SMALL,
             middleSegmentWidth * 3 - 32,
             16,
             COLOR_NORMAL_BAR_MIDDLE_3
         )
         cr.drawRectangle(
-            monitor.x + 240 + middleSegmentWidth * 3,
-            monitor.y + BAR_HEIGHT + INNER_CORNER_RADIUS + 3 * BAR_GAP_SIZE + DATA_BAR_HEIGHT + BAR_HEIGHT_SMALL,
+            screen.x + 240 + middleSegmentWidth * 3,
+            screen.y + BAR_HEIGHT + INNER_CORNER_RADIUS + 3 * BAR_GAP_SIZE + DATA_BAR_HEIGHT + BAR_HEIGHT_SMALL,
             middleSegmentWidth * 5,
             16,
             COLOR_NORMAL_BAR_MIDDLE_4
         )
 
         cr.drawCornerUp(
-            monitor.x,
-            monitor.y + BAR_HEIGHT + BAR_GAP_SIZE,
+            screen.x,
+            screen.y + BAR_HEIGHT + BAR_GAP_SIZE,
             256,
             SIDE_BAR_WIDTH,
             160,
@@ -205,8 +205,8 @@ class RootWindowDrawer(
         )
 
         cr.drawCornerDown(
-            monitor.x,
-            monitor.y + BAR_HEIGHT + 3 * BAR_GAP_SIZE + DATA_BAR_HEIGHT + 32,
+            screen.x,
+            screen.y + BAR_HEIGHT + 3 * BAR_GAP_SIZE + DATA_BAR_HEIGHT + 32,
             256,
             SIDE_BAR_WIDTH,
             32,
@@ -217,16 +217,16 @@ class RootWindowDrawer(
         )
 
         cr.drawRectangle(
-            monitor.x,
-            monitor.y + NORMAL_WINDOW_UPPER_OFFSET + INNER_CORNER_RADIUS,
+            screen.x,
+            screen.y + NORMAL_WINDOW_UPPER_OFFSET + INNER_CORNER_RADIUS,
             SIDE_BAR_WIDTH,
-            monitor.height - NORMAL_WINDOW_NON_APP_HEIGHT,
+            screen.height - NORMAL_WINDOW_NON_APP_HEIGHT,
             COLOR_NORMAL_SIDEBAR_DOWN
         )
 
         cr.drawCornerUp(
-            monitor.x,
-            monitor.y + monitor.height - BAR_HEIGHT - INNER_CORNER_RADIUS,
+            screen.x,
+            screen.y + screen.height - BAR_HEIGHT - INNER_CORNER_RADIUS,
             312,
             SIDE_BAR_WIDTH,
             BAR_HEIGHT + INNER_CORNER_RADIUS,
@@ -237,13 +237,13 @@ class RootWindowDrawer(
         )
 
         if (logo != null) {
-            drawLogo(cr, monitor.x + monitor.width - 16 - logo.width, monitor.y)
+            drawLogo(cr, screen.x + screen.width - 16 - logo.width, screen.y)
         } else {
             cr.drawText(
                 logoText,
                 fontFamily,
-                monitor.x + monitor.width,
-                monitor.y,
+                screen.x + screen.width,
+                screen.y,
                 BAR_HEIGHT,
                 TextAlignment.RIGHT,
                 COLOR_LOGO,
@@ -252,12 +252,12 @@ class RootWindowDrawer(
         }
     }
 
-    private fun clearScreen(monitor: Monitor<*>, cr: Session) {
+    private fun clearScreen(screen: Screen<*>, cr: Session) {
         cr.drawRectangle(
-            monitor.x,
-            monitor.y,
-            monitor.width,
-            monitor.height,
+            screen.x,
+            screen.y,
+            screen.width,
+            screen.height,
             COLOR_BACKGROUND
         )
     }

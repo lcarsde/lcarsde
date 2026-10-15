@@ -12,37 +12,37 @@ data class WindowMeasurements(val x: Int, val y: Int, val width: Int, val height
 
     companion object {
         /** Create window measurements for normal mode windows (primary screen exclusive mode) */
-        fun createNormal(monitorX: Int, monitorY: Int, monitorWidth: Int, monitorHeight: Int): WindowMeasurements {
+        fun createNormal(screenX: Int, screenY: Int, screenWidth: Int, screenHeight: Int): WindowMeasurements {
             return WindowMeasurements(
-                monitorX + NORMAL_WINDOW_LEFT_OFFSET,
-                monitorY + NORMAL_WINDOW_UPPER_OFFSET,
-                monitorWidth - NORMAL_WINDOW_LEFT_OFFSET,
-                monitorHeight - NORMAL_WINDOW_UPPER_OFFSET - BAR_GAP_SIZE - BAR_HEIGHT,
-                monitorHeight - NORMAL_WINDOW_UPPER_OFFSET
+                screenX + NORMAL_WINDOW_LEFT_OFFSET,
+                screenY + NORMAL_WINDOW_UPPER_OFFSET,
+                screenWidth - NORMAL_WINDOW_LEFT_OFFSET,
+                screenHeight - NORMAL_WINDOW_UPPER_OFFSET - BAR_GAP_SIZE - BAR_HEIGHT,
+                screenHeight - NORMAL_WINDOW_UPPER_OFFSET
             )
         }
 
         /** Create window measurements for maximized windows */
-        fun createMaximized(monitorX: Int, monitorY: Int, monitorWidth: Int, monitorHeight: Int): WindowMeasurements {
+        fun createMaximized(screenX: Int, screenY: Int, screenWidth: Int, screenHeight: Int): WindowMeasurements {
             val upperWindowOffset = BAR_HEIGHT + BAR_GAP_SIZE
 
             return WindowMeasurements(
-                monitorX,
-                monitorY + upperWindowOffset,
-                monitorWidth,
-                monitorHeight - 2 * upperWindowOffset,
-                monitorHeight - upperWindowOffset
+                screenX,
+                screenY + upperWindowOffset,
+                screenWidth,
+                screenHeight - 2 * upperWindowOffset,
+                screenHeight - upperWindowOffset
             )
         }
 
         /** Create window measurements for fullscreen windows */
-        fun createFullscreen(monitorX: Int, monitorY: Int, monitorWidth: Int, monitorHeight: Int): WindowMeasurements {
+        fun createFullscreen(screenX: Int, screenY: Int, screenWidth: Int, screenHeight: Int): WindowMeasurements {
             return WindowMeasurements(
-                monitorX,
-                monitorY,
-                monitorWidth,
-                monitorHeight,
-                monitorHeight
+                screenX,
+                screenY,
+                screenWidth,
+                screenHeight,
+                screenHeight
             )
         }
     }

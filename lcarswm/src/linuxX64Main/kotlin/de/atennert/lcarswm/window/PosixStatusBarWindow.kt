@@ -7,8 +7,8 @@ import de.atennert.lcarswm.conversion.combine
 import de.atennert.lcarswm.conversion.toUByteArray
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.events.sendConfigureNotify
-import de.atennert.lcarswm.monitor.Monitor
-import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.screen.Screen
+import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.system.*
 import de.atennert.rx.NextObserver
 import de.atennert.rx.ReplaySubject
@@ -23,7 +23,7 @@ import xlib.RROutput
 class PosixStatusBarWindow(
     private val display: CPointer<Display>?,
     private val rootWindowId: Window,
-    monitorManager: MonitorManager<RROutput>,
+    screenManager: ScreenManager<RROutput>,
     eventStore: EventStore,
     atomLibrary: AtomLibrary,
     override val id: Window,
@@ -33,15 +33,15 @@ class PosixStatusBarWindow(
         .map { it.toUByteArray() }
         .combine()
 
-    private val windowMeasurementsObs = monitorManager.primaryMonitorObs
+    private val windowMeasurementsObs = screenManager.primaryScreenObs
         .map(::getWindowMeasurements)
 
     private val frameIdSj = ReplaySubject<Window>(1)
     private val frameIdObs = frameIdSj.asObservable()
 
     private val nextHandler =
-        NextObserver.NextHandler<Tuple2<Window, Monitor<RROutput>?>> { (frameId, primaryMonitor) ->
-            if (primaryMonitor != null && primaryMonitor.screenMode == ScreenMode.NORMAL) {
+        NextObserver.NextHandler<Tuple2<Window, Screen<RROutput>?>> { (frameId, primaryScreen) ->
+            if (primaryScreen != null && primaryScreen.screenMode == ScreenMode.NORMAL) {
                 internalShow(frameId)
             } else {
                 internalHide(frameId)
@@ -99,7 +99,7 @@ class PosixStatusBarWindow(
 
         subscription.add(
             frameIdObs
-                .combineLatestWith(monitorManager.primaryMonitorObs)
+                .combineLatestWith(screenManager.primaryScreenObs)
                 .subscribe(NextObserver(nextHandler))
         )
 
@@ -183,14 +183,14 @@ class PosixStatusBarWindow(
         // Nothing to do
     }
 
-    private fun getWindowMeasurements(primaryMonitor: Monitor<*>?): WindowMeasurements? {
-        if (primaryMonitor == null) {
+    private fun getWindowMeasurements(primaryScreen: Screen<*>?): WindowMeasurements? {
+        if (primaryScreen == null) {
             return null
         }
         return WindowMeasurements(
-            primaryMonitor.x + NORMAL_WINDOW_LEFT_OFFSET,
-            primaryMonitor.y + BAR_HEIGHT + BAR_GAP_SIZE,
-            (primaryMonitor.width - NORMAL_WINDOW_LEFT_OFFSET).convert(),
+            primaryScreen.x + NORMAL_WINDOW_LEFT_OFFSET,
+            primaryScreen.y + BAR_HEIGHT + BAR_GAP_SIZE,
+            (primaryScreen.width - NORMAL_WINDOW_LEFT_OFFSET).convert(),
             (DATA_AREA_HEIGHT).convert(),
             (DATA_AREA_HEIGHT).convert()
         )

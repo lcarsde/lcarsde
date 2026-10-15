@@ -8,22 +8,23 @@ import de.atennert.lcarswm.drivenPorts.drawing.Surface
 import de.atennert.lcarswm.drivenPorts.drawing.TextAlignment
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.keys.KeyManager
-import de.atennert.lcarswm.monitor.Monitor
-import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.screen.Screen
+import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.settings.GeneralSetting
 import de.atennert.lcarswm.system.*
 import de.atennert.rx.NextObserver
 import de.atennert.rx.Subscription
 import de.atennert.rx.operators.filter
 import gtk.*
+import gtk.Screen as XScreen
 import kotlinx.cinterop.*
 import xlib.RROutput
 
 @ExperimentalForeignApi
 class PosixButton(
     private val display: CPointer<Display>?,
-    screen: Screen,
-    monitorManager: MonitorManager<RROutput>,
+    xScreen: XScreen,
+    screenManager: ScreenManager<RROutput>,
     keyManager: KeyManager,
     eventStore: EventStore,
     private val text: String,
@@ -41,7 +42,7 @@ class PosixButton(
 
     override val id: Window = wrapXCreateSimpleWindow(
         display,
-        screen.root,
+        xScreen.root,
         x,
         y,
         width.convert(),
@@ -55,7 +56,7 @@ class PosixButton(
         Surface.Configuration(
             display,
             id,
-            screen.root_visual,
+            xScreen.root_visual,
             width,
             height,
         )
@@ -71,7 +72,7 @@ class PosixButton(
     private var isHovered = false
     private var isPressed = false
 
-    // TODO combine screen mode and primary monitor handling
+    // TODO combine screen mode and primary screen handling
     private val screenModeHandler = NextObserver.NextHandler<ScreenMode> {
         when (it) {
             ScreenMode.NORMAL -> {
@@ -90,8 +91,8 @@ class PosixButton(
         }
     }
 
-    private val primaryMonitorHandler = NextObserver.NextHandler<Monitor<RROutput>?> { monitor ->
-        monitor?.let {
+    private val primaryScreenHandler = NextObserver.NextHandler<Screen<RROutput>?> { screen ->
+        screen?.let {
             x = it.x
             y = it.y
             this.changePosition(it.x + xOffset, it.y)
@@ -138,13 +139,13 @@ class PosixButton(
         draw()
 
         subscription.add(
-            monitorManager.screenModeObs
+            screenManager.screenModeObs
                 .subscribe(NextObserver(screenModeHandler))
         )
 
         subscription.add(
-            monitorManager.primaryMonitorObs
-                .subscribe(NextObserver(primaryMonitorHandler))
+            screenManager.primaryScreenObs
+                .subscribe(NextObserver(primaryScreenHandler))
         )
     }
 

@@ -3,7 +3,7 @@ package de.atennert.lcarswm.events
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.keys.*
-import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.window.WindowCoordinator
 import de.atennert.lcarswm.window.WindowFocusHandler
 import gtk.KeyPress
@@ -16,7 +16,7 @@ class KeyPressHandler(
     private val keyManager: KeyManager,
     private val keyConfiguration: KeyConfiguration,
     private val toggleSessionManager: KeySessionManager,
-    private val monitorManager: MonitorManager<*>,
+    private val screenManager: ScreenManager<*>,
     private val windowCoordinator: WindowCoordinator,
     private val windowFocusHandler: WindowFocusHandler
 ) : XEventHandler {
@@ -48,8 +48,8 @@ class KeyPressHandler(
     private fun act(action: WmAction): Boolean {
         keyPressSj.next(action)
         when (action) {
-            WmAction.WINDOW_MOVE_NEXT -> moveWindowToNextMonitor()
-            WmAction.WINDOW_MOVE_PREVIOUS -> moveWindowToPreviousMonitor()
+            WmAction.WINDOW_MOVE_NEXT -> moveWindowToNextScreen()
+            WmAction.WINDOW_MOVE_PREVIOUS -> moveWindowToPreviousScreen()
             WmAction.WINDOW_TOGGLE_FWD -> toggleFocusedWindowForward()
             WmAction.WINDOW_TOGGLE_BWD -> toggleFocusedWindowBackward()
             WmAction.SCREEN_MODE_TOGGLE -> toggleScreenMode()
@@ -59,16 +59,16 @@ class KeyPressHandler(
         return false
     }
 
-    private fun moveWindowToNextMonitor() {
+    private fun moveWindowToNextScreen() {
         val focusedWindow = windowFocusHandler.getFocusedWindow() ?: return
-        logger.logDebug("KeyPressHandler::moveWindowToNextMonitor::focused window: $focusedWindow")
-        windowCoordinator.moveWindowToNextMonitor(focusedWindow)
+        logger.logDebug("KeyPressHandler::moveWindowToNextScreen::focused window: $focusedWindow")
+        windowCoordinator.moveWindowToNextScreen(focusedWindow)
     }
 
-    private fun moveWindowToPreviousMonitor() {
+    private fun moveWindowToPreviousScreen() {
         val focusedWindow = windowFocusHandler.getFocusedWindow() ?: return
-        logger.logDebug("KeyPressHandler::moveWindowToPreviousMonitor::focused window: $focusedWindow")
-        windowCoordinator.moveWindowToPreviousMonitor(focusedWindow)
+        logger.logDebug("KeyPressHandler::moveWindowToPreviousScreen::focused window: $focusedWindow")
+        windowCoordinator.moveWindowToPreviousScreen(focusedWindow)
     }
 
     private fun toggleFocusedWindowForward() {
@@ -85,6 +85,6 @@ class KeyPressHandler(
 
     private fun toggleScreenMode() {
         logger.logDebug("KeyPressHandler::toggleScreenMode::")
-        monitorManager.toggleScreenMode()
+        screenManager.toggleScreenMode()
     }
 }

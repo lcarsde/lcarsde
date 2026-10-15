@@ -3,8 +3,8 @@ package de.atennert.lcarswm.mouse
 import de.atennert.lcarsde.lifecycle.closeWith
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
-import de.atennert.lcarswm.monitor.Monitor
-import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.screen.Screen
+import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.window.ManagedWmWindow
 import de.atennert.lcarswm.window.WindowCoordinator
 import de.atennert.rx.NextObserver
@@ -15,25 +15,25 @@ import xlib.RROutput
 @OptIn(ExperimentalForeignApi::class)
 class MoveWindowManager(
     private val windowCoordinator: WindowCoordinator,
-    monitorManager: MonitorManager<RROutput>
+    screenManager: ScreenManager<RROutput>
 ) {
     private val logger by inject<Logger>()
 
-    private var monitors = emptyList<Monitor<RROutput>>()
+    private var screens = emptyList<Screen<RROutput>>()
 
-    private lateinit var lastWindowMonitor: Monitor<RROutput>
+    private lateinit var lastWindowScreen: Screen<RROutput>
 
     private var targetWindow: ManagedWmWindow<Window>? = null
 
     init {
-        monitorManager.monitorsObs.subscribe(NextObserver { monitors ->
+        screenManager.screensObs.subscribe(NextObserver { screens ->
             // TODO use more RX stuff
-            this.monitors = monitors
-            logger.logDebug("MoveWindowManager::updateMonitors::$monitors")
+            this.screens = screens
+            logger.logDebug("MoveWindowManager::updateScreens::$screens")
 
             // cancel moving the window
             targetWindow?.let {
-                logger.logWarning("MoveWindowManager::updateMonitors::cancel moving of ${it.id}")
+                logger.logWarning("MoveWindowManager::updateScreens::cancel moving of ${it.id}")
             }
             targetWindow = null
         })
@@ -46,15 +46,15 @@ class MoveWindowManager(
         }
 
         targetWindow = window
-        lastWindowMonitor = getMonitor(x, y) ?: return
+        lastWindowScreen = getScreen(x, y) ?: return
     }
 
     fun move(x: Int, y: Int) {
         targetWindow?.let {
-            val newMonitor = getMonitor(x, y) ?: return
-            if (newMonitor.id != lastWindowMonitor.id) {
-                windowCoordinator.moveWindowToMonitor(it.id, newMonitor)
-                lastWindowMonitor = newMonitor
+            val newScreen = getScreen(x, y) ?: return
+            if (newScreen.id != lastWindowScreen.id) {
+                windowCoordinator.moveWindowToScreen(it.id, newScreen)
+                lastWindowScreen = newScreen
             }
         }
     }
@@ -63,9 +63,9 @@ class MoveWindowManager(
         targetWindow = null
     }
 
-    private fun getMonitor(x: Int, y: Int): Monitor<RROutput>? {
+    private fun getScreen(x: Int, y: Int): Screen<RROutput>? {
         return try {
-            monitors.first { it.isOnMonitor(x, y) }
+            screens.first { it.isOnScreen(x, y) }
         } catch (e: Exception) {
             logger.logError(e.toString())
             null

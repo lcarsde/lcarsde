@@ -2,6 +2,7 @@ package de.atennert.lcarswm.system
 
 import de.atennert.lcarswm.system.api.WindowUtilApi
 import gtk.*
+import gtk.Screen as XScreen
 import kotlinx.cinterop.*
 
 @ExperimentalForeignApi
@@ -16,7 +17,7 @@ open class WindowUtilApiMock : WindowUtilApi {
         TODO("Not yet implemented")
     }
 
-    override fun defaultScreenOfDisplay(): CPointer<Screen>? {
+    override fun defaultScreenOfDisplay(): CPointer<XScreen>? {
         TODO("Not yet implemented")
     }
 

@@ -3,6 +3,7 @@ package de.atennert.lcarswm.system
 import de.atennert.lcarswm.signal.Signal
 import de.atennert.lcarswm.system.api.SystemApi
 import gtk.*
+import gtk.Screen as XScreen
 import kotlinx.cinterop.*
 import platform.posix.sigaction
 import platform.posix.sigset_t
@@ -350,12 +351,12 @@ open class SystemFacadeMock : SystemApi {
         return 0
     }
 
-    override fun defaultScreenOfDisplay(): CPointer<Screen>? {
+    override fun defaultScreenOfDisplay(): CPointer<XScreen>? {
         functionCalls.add(FunctionCall("defaultScreenOfDisplay"))
-        val screen = nativeHeap.alloc<Screen>()
-        screen.root = rootWindowId
-        screen.root_visual = nativeHeap.alloc<Visual>().ptr
-        return screen.ptr
+        val xScreen = nativeHeap.alloc<XScreen>()
+        xScreen.root = rootWindowId
+        xScreen.root_visual = nativeHeap.alloc<Visual>().ptr
+        return xScreen.ptr
     }
 
     override fun defaultScreenNumber(): Int {

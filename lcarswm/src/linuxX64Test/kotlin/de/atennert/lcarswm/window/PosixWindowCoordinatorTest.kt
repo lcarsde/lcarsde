@@ -7,7 +7,7 @@ import de.atennert.lcarswm.ScreenMode
 import de.atennert.lcarswm.drawing.UIDrawingMock
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.log.LoggerMock
-import de.atennert.lcarswm.monitor.MonitorManagerMock
+import de.atennert.lcarswm.screen.ScreenManagerMock
 import de.atennert.lcarswm.system.FunctionCall
 import de.atennert.lcarswm.system.SystemCallMocker
 import gtk.Display
@@ -39,16 +39,16 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
     }
 
     @Test
-    fun `add windows to a monitor`() {
-        val monitorManager = MonitorManagerMock()
+    fun `add windows to a screen`() {
+        val screenManager = ScreenManagerMock()
         val windowFactory = FakeWindowFactory()
         val windowList = WindowList()
         val rootWindowDrawer = UIDrawingMock()
-        val primaryMonitor = monitorManager.lastMonitorBuilders[0]
+        val primaryScreen = screenManager.lastScreenBuilders[0]
 
         PosixWindowCoordinator(
             eventStore,
-            monitorManager,
+            screenManager,
             windowFactory,
             windowList,
             rootWindowDrawer,
@@ -59,10 +59,10 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
 
         val window = windowList.get(42.convert()) as FakeManagedWindow
         val windowMeasurements = WindowMeasurements.createNormal(
-            primaryMonitor.x,
-            primaryMonitor.y,
-            primaryMonitor.width,
-            primaryMonitor.height,
+            primaryScreen.x,
+            primaryScreen.y,
+            primaryScreen.width,
+            primaryScreen.height,
         )
 
         window.functionCalls.last().shouldBe(
@@ -76,14 +76,14 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
 
     @Test
     fun `remove window from coordinator`() {
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val windowFactory = FakeWindowFactory()
         val windowList = WindowList()
         val rootWindowDrawer = UIDrawingMock()
 
         PosixWindowCoordinator(
             eventStore,
-            monitorManager,
+            screenManager,
             windowFactory,
             windowList,
             rootWindowDrawer,
@@ -100,15 +100,15 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
     }
 
     @Test
-    fun `handle monitor updates`() {
-        val monitorManager = MonitorManagerMock()
+    fun `handle screen updates`() {
+        val screenManager = ScreenManagerMock()
         val windowFactory = FakeWindowFactory()
         val windowList = WindowList()
         val rootWindowDrawer = UIDrawingMock()
 
         PosixWindowCoordinator(
             eventStore,
-            monitorManager,
+            screenManager,
             windowFactory,
             windowList,
             rootWindowDrawer,
@@ -117,20 +117,20 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         eventStore.mapSj.next(42.convert())
         val window = windowList.get(42.convert()) as FakeManagedWindow
 
-        val newMonitor =
-            MonitorManagerMock.createMonitorBuilder(
+        val newScreen =
+            ScreenManagerMock.createScreenBuilder(
                 1,
                 width = 1280,
                 height = 1024,
                 isPrimary = true
             )
-        monitorManager.lastMonitorBuildersSj.next(listOf(newMonitor))
+        screenManager.lastScreenBuildersSj.next(listOf(newScreen))
 
         val measurments = WindowMeasurements.createNormal(
-            newMonitor.x,
-            newMonitor.y,
-            newMonitor.width,
-            newMonitor.height
+            newScreen.x,
+            newScreen.y,
+            newScreen.width,
+            newScreen.height
         )
         window.functionCalls.last().shouldBe(
             FunctionCall(
@@ -142,14 +142,14 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
     }
 
     @Test
-    fun `move window to next monitor`() {
-        val monitorManager = MonitorManagerMock()
-        val primaryMonitor = monitorManager.lastMonitorBuilders[0]
-        val secondaryMonitor =
-            MonitorManagerMock.createMonitorBuilder(2, x = 800)
-        val tertiaryMonitor =
-            MonitorManagerMock.createMonitorBuilder(2, y = 600)
-        monitorManager.lastMonitorBuildersSj.next(listOf(primaryMonitor, secondaryMonitor, tertiaryMonitor))
+    fun `move window to next screen`() {
+        val screenManager = ScreenManagerMock()
+        val primaryScreen = screenManager.lastScreenBuilders[0]
+        val secondaryScreen =
+            ScreenManagerMock.createScreenBuilder(2, x = 800)
+        val tertiaryScreen =
+            ScreenManagerMock.createScreenBuilder(2, y = 600)
+        screenManager.lastScreenBuildersSj.next(listOf(primaryScreen, secondaryScreen, tertiaryScreen))
 
         val windowFactory = FakeWindowFactory()
         val windowList = WindowList()
@@ -157,7 +157,7 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
 
         val windowCoordinator = PosixWindowCoordinator(
             eventStore,
-            monitorManager,
+            screenManager,
             windowFactory,
             windowList,
             rootWindowDrawer,
@@ -166,12 +166,12 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         eventStore.mapSj.next(42.convert())
         val window = windowList.get(42.convert()) as FakeManagedWindow
 
-        windowCoordinator.moveWindowToNextMonitor(window.id)
+        windowCoordinator.moveWindowToNextScreen(window.id)
         var measurments = WindowMeasurements.createMaximized(
-            secondaryMonitor.x,
-            secondaryMonitor.y,
-            secondaryMonitor.width,
-            secondaryMonitor.height
+            secondaryScreen.x,
+            secondaryScreen.y,
+            secondaryScreen.width,
+            secondaryScreen.height
         )
         window.functionCalls.last().shouldBe(
             FunctionCall(
@@ -181,12 +181,12 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
             )
         )
 
-        windowCoordinator.moveWindowToNextMonitor(window.id)
+        windowCoordinator.moveWindowToNextScreen(window.id)
         measurments = WindowMeasurements.createMaximized(
-            tertiaryMonitor.x,
-            tertiaryMonitor.y,
-            tertiaryMonitor.width,
-            tertiaryMonitor.height
+            tertiaryScreen.x,
+            tertiaryScreen.y,
+            tertiaryScreen.width,
+            tertiaryScreen.height
         )
         window.functionCalls.last().shouldBe(
             FunctionCall(
@@ -196,12 +196,12 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
             )
         )
 
-        windowCoordinator.moveWindowToNextMonitor(window.id)
+        windowCoordinator.moveWindowToNextScreen(window.id)
         measurments = WindowMeasurements.createNormal(
-            primaryMonitor.x,
-            primaryMonitor.y,
-            primaryMonitor.width,
-            primaryMonitor.height
+            primaryScreen.x,
+            primaryScreen.y,
+            primaryScreen.width,
+            primaryScreen.height
         )
         window.functionCalls.last().shouldBe(
             FunctionCall(
@@ -213,14 +213,14 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
     }
 
     @Test
-    fun `move window to previous monitor`() {
-        val monitorManager = MonitorManagerMock()
-        val primaryMonitor = monitorManager.lastMonitorBuilders[0]
-        val secondaryMonitor =
-            MonitorManagerMock.createMonitorBuilder(2, x = 800)
-        val tertiaryMonitor =
-            MonitorManagerMock.createMonitorBuilder(2, y = 600)
-        monitorManager.lastMonitorBuildersSj.next(listOf(primaryMonitor, secondaryMonitor, tertiaryMonitor))
+    fun `move window to previous screen`() {
+        val screenManager = ScreenManagerMock()
+        val primaryScreen = screenManager.lastScreenBuilders[0]
+        val secondaryScreen =
+            ScreenManagerMock.createScreenBuilder(2, x = 800)
+        val tertiaryScreen =
+            ScreenManagerMock.createScreenBuilder(2, y = 600)
+        screenManager.lastScreenBuildersSj.next(listOf(primaryScreen, secondaryScreen, tertiaryScreen))
 
         val windowFactory = FakeWindowFactory()
         val windowList = WindowList()
@@ -228,7 +228,7 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
 
         val windowCoordinator = PosixWindowCoordinator(
             eventStore,
-            monitorManager,
+            screenManager,
             windowFactory,
             windowList,
             rootWindowDrawer,
@@ -237,12 +237,12 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         eventStore.mapSj.next(42.convert())
         val window = windowList.get(42.convert()) as FakeManagedWindow
 
-        windowCoordinator.moveWindowToPreviousMonitor(window.id)
+        windowCoordinator.moveWindowToPreviousScreen(window.id)
         var measurments = WindowMeasurements.createMaximized(
-            tertiaryMonitor.x,
-            tertiaryMonitor.y,
-            tertiaryMonitor.width,
-            tertiaryMonitor.height
+            tertiaryScreen.x,
+            tertiaryScreen.y,
+            tertiaryScreen.width,
+            tertiaryScreen.height
         )
         window.functionCalls.last().shouldBe(
             FunctionCall(
@@ -252,12 +252,12 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
             )
         )
 
-        windowCoordinator.moveWindowToPreviousMonitor(window.id)
+        windowCoordinator.moveWindowToPreviousScreen(window.id)
         measurments = WindowMeasurements.createMaximized(
-            secondaryMonitor.x,
-            secondaryMonitor.y,
-            secondaryMonitor.width,
-            secondaryMonitor.height
+            secondaryScreen.x,
+            secondaryScreen.y,
+            secondaryScreen.width,
+            secondaryScreen.height
         )
         window.functionCalls.last().shouldBe(
             FunctionCall(
@@ -267,12 +267,12 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
             )
         )
 
-        windowCoordinator.moveWindowToPreviousMonitor(window.id)
+        windowCoordinator.moveWindowToPreviousScreen(window.id)
         measurments = WindowMeasurements.createNormal(
-            primaryMonitor.x,
-            primaryMonitor.y,
-            primaryMonitor.width,
-            primaryMonitor.height
+            primaryScreen.x,
+            primaryScreen.y,
+            primaryScreen.width,
+            primaryScreen.height
         )
         window.functionCalls.last().shouldBe(
             FunctionCall(
@@ -285,14 +285,14 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
 
     @Test
     fun `test realign windows`() {
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val windowFactory = FakeWindowFactory()
         val windowList = WindowList()
         val rootWindowDrawer = UIDrawingMock()
 
         PosixWindowCoordinator(
             eventStore,
-            monitorManager,
+            screenManager,
             windowFactory,
             windowList,
             rootWindowDrawer,
@@ -301,7 +301,7 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
         eventStore.mapSj.next(42.convert())
         val window = windowList.get(42.convert()) as FakeManagedWindow
 
-        monitorManager.screenMode = ScreenMode.MAXIMIZED
+        screenManager.screenMode = ScreenMode.MAXIMIZED
         var measurments = WindowMeasurements(0, 48, 800, 504, 552)
         window.functionCalls.last().shouldBe(
             FunctionCall(
@@ -311,7 +311,7 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
             )
         )
 
-        monitorManager.screenMode = ScreenMode.FULLSCREEN
+        screenManager.screenMode = ScreenMode.FULLSCREEN
         measurments = WindowMeasurements(0, 0, 800, 600, 600)
         window.functionCalls.last().shouldBe(
             FunctionCall(
@@ -321,7 +321,7 @@ class PosixWindowCoordinatorTest : SystemCallMocker() {
             )
         )
 
-        monitorManager.screenMode = ScreenMode.NORMAL
+        screenManager.screenMode = ScreenMode.NORMAL
         measurments = WindowMeasurements(232, 240, 568, 312, 360)
         window.functionCalls.last().shouldBe(
             FunctionCall(

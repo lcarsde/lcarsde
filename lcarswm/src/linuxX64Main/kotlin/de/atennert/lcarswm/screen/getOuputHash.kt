@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.monitor
+package de.atennert.lcarswm.screen
 
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.RROutput

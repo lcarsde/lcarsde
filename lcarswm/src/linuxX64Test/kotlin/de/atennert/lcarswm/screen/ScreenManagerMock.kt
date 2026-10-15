@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.monitor
+package de.atennert.lcarswm.screen
 
 import de.atennert.lcarswm.ScreenMode
 import de.atennert.lcarswm.system.FunctionCall
@@ -11,45 +11,45 @@ import xlib.RROutput
 import kotlin.math.max
 
 @ExperimentalForeignApi
-open class MonitorManagerMock : MonitorManager<RROutput> {
+open class ScreenManagerMock : ScreenManager<RROutput> {
     val functionCalls = mutableListOf<FunctionCall>()
 
-    val lastMonitorBuildersSj = BehaviorSubject(
+    val lastScreenBuildersSj = BehaviorSubject(
         listOf(
-            createMonitorBuilder(
+            createScreenBuilder(
                 1,
                 isPrimary = true
             )
         )
     )
-    private val lastMonitorBuildersObs = lastMonitorBuildersSj.asObservable()
-    val lastMonitorBuilders by lastMonitorBuildersSj
+    private val lastScreenBuildersObs = lastScreenBuildersSj.asObservable()
+    val lastScreenBuilders by lastScreenBuildersSj
 
     private val screenModeSj = BehaviorSubject(ScreenMode.NORMAL)
     override val screenModeObs = screenModeSj.asObservable()
     var screenMode by screenModeSj
 
-    override val monitorsObs = lastMonitorBuildersObs
+    override val screensObs = lastScreenBuildersObs
         .combineLatestWith(screenModeObs)
-        .map { (monitorBuilders, screenMode) ->
-            monitorBuilders.map { it.setScreenMode(screenMode).build() }
+        .map { (screenBuilders, screenMode) ->
+            screenBuilders.map { it.setScreenMode(screenMode).build() }
         }
 
-    override val primaryMonitorObs = monitorsObs
-        .map { monitors -> monitors.firstOrNull { it.isPrimary } }
+    override val primaryScreenObs = screensObs
+        .map { screens -> screens.firstOrNull { it.isPrimary } }
 
-    override val combinedScreenSizeObs = monitorsObs
-        .map { monitors ->
-            monitors.fold(Pair(0, 0)) { (oldWidth, oldHeight), monitor ->
+    override val combinedScreenSizeObs = screensObs
+        .map { screens ->
+            screens.fold(Pair(0, 0)) { (oldWidth, oldHeight), screen ->
                 Pair(
-                    max(monitor.x + monitor.width, oldWidth),
-                    max(monitor.y + monitor.height, oldHeight)
+                    max(screen.x + screen.width, oldWidth),
+                    max(screen.y + screen.height, oldHeight)
                 )
             }
         }
 
-    override fun updateMonitorList() {
-        functionCalls.add(FunctionCall("updateMonitorList"))
+    override fun updateScreenList() {
+        functionCalls.add(FunctionCall("updateScreenList"))
     }
 
     override fun toggleScreenMode() {
@@ -61,7 +61,7 @@ open class MonitorManagerMock : MonitorManager<RROutput> {
     }
 
     companion object {
-        fun createMonitorBuilder(
+        fun createScreenBuilder(
             id: Int,
             name: String = "",
             x: Int = 0,
@@ -69,8 +69,8 @@ open class MonitorManagerMock : MonitorManager<RROutput> {
             width: Int = 800,
             height: Int = 600,
             isPrimary: Boolean = false
-        ): Monitor.Builder<RROutput> {
-            return Monitor.Builder<RROutput>(id.convert(), name, isPrimary)
+        ): Screen.Builder<RROutput> {
+            return Screen.Builder<RROutput>(id.convert(), name, isPrimary)
                 .setMeasurements(x, y, width, height)
         }
     }

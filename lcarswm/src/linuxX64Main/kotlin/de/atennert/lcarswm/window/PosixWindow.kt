@@ -14,6 +14,7 @@ import de.atennert.lcarswm.events.sendConfigureNotify
 import de.atennert.lcarswm.keys.KeyManager
 import de.atennert.lcarswm.system.*
 import gtk.*
+import gtk.Screen as XScreen
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
@@ -33,7 +34,7 @@ private val wmStateData = listOf<ULong>(NormalState.convert(), None.convert())
 @ExperimentalForeignApi
 class PosixWindow(
     private val display: CPointer<Display>?,
-    private val screen: Screen,
+    private val xScreen: XScreen,
     private val atomLibrary: AtomLibrary,
     private val textAtomReader: TextAtomReader,
     private val frameDrawer: IFrameDrawer,
@@ -70,7 +71,7 @@ class PosixWindow(
 
         frame = wrapXCreateSimpleWindow(
             display,
-            screen.root,
+            xScreen.root,
             measurements.x,
             measurements.y,
             measurements.width.convert(),
@@ -227,7 +228,7 @@ class PosixWindow(
 
         wrapXSetWindowBorderWidth(display, id, borderWidth.convert())
 
-        wrapXReparentWindow(display, id, screen.root, 0, 0)
+        wrapXReparentWindow(display, id, xScreen.root, 0, 0)
         wrapXRemoveFromSaveSet(display, id)
         wrapXDestroyWindow(display, titleBar)
         wrapXDestroyWindow(display, frame)

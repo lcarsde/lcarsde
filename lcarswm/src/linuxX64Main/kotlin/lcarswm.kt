@@ -73,7 +73,7 @@ suspend fun runWindowManager(system: SystemApi, resourceGenerator: ResourceGener
 
     runtimeResources?.let { rr ->
         try {
-            (rr.platform.monitorManager.primaryMonitorObs)
+            (rr.platform.screenManager.primaryScreenObs)
                 .filterNotNull()
                 .take(1)
                 .subscribe(NextObserver {

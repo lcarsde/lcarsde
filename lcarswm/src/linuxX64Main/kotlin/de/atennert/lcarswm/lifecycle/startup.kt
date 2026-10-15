@@ -17,8 +17,8 @@ import de.atennert.lcarswm.keys.FocusSessionKeyboardGrabber
 import de.atennert.lcarswm.keys.KeyConfiguration
 import de.atennert.lcarswm.keys.KeyManager
 import de.atennert.lcarswm.keys.KeySessionManager
-import de.atennert.lcarswm.monitor.MonitorManager
-import de.atennert.lcarswm.monitor.MonitorManagerImpl
+import de.atennert.lcarswm.screen.ScreenManager
+import de.atennert.lcarswm.screen.ScreenManagerImpl
 import de.atennert.lcarswm.mouse.MoveWindowManager
 import de.atennert.lcarswm.settings.SettingsReader
 import de.atennert.lcarswm.signal.Signal
@@ -93,8 +93,8 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
             })
         }
 
-    val screen = system.defaultScreenOfDisplay()?.pointed
-    if (screen == null) {
+    val xScreen = system.defaultScreenOfDisplay()?.pointed
+    if (xScreen == null) {
         logger.logError("::startup::got no screen")
         return null
     }
@@ -105,7 +105,7 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
 
     val rootWindowPropertyHandler = RootWindowPropertyHandler(
         system,
-        screen.root,
+        xScreen.root,
         atomLibrary,
         eventBuffer
     )
@@ -120,7 +120,7 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
     system.sync(false)
     system.setErrorHandler(staticCFunction { _, _ -> wmDetected = true; 0 })
 
-    system.selectInput(screen.root, ROOT_WINDOW_MASK)
+    system.selectInput(xScreen.root, ROOT_WINDOW_MASK)
 
     system.sync(false)
 
@@ -128,11 +128,11 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
         logger.logError("::startup::Detected another active window manager")
         return null
     }
-    system.closeWith { selectInput(screen.root, NoEventMask) }
+    system.closeWith { selectInput(xScreen.root, NoEventMask) }
 
     system.setErrorHandler(staticCFunction { _, err -> staticLogger?.logError("::startup::error code: ${err?.pointed?.error_code}"); 0 })
 
-    system.defineCursor(screen.root, system.createFontCursor(XC_left_ptr))
+    system.defineCursor(xScreen.root, system.createFontCursor(XC_left_ptr))
 
     rootWindowPropertyHandler
         .closeWith(RootWindowPropertyHandler::unsetWindowProperties)
@@ -146,19 +146,19 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
         return null
     }
 
-    logger.logDebug("::startup::Screen size: ${screen.width}/${screen.height}, root: ${screen.root}")
+    logger.logDebug("::startup::Screen size: ${xScreen.width}/${xScreen.height}, root: ${xScreen.root}")
 
-    val monitorManager = MonitorManagerImpl(system, screen.root)
+    val screenManager = ScreenManagerImpl(system, xScreen.root)
 
     val uiDrawer =
         RootWindowDrawer(
             system,
-            monitorManager,
-            screen,
+            screenManager,
+            xScreen,
             settings.generalSettings
         )
 
-    keyManager.ungrabAllKeys(screen.root)
+    keyManager.ungrabAllKeys(xScreen.root)
 
     val env = Environment(system.display)
 
@@ -169,7 +169,7 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
         settings.keyBindings,
         keyManager,
         toggleSessionManager,
-        screen.root
+        xScreen.root
     )
 
     system.sync(false)
@@ -188,7 +188,7 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
 
     WindowStack(system.display, windowList, focusHandler)
 
-    val frameDrawer = FrameDrawer(system, screen, settings.generalSettings)
+    val frameDrawer = FrameDrawer(system, xScreen, settings.generalSettings)
 
     val textAtomReader = TextAtomReader(system, atomLibrary)
     val numberAtomReader = NumberAtomReader(system.display, atomLibrary)
@@ -197,9 +197,9 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
 
     val windowFactory = PosixWindowFactory(
         system.display,
-        screen,
+        xScreen,
         keyManager,
-        monitorManager,
+        screenManager,
         atomLibrary,
         eventStore,
         focusHandler,
@@ -214,11 +214,11 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
     val windowCoordinator =
         PosixWindowCoordinator(
             eventStore,
-            monitorManager,
+            screenManager,
             windowFactory,
             windowList,
             uiDrawer,
-            screen.display
+            xScreen.display
         )
 
     val modeButton = windowFactory.createButton(
@@ -229,24 +229,24 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
         SIDE_BAR_WIDTH,
         BAR_HEIGHT
     ) {
-        monitorManager.toggleFramedScreenMode()
+        screenManager.toggleFramedScreenMode()
     }
 
     val screenChangeHandler =
         setupRandr(
             system,
             randrHandlerFactory,
-            monitorManager,
-            screen.root
+            screenManager,
+            xScreen.root
         )
 
-    val moveWindowManager = MoveWindowManager(windowCoordinator, monitorManager)
+    val moveWindowManager = MoveWindowManager(windowCoordinator, screenManager)
 
     focusHandler.registerObserver(
         FocusSessionKeyboardGrabber(system, eventTime, rootWindowPropertyHandler.ewmhSupportWindow)
     )
 
-    focusHandler.registerObserver(InputFocusHandler(system, eventTime, screen.root))
+    focusHandler.registerObserver(InputFocusHandler(system, eventTime, xScreen.root))
 
     focusHandler.windowFocusEventObs
         .withLatestFrom(windowList.windowsObs)
@@ -261,14 +261,14 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
             newWindow?.focus()
         })
 
-    updateWindowListAtom(screen.root, system, atomLibrary, windowList)
+    updateWindowListAtom(xScreen.root, system, atomLibrary, windowList)
 
     toggleSessionManager.addListener(focusHandler.keySessionListener)
 
     val eventManager = createEventManager(
         eventStore,
         system,
-        monitorManager,
+        screenManager,
         windowCoordinator,
         focusHandler,
         keyManager,
@@ -278,20 +278,20 @@ fun startup(system: SystemApi, resourceGenerator: ResourceGenerator): RuntimeRes
         screenChangeHandler,
         keyConfiguration,
         windowList,
-        screen.root,
+        xScreen.root,
         modeButton
     )
 
     setupScreen(
         system,
-        screen.root,
+        xScreen.root,
         rootWindowPropertyHandler,
         windowFactory
     )
 
     val xEventResources = XEventResources(eventManager, eventTime, eventBuffer)
     val sideBarResources = SideBarResources(sideBarMessageHandler, sideBarMessageQueue)
-    val platformResources = PlatformResources(fileFactory, files, monitorManager, environment)
+    val platformResources = PlatformResources(fileFactory, files, screenManager, environment)
 
     return RuntimeResources(xEventResources, sideBarResources, platformResources)
 }
@@ -373,10 +373,10 @@ private fun loadSettings(
 private fun setupRandr(
     system: SystemApi,
     randrHandlerFactory: RandrHandlerFactory,
-    monitorManager: MonitorManager<*>,
+    screenManager: ScreenManager<*>,
     rootWindowId: Window
 ): XEventHandler {
-    val screenChangeHandler = randrHandlerFactory.createScreenChangeHandler(monitorManager)
+    val screenChangeHandler = randrHandlerFactory.createScreenChangeHandler(screenManager)
     val fakeEvent = nativeHeap.alloc<XEvent>()
     screenChangeHandler.handleEvent(fakeEvent)
     nativeHeap.free(fakeEvent)
@@ -393,7 +393,7 @@ private fun setupRandr(
 private fun createEventManager(
     eventStore: EventStore,
     system: SystemApi,
-    monitorManager: MonitorManager<*>,
+    screenManager: ScreenManager<*>,
     windowCoordinator: WindowCoordinator,
     focusHandler: WindowFocusHandler,
     keyManager: KeyManager,
@@ -417,7 +417,7 @@ private fun createEventManager(
                 keyManager,
                 keyConfiguration,
                 toggleSessionManager,
-                monitorManager,
+                screenManager,
                 windowCoordinator,
                 focusHandler
             )
