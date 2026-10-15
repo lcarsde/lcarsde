@@ -3,6 +3,8 @@ package de.atennert.lcarswm.lifecycle
 import de.atennert.lcarsde.file.Files
 import de.atennert.lcarsde.lifecycle.inject
 import de.atennert.lcarsde.log.Logger
+import de.atennert.lcarswm.DEFAULT_GLOBAL_AUTOSTART_DIR
+import de.atennert.lcarswm.GLOBAL_AUTOSTART_DIR_PROPERTY
 import de.atennert.lcarswm.HOME_CONFIG_DIR_PROPERTY
 import de.atennert.lcarswm.drivenPorts.process.ProcessBuilderFactory
 import de.atennert.lcarswm.environment.Environment
@@ -77,7 +79,7 @@ fun runAutostartApps(
     logger: Logger
 ) {
     var localApps = emptyList<String>()
-    val globalAutostart = "/etc/xdg/autostart"
+    val globalAutostart = environment[GLOBAL_AUTOSTART_DIR_PROPERTY] ?: DEFAULT_GLOBAL_AUTOSTART_DIR
     val localAutostart = environment[HOME_CONFIG_DIR_PROPERTY]
         ?.let { "$it/autostart" }
 
