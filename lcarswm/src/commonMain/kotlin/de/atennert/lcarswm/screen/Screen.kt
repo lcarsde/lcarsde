@@ -1,4 +1,4 @@
-package de.atennert.lcarswm.monitor
+package de.atennert.lcarswm.screen
 
 import de.atennert.lcarswm.ScreenMode
 import de.atennert.lcarswm.window.WindowMeasurements
@@ -6,7 +6,7 @@ import kotlin.properties.Delegates
 
 expect fun <Output> getOutputHash(output: Output): Int
 
-data class Monitor<Output> private constructor(
+data class Screen<Output> private constructor(
     val id: Output,
     val name: String,
     val isPrimary: Boolean,
@@ -23,10 +23,10 @@ data class Monitor<Output> private constructor(
     }(x, y, width, height)
 
     /**
-     * Check if a pixel is shown on this monitor.
-     * @return <code>true</code> if the pixel is on the monitor, <code>false</code> otherwise
+     * Check if a pixel is shown on this screen.
+     * @return <code>true</code> if the pixel is on the screen, <code>false</code> otherwise
      */
-    fun isOnMonitor(x: Int, y: Int): Boolean {
+    fun isOnScreen(x: Int, y: Int): Boolean {
         return this.x <= x && x < (this.x + this.width) && this.y <= y && y < (this.y + this.height)
     }
 
@@ -48,6 +48,6 @@ data class Monitor<Output> private constructor(
             this.height = height
         }
         fun setScreenMode(screenMode: ScreenMode) = apply { this.screenMode = screenMode }
-        fun build() = Monitor(id, name, isPrimary, x, y, width, height, if (!isPrimary && screenMode == ScreenMode.NORMAL) ScreenMode.MAXIMIZED else screenMode)
+        fun build() = Screen(id, name, isPrimary, x, y, width, height, if (!isPrimary && screenMode == ScreenMode.NORMAL) ScreenMode.MAXIMIZED else screenMode)
     }
 }

@@ -6,8 +6,8 @@ import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.drawing.UIDrawing
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.events.ReparentEvent
-import de.atennert.lcarswm.monitor.Monitor
-import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.screen.Screen
+import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.system.wrapXConfigureWindow
 import de.atennert.lcarswm.system.wrapXSendEvent
 import de.atennert.rx.*
@@ -18,14 +18,14 @@ import kotlinx.cinterop.*
 import xlib.*
 
 @ExperimentalForeignApi
-sealed class WindowToMonitorEvent(val window: ManagedWmWindow<Window>, val monitor: Monitor<RROutput>?)
+sealed class WindowToScreenEvent(val window: ManagedWmWindow<Window>, val screen: Screen<RROutput>?)
 
 @ExperimentalForeignApi
-class WindowToMonitorSetEvent(window: ManagedWmWindow<Window>, monitor: Monitor<RROutput>) :
-    WindowToMonitorEvent(window, monitor)
+class WindowToScreenSetEvent(window: ManagedWmWindow<Window>, screen: Screen<RROutput>) :
+    WindowToScreenEvent(window, screen)
 
 @ExperimentalForeignApi
-class WindowToMonitorRemoveEvent(window: ManagedWmWindow<Window>) : WindowToMonitorEvent(window, null)
+class WindowToScreenRemoveEvent(window: ManagedWmWindow<Window>) : WindowToScreenEvent(window, null)
 
 @ExperimentalForeignApi
 private fun Observable<ReparentEvent>.filterForBadParenting(windowList: WindowList) =
@@ -42,7 +42,7 @@ private fun Observable<ReparentEvent>.filterForBadParenting(windowList: WindowLi
 @ExperimentalForeignApi
 class PosixWindowCoordinator(
     eventStore: EventStore,
-    monitorManager: MonitorManager<RROutput>,
+    screenManager: ScreenManager<RROutput>,
     windowFactory: WindowFactory<Window>,
     windowList: WindowList,
     rootWindowDrawer: UIDrawing,
@@ -50,29 +50,29 @@ class PosixWindowCoordinator(
 ) : WindowCoordinator {
     private val logger by inject<Logger>()
 
-    private val windowToMonitorEventSj = Subject<WindowToMonitorEvent>()
-    val windowToMonitorEventObs = windowToMonitorEventSj.asObservable()
+    private val windowToScreenEventSj = Subject<WindowToScreenEvent>()
+    val windowToScreenEventObs = windowToScreenEventSj.asObservable()
 
-    private val windowsOnMonitorsSj = BehaviorSubject(emptyMap<ManagedWmWindow<Window>, Monitor<*>>())
-    val windowsOnMonitorsObs = windowsOnMonitorsSj.asObservable()
-    private var windowsOnMonitors by windowsOnMonitorsSj
+    private val windowsOnScreensSj = BehaviorSubject(emptyMap<ManagedWmWindow<Window>, Screen<*>>())
+    val windowsOnScreensObs = windowsOnScreensSj.asObservable()
+    private var windowsOnScreens by windowsOnScreensSj
 
-    private val moveWindowToNextMonitorSj = Subject<Window>()
-    private val moveWindowToPrevMonitorSj = Subject<Window>()
+    private val moveWindowToNextScreenSj = Subject<Window>()
+    private val moveWindowToPrevScreenSj = Subject<Window>()
 
-    val rearrangeObs = monitorManager.monitorsObs
+    val rearrangeObs = screenManager.screensObs
         .filter { it.isNotEmpty() }
-        .map { updatedMonitors ->
-            val primaryMonitor = updatedMonitors.find { it.isPrimary } ?: updatedMonitors[0]
+        .map { updatedScreens ->
+            val primaryScreen = updatedScreens.find { it.isPrimary } ?: updatedScreens[0]
 
-            val updatedWindows = windowsOnMonitors
-                .map { (window, monitor) ->
-                    Pair(window, updatedMonitors.getOrElse(updatedMonitors.indexOf(monitor)) { primaryMonitor })
+            val updatedWindows = windowsOnScreens
+                .map { (window, screen) ->
+                    Pair(window, updatedScreens.getOrElse(updatedScreens.indexOf(screen)) { primaryScreen })
                 }
             updatedWindows
         }
 
-    val combinedMeasurementsObs = windowsOnMonitorsObs
+    val combinedMeasurementsObs = windowsOnScreensObs
         .map { updatedWindows ->
             updatedWindows.map {
                 Observable.of(Tuple(it.value.windowMeasurements, it.value.screenMode, it.key))
@@ -92,12 +92,12 @@ class PosixWindowCoordinator(
             .closeWith { this.unsubscribe() }
 
         subscription.add(
-            windowToMonitorEventObs
+            windowToScreenEventObs
                 .subscribe(NextObserver {
-                    if (it is WindowToMonitorSetEvent) {
-                        windowsOnMonitors += it.window to it.monitor!!
+                    if (it is WindowToScreenSetEvent) {
+                        windowsOnScreens += it.window to it.screen!!
                     } else {
-                        windowsOnMonitors -= it.window
+                        windowsOnScreens -= it.window
                     }
                 })
         )
@@ -107,23 +107,23 @@ class PosixWindowCoordinator(
             eventStore.mapObs
                 .filter { !windowList.isManaged(it) }
                 .bufferWhile(
-                    monitorManager.primaryMonitorObs.filter { it == null },
-                    monitorManager.primaryMonitorObs.filterNotNull()
+                    screenManager.primaryScreenObs.filter { it == null },
+                    screenManager.primaryScreenObs.filterNotNull()
                 )
                 .filter { it.isNotEmpty() }
                 .withLatestFrom(
-                    monitorManager.primaryMonitorObs
+                    screenManager.primaryScreenObs
                         .filterNotNull(),
                 )
-                .subscribe(NextObserver { (windowIds, monitor) ->
+                .subscribe(NextObserver { (windowIds, screen) ->
                     for (windowId in windowIds) {
                         logger.logDebug("PosixWindowCoordinator::init::create window $windowId")
                         windowFactory.createWindow(windowId)
                             ?.let {
                                 if (it is ManagedWmWindow) {
                                     logger.logDebug("PosixWindowCoordinator::init::open window $windowId")
-                                    windowToMonitorEventSj.next(WindowToMonitorSetEvent(it, monitor))
-                                    it.open(monitor.windowMeasurements, monitor.screenMode)
+                                    windowToScreenEventSj.next(WindowToScreenSetEvent(it, screen))
+                                    it.open(screen.windowMeasurements, screen.screenMode)
                                     windowList.add(it)
                                 }
                             }
@@ -144,7 +144,7 @@ class PosixWindowCoordinator(
                         ?.let {
                             logger.logDebug("PosixWindowCoordinator::init::remove window $windowId")
                             windowList.remove(it)
-                            windowToMonitorEventSj.next(WindowToMonitorRemoveEvent(it))
+                            windowToScreenEventSj.next(WindowToScreenRemoveEvent(it))
                             it.close()
                         }
                 })
@@ -156,7 +156,7 @@ class PosixWindowCoordinator(
 
         // rearrange windows
         subscription.add(rearrangeObs.subscribe(NextObserver { updatedWindows ->
-            windowsOnMonitors = updatedWindows.toMap()
+            windowsOnScreens = updatedWindows.toMap()
         }))
 
         subscription.add(
@@ -174,14 +174,14 @@ class PosixWindowCoordinator(
         subscription.add(
             eventStore.configureRequestObs
                 .withLatestFrom(windowList.windowsObs)
-                // TODO should filter using windowsOnMonitors
+                // TODO should filter using windowsOnScreens
                 .filter { (configureRequest, windows) ->
                     windows.any { it.id == configureRequest.window && (it !is PosixTransientWindow || !it.isTransientForRoot) }
                 }
                 .map { (configureRequest) -> configureRequest }
                 .switchMap { configureRequest ->
                     Observable.of(configureRequest)
-                        .withLatestFrom(Observable.of(windowsOnMonitors.firstNotNullOf { entry ->
+                        .withLatestFrom(Observable.of(windowsOnScreens.firstNotNullOf { entry ->
                             if (entry.key.id == configureRequest.window) {
                                 entry.value
                             } else {
@@ -189,15 +189,15 @@ class PosixWindowCoordinator(
                             }
                         }))
                 }
-                .subscribe(NextObserver { (configureRequest, monitor) ->
-                    adjustWindowToScreen(configureRequest, monitor.windowMeasurements)
+                .subscribe(NextObserver { (configureRequest, screen) ->
+                    adjustWindowToScreen(configureRequest, screen.windowMeasurements)
                 })
         )
 
         subscription.add(
             eventStore.configureRequestObs
                 .withLatestFrom(windowList.windowsObs)
-                // TODO should filter using windowsOnMonitors
+                // TODO should filter using windowsOnScreens
                 .filter { (configureRequest, windows) ->
                     !windows.any { it.id == configureRequest.window && (it !is PosixTransientWindow || !it.isTransientForRoot) }
                 }
@@ -209,34 +209,34 @@ class PosixWindowCoordinator(
 
         // move windows
         subscription.add(
-            moveWindowToNextMonitorSj
-                .map { windowId -> windowsOnMonitors.keys.find { it.id == windowId } }
+            moveWindowToNextScreenSj
+                .map { windowId -> windowsOnScreens.keys.find { it.id == windowId } }
                 .filterNotNull()
-                .withLatestFrom(windowsOnMonitorsObs, monitorManager.monitorsObs)
-                .map { (window, windowsOnMonitors, monitors) ->
-                    val currentMonitorIndex = monitors.indexOf(windowsOnMonitors[window])
-                    Tuple(window, monitors[(currentMonitorIndex + 1).rem(monitors.size)])
+                .withLatestFrom(windowsOnScreensObs, screenManager.screensObs)
+                .map { (window, windowsOnScreens, screens) ->
+                    val currentScreenIndex = screens.indexOf(windowsOnScreens[window])
+                    Tuple(window, screens[(currentScreenIndex + 1).rem(screens.size)])
                 }
-                .subscribe(NextObserver { (window, nextMonitor) ->
-                    windowToMonitorEventSj.next(WindowToMonitorSetEvent(window, nextMonitor))
+                .subscribe(NextObserver { (window, nextScreen) ->
+                    windowToScreenEventSj.next(WindowToScreenSetEvent(window, nextScreen))
                     rootWindowDrawer.drawWindowManagerFrame()
                 })
         )
 
         subscription.add(
-            moveWindowToPrevMonitorSj
-                .map { windowId -> windowsOnMonitors.keys.find { it.id == windowId } }
+            moveWindowToPrevScreenSj
+                .map { windowId -> windowsOnScreens.keys.find { it.id == windowId } }
                 .filterNotNull()
-                .withLatestFrom(windowsOnMonitorsObs, monitorManager.monitorsObs)
-                .map { (window, windowsOnMonitors, monitors) ->
-                    val currentMonitorIndex = monitors.indexOf(windowsOnMonitors[window])
+                .withLatestFrom(windowsOnScreensObs, screenManager.screensObs)
+                .map { (window, windowsOnScreens, screens) ->
+                    val currentScreenIndex = screens.indexOf(windowsOnScreens[window])
                     Tuple(
                         window,
-                        monitors[if (currentMonitorIndex == 0) monitors.size - 1 else currentMonitorIndex - 1]
+                        screens[if (currentScreenIndex == 0) screens.size - 1 else currentScreenIndex - 1]
                     )
                 }
-                .subscribe(NextObserver { (window, prevMonitor) ->
-                    windowToMonitorEventSj.next(WindowToMonitorSetEvent(window, prevMonitor))
+                .subscribe(NextObserver { (window, prevScreen) ->
+                    windowToScreenEventSj.next(WindowToScreenSetEvent(window, prevScreen))
                     rootWindowDrawer.drawWindowManagerFrame()
                 })
         )
@@ -248,17 +248,17 @@ class PosixWindowCoordinator(
         )
     }
 
-    override fun moveWindowToNextMonitor(windowId: Window) {
-        moveWindowToNextMonitorSj.next(windowId)
+    override fun moveWindowToNextScreen(windowId: Window) {
+        moveWindowToNextScreenSj.next(windowId)
     }
 
-    override fun moveWindowToPreviousMonitor(windowId: Window) {
-        moveWindowToPrevMonitorSj.next(windowId)
+    override fun moveWindowToPreviousScreen(windowId: Window) {
+        moveWindowToPrevScreenSj.next(windowId)
     }
 
-    override fun moveWindowToMonitor(windowId: Window, monitor: Monitor<RROutput>) {
-        val window = windowsOnMonitors.keys.single { it.id == windowId }
-        windowToMonitorEventSj.next(WindowToMonitorSetEvent(window, monitor))
+    override fun moveWindowToScreen(windowId: Window, screen: Screen<RROutput>) {
+        val window = windowsOnScreens.keys.single { it.id == windowId }
+        windowToScreenEventSj.next(WindowToScreenSetEvent(window, screen))
     }
 
     private fun adjustWindowToScreen(

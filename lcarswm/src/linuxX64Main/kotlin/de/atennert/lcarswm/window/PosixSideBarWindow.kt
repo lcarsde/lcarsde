@@ -8,8 +8,8 @@ import de.atennert.lcarswm.conversion.combine
 import de.atennert.lcarswm.conversion.toUByteArray
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.events.sendConfigureNotify
-import de.atennert.lcarswm.monitor.Monitor
-import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.screen.Screen
+import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.system.*
 import de.atennert.rx.NextObserver
 import de.atennert.rx.ReplaySubject
@@ -26,7 +26,7 @@ import kotlin.experimental.ExperimentalNativeApi
 class PosixSideBarWindow(
     private val display: CPointer<Display>?,
     private val rootWindowId: Window,
-    monitorManager: MonitorManager<RROutput>,
+    screenManager: ScreenManager<RROutput>,
     eventStore: EventStore,
     atomLibrary: AtomLibrary,
     focusHandler: WindowFocusHandler,
@@ -39,15 +39,15 @@ class PosixSideBarWindow(
         .map { it.toUByteArray() }
         .combine()
 
-    private val windowMeasurementsObs = monitorManager.primaryMonitorObs
+    private val windowMeasurementsObs = screenManager.primaryScreenObs
         .map(::getWindowMeasurements)
 
     private val frameIdSj = ReplaySubject<Window>(1)
     private val frameIdObs = frameIdSj.asObservable()
 
     private val nextHandler =
-        NextObserver.NextHandler<Tuple2<Window, Monitor<RROutput>?>> { (frameId, primaryMonitor) ->
-            if (primaryMonitor != null && primaryMonitor.screenMode == ScreenMode.NORMAL) {
+        NextObserver.NextHandler<Tuple2<Window, Screen<RROutput>?>> { (frameId, primaryScreen) ->
+            if (primaryScreen != null && primaryScreen.screenMode == ScreenMode.NORMAL) {
                 internalShow(frameId)
             } else {
                 internalHide(frameId)
@@ -120,7 +120,7 @@ class PosixSideBarWindow(
 
         subscription.add(
             frameIdObs
-                .combineLatestWith(monitorManager.primaryMonitorObs)
+                .combineLatestWith(screenManager.primaryScreenObs)
                 .subscribe(NextObserver(nextHandler))
         )
 
@@ -210,16 +210,16 @@ class PosixSideBarWindow(
         // Nothing to do
     }
 
-    private fun getWindowMeasurements(primaryMonitor: Monitor<*>?): WindowMeasurements? {
-        if (primaryMonitor == null) {
+    private fun getWindowMeasurements(primaryScreen: Screen<*>?): WindowMeasurements? {
+        if (primaryScreen == null) {
             return null
         }
         return WindowMeasurements(
-            primaryMonitor.x,
-            primaryMonitor.y + NORMAL_WINDOW_UPPER_OFFSET + INNER_CORNER_RADIUS,
+            primaryScreen.x,
+            primaryScreen.y + NORMAL_WINDOW_UPPER_OFFSET + INNER_CORNER_RADIUS,
             (SIDE_BAR_WIDTH + BAR_GAP_SIZE + BAR_END_WIDTH).convert(), // "bar end" is used as window close button
-            (primaryMonitor.height - NORMAL_WINDOW_NON_APP_HEIGHT).convert(),
-            (primaryMonitor.height - NORMAL_WINDOW_NON_APP_HEIGHT).convert()
+            (primaryScreen.height - NORMAL_WINDOW_NON_APP_HEIGHT).convert(),
+            (primaryScreen.height - NORMAL_WINDOW_NON_APP_HEIGHT).convert()
         )
     }
 

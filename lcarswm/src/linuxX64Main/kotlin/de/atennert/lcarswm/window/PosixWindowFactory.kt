@@ -11,10 +11,11 @@ import de.atennert.lcarswm.atom.TextAtomReader
 import de.atennert.lcarswm.drawing.IFrameDrawer
 import de.atennert.lcarswm.events.EventStore
 import de.atennert.lcarswm.keys.KeyManager
-import de.atennert.lcarswm.monitor.MonitorManager
+import de.atennert.lcarswm.screen.ScreenManager
 import de.atennert.lcarswm.settings.GeneralSetting
 import de.atennert.lcarswm.system.*
 import gtk.*
+import gtk.Screen as XScreen
 import kotlinx.cinterop.*
 import xlib.RROutput
 import kotlin.experimental.ExperimentalNativeApi
@@ -29,9 +30,9 @@ private const val clientNoPropagateMask = ButtonPressMask or ButtonReleaseMask o
 @ExperimentalNativeApi
 class PosixWindowFactory(
     private val display: CPointer<Display>?,
-    private val screen: Screen,
+    private val xScreen: XScreen,
     private val keyManager: KeyManager,
-    private val monitorManager: MonitorManager<RROutput>,
+    private val screenManager: ScreenManager<RROutput>,
     private val atomLibrary: AtomLibrary,
     private val eventStore: EventStore,
     private val focusHandler: WindowFocusHandler,
@@ -54,7 +55,7 @@ class PosixWindowFactory(
         onClick: () -> Unit
     ): PosixButton {
         return PosixButton(
-            display, screen, monitorManager, keyManager, eventStore,
+            display, xScreen, screenManager, keyManager, eventStore,
             text, colorSet, x, y, width, height, settings, onClick
         )
     }
@@ -93,8 +94,8 @@ class PosixWindowFactory(
         val window = when {
             PosixSideBarWindow.isSideBar(display, atomLibrary, id) -> PosixSideBarWindow(
                 display,
-                screen.root,
-                monitorManager,
+                xScreen.root,
+                screenManager,
                 eventStore,
                 atomLibrary,
                 focusHandler,
@@ -106,8 +107,8 @@ class PosixWindowFactory(
 
             PosixStatusBarWindow.isStatusBar(display, atomLibrary, id) -> PosixStatusBarWindow(
                 display,
-                screen.root,
-                monitorManager,
+                xScreen.root,
+                screenManager,
                 eventStore,
                 atomLibrary,
                 id,
@@ -119,7 +120,7 @@ class PosixWindowFactory(
                 if (isTransient) {
                     PosixTransientWindow(
                         display,
-                        screen,
+                        xScreen,
                         atomLibrary,
                         textAtomReader,
                         keyManager,
@@ -131,7 +132,7 @@ class PosixWindowFactory(
                 } else {
                     PosixWindow(
                         display,
-                        screen,
+                        xScreen,
                         atomLibrary,
                         textAtomReader,
                         frameDrawer,
@@ -157,7 +158,7 @@ class PosixWindowFactory(
         val transientWindow = nativeHeap.alloc(None.toULong())
         if (wrapXGetTransientForHint(display, id, transientWindow.ptr) != 0) {
             isTransient = true
-            if (transientWindow.value != screen.root && transientWindow.value != 0.toULong() && type != WindowType.DOCK) {
+            if (transientWindow.value != xScreen.root && transientWindow.value != 0.toULong() && type != WindowType.DOCK) {
                 transientFor = transientWindow.value
             }
         }

@@ -8,14 +8,14 @@ import de.atennert.lcarswm.drivenPorts.drawing.TextAlignment
 import de.atennert.lcarswm.settings.GeneralSetting
 import de.atennert.lcarswm.system.api.WindowUtilApi
 import de.atennert.lcarswm.window.WindowMeasurements
-import gtk.Screen
+import gtk.Screen as XScreen
 import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 
 @ExperimentalForeignApi
 class FrameDrawer(
     private val windowUtilApi: WindowUtilApi,
-    private val screen: Screen,
+    private val xScreen: XScreen,
     settings: Map<GeneralSetting, String>
 ) : IFrameDrawer {
     private val drawFactory by inject<DrawFactory>()
@@ -33,7 +33,7 @@ class FrameDrawer(
             Surface.Configuration(
                 windowUtilApi.display,
                 drawable = titleBar,
-                visual = screen.root_visual,
+                visual = xScreen.root_visual,
                 width = measurements.width,
                 height = BAR_HEIGHT + TITLE_BAR_OFFSET
             )

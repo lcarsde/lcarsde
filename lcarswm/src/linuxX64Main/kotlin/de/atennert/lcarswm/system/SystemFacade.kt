@@ -6,6 +6,7 @@ import de.atennert.lcarswm.signal.Signal
 import de.atennert.lcarswm.system.api.SystemApi
 import de.atennert.lcarswm.toX
 import gtk.*
+import gtk.Screen as XScreen
 import kotlinx.cinterop.*
 import platform.posix.sigaction
 import platform.posix.sigemptyset
@@ -30,7 +31,7 @@ class SystemFacade : SystemApi {
         return XCloseDisplay(display)
     }
 
-    override fun defaultScreenOfDisplay(): CPointer<Screen>? {
+    override fun defaultScreenOfDisplay(): CPointer<XScreen>? {
         return XDefaultScreenOfDisplay(display)
     }
 

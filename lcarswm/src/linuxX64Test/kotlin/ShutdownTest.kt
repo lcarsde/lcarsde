@@ -20,6 +20,7 @@ import de.atennert.lcarswm.system.SystemCallMocker
 import de.atennert.lcarswm.system.SystemFacadeMock
 import de.atennert.mock.drawing.MockDrawFactory
 import gtk.*
+import gtk.Screen as XScreen
 import kotlinx.cinterop.*
 import kotlinx.coroutines.runBlocking
 import kotlin.experimental.ExperimentalNativeApi
@@ -110,7 +111,7 @@ class ShutdownTest : SystemCallMocker() {
         lateinit var modifierKeymapRef: CPointer<XModifierKeymap>
         lateinit var keymapRef: CPointer<KeySymVar>
         val testFacade = object : SystemFacadeMock() {
-            override fun defaultScreenOfDisplay(): CPointer<Screen>? {
+            override fun defaultScreenOfDisplay(): CPointer<XScreen>? {
                 super.defaultScreenOfDisplay()
                 return null
             }

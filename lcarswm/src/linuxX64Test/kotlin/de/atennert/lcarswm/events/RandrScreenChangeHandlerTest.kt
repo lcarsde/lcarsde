@@ -3,7 +3,7 @@ package de.atennert.lcarswm.events
 import de.atennert.lcarsde.lifecycle.ServiceLocator
 import de.atennert.lcarsde.log.Logger
 import de.atennert.lcarswm.log.LoggerMock
-import de.atennert.lcarswm.monitor.MonitorManagerMock
+import de.atennert.lcarswm.screen.ScreenManagerMock
 import de.atennert.lcarswm.system.SystemFacadeMock
 import gtk.XEvent
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -27,11 +27,11 @@ class RandrScreenChangeHandlerTest {
     @Test
     fun `check correct type of RandrScreenChangeHandler`() {
         val systemApi = SystemFacadeMock()
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
 
         val randrHandlerFactory = RandrHandlerFactory(systemApi)
 
-        val screenChangeHandler = randrHandlerFactory.createScreenChangeHandler(monitorManager)
+        val screenChangeHandler = randrHandlerFactory.createScreenChangeHandler(screenManager)
 
         assertEquals(
             systemApi.randrEventBase + RRScreenChangeNotify,
@@ -43,11 +43,11 @@ class RandrScreenChangeHandlerTest {
     @Test
     fun `handle screen change`() {
         val systemApi = SystemFacadeMock()
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
 
         val randrHandlerFactory = RandrHandlerFactory(systemApi)
 
-        val screenChangeHandler = randrHandlerFactory.createScreenChangeHandler(monitorManager)
+        val screenChangeHandler = randrHandlerFactory.createScreenChangeHandler(screenManager)
 
         val screenChangeEvent = nativeHeap.alloc<XEvent>()
         screenChangeEvent.type = systemApi.randrEventBase + RRScreenChangeNotify
@@ -56,11 +56,11 @@ class RandrScreenChangeHandlerTest {
 
         assertFalse(shutdownValue, "Handling a screen change should close the window manager")
 
-        val updateMonitorListCall = monitorManager.functionCalls.removeAt(0)
+        val updateScreenListCall = screenManager.functionCalls.removeAt(0)
         assertEquals(
-            "updateMonitorList",
-            updateMonitorListCall.name,
-            "The monitor list needs to be updated"
+            "updateScreenList",
+            updateScreenListCall.name,
+            "The screen list needs to be updated"
         )
     }
 }

@@ -1,6 +1,6 @@
 package de.atennert.lcarswm.window
 
-import de.atennert.lcarswm.monitor.Monitor
+import de.atennert.lcarswm.screen.Screen
 import de.atennert.lcarswm.system.FunctionCall
 import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -10,27 +10,27 @@ class WindowCoordinatorMock : WindowCoordinator {
     val functionCalls = mutableListOf<FunctionCall>()
 
     @ExperimentalForeignApi
-    override fun moveWindowToNextMonitor(windowId: Window) {
+    override fun moveWindowToNextScreen(windowId: Window) {
         functionCalls.add(
             FunctionCall(
-                "moveWindowToNextMonitor",
+                "moveWindowToNextScreen",
                 windowId
             )
         )
     }
 
     @ExperimentalForeignApi
-    override fun moveWindowToPreviousMonitor(windowId: Window) {
+    override fun moveWindowToPreviousScreen(windowId: Window) {
         functionCalls.add(
             FunctionCall(
-                "moveWindowToPreviousMonitor",
+                "moveWindowToPreviousScreen",
                 windowId
             )
         )
     }
 
     @ExperimentalForeignApi
-    override fun moveWindowToMonitor(windowId: Window, monitor: Monitor<RROutput>) {
+    override fun moveWindowToScreen(windowId: Window, screen: Screen<RROutput>) {
         TODO("Not yet implemented")
     }
 }

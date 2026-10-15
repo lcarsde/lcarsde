@@ -1,20 +1,20 @@
 package de.atennert.lcarswm.window
 
-import de.atennert.lcarswm.monitor.Monitor
+import de.atennert.lcarswm.screen.Screen
 import gtk.Window
 import kotlinx.cinterop.ExperimentalForeignApi
 import xlib.RROutput
 
 /**
- * Interface for class that manages the mapping of windows to monitors
+ * Interface for class that manages the mapping of windows to screens
  */
 interface WindowCoordinator {
     @ExperimentalForeignApi
-    fun moveWindowToNextMonitor(windowId: Window)
+    fun moveWindowToNextScreen(windowId: Window)
 
     @ExperimentalForeignApi
-    fun moveWindowToPreviousMonitor(windowId: Window)
+    fun moveWindowToPreviousScreen(windowId: Window)
 
     @ExperimentalForeignApi
-    fun moveWindowToMonitor(windowId: Window, monitor: Monitor<RROutput>)
+    fun moveWindowToScreen(windowId: Window, screen: Screen<RROutput>)
 }

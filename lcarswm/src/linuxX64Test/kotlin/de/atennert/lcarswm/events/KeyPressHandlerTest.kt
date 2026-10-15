@@ -8,7 +8,7 @@ import de.atennert.lcarswm.Environment
 import de.atennert.lcarswm.atom.AtomLibrary
 import de.atennert.lcarswm.keys.*
 import de.atennert.lcarswm.log.LoggerMock
-import de.atennert.lcarswm.monitor.MonitorManagerMock
+import de.atennert.lcarswm.screen.ScreenManagerMock
 import de.atennert.lcarswm.system.SystemCallMocker
 import de.atennert.lcarswm.system.SystemFacadeMock
 import de.atennert.lcarswm.window.WindowCoordinatorMock
@@ -58,7 +58,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -72,7 +72,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -81,7 +81,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
     }
 
     @Test
-    fun `move active window to the next monitor`() {
+    fun `move active window to the next screen`() {
         val systemApi = SystemFacadeMock()
         val env = Environment(systemApi.display)
         val keyManager = KeyManager(systemApi)
@@ -89,7 +89,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -104,7 +104,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -120,19 +120,19 @@ class KeyPressHandlerTest : SystemCallMocker() {
 
         val moveWindowCall = windowCoordinator.functionCalls.removeAt(0)
         assertEquals(
-            "moveWindowToNextMonitor",
+            "moveWindowToNextScreen",
             moveWindowCall.name,
-            "The focused window should be moved to the next monitor"
+            "The focused window should be moved to the next screen"
         )
         assertEquals(
             windowFocusHandler.getFocusedWindow(),
             moveWindowCall.parameters[0],
-            "The _focused window_ should be moved to the next monitor"
+            "The _focused window_ should be moved to the next screen"
         )
     }
 
     @Test
-    fun `move active window to the previous monitor`() {
+    fun `move active window to the previous screen`() {
         val systemApi = SystemFacadeMock()
         val env = Environment(systemApi.display)
         val keyManager = KeyManager(systemApi)
@@ -140,7 +140,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -155,7 +155,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -171,19 +171,19 @@ class KeyPressHandlerTest : SystemCallMocker() {
 
         val moveWindowCall = windowCoordinator.functionCalls.removeAt(0)
         assertEquals(
-            "moveWindowToPreviousMonitor",
+            "moveWindowToPreviousScreen",
             moveWindowCall.name,
-            "The focused window should be moved to the previous monitor"
+            "The focused window should be moved to the previous screen"
         )
         assertEquals(
             windowFocusHandler.getFocusedWindow(),
             moveWindowCall.parameters[0],
-            "The _focused window_ should be moved to the previous monitor"
+            "The _focused window_ should be moved to the previous screen"
         )
     }
 
     @Test
-    fun `don't react on move to next monitor without a focusable window`() {
+    fun `don't react on move to next screen without a focusable window`() {
         val systemApi = SystemFacadeMock()
         val env = Environment(systemApi.display)
         val keyManager = KeyManager(systemApi)
@@ -191,7 +191,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -205,7 +205,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -226,7 +226,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
     }
 
     @Test
-    fun `don't react on move to previous monitor without a focusable window`() {
+    fun `don't react on move to previous screen without a focusable window`() {
         val systemApi = SystemFacadeMock()
         val env = Environment(systemApi.display)
         val keyManager = KeyManager(systemApi)
@@ -234,7 +234,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -248,7 +248,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -284,7 +284,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val window1 = systemApi.getNewWindowId()
         val window2 = systemApi.getNewWindowId()
         val window3 = systemApi.getNewWindowId()
@@ -305,7 +305,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -356,7 +356,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val window1 = systemApi.getNewWindowId()
         val window2 = systemApi.getNewWindowId()
         val window3 = systemApi.getNewWindowId()
@@ -377,7 +377,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -429,7 +429,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -443,7 +443,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -473,7 +473,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -488,7 +488,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -502,10 +502,10 @@ class KeyPressHandlerTest : SystemCallMocker() {
 
         assertFalse(shutdownValue, "Handling the M-key shouldn't trigger a shutdown.")
 
-        val monitorModeToggleCall = monitorManager.functionCalls.removeAt(0)
+        val screenModeToggleCall = screenManager.functionCalls.removeAt(0)
         assertEquals(
             "toggleScreenMode",
-            monitorModeToggleCall.name,
+            screenModeToggleCall.name,
             "The screen mode should be toggled."
         )
     }
@@ -519,7 +519,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -534,7 +534,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -560,7 +560,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -575,7 +575,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -601,7 +601,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -616,7 +616,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )
@@ -642,7 +642,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
         val windowList = WindowList()
         val windowFocusHandler =
             WindowFocusHandler(windowList, SideBarMessageHandler(systemApi, AtomLibrary(systemApi), windowList))
-        val monitorManager = MonitorManagerMock()
+        val screenManager = ScreenManagerMock()
         val keySessionManager = KeySessionManager(env)
         val keyConfiguration = KeyConfiguration(
             systemApi,
@@ -657,7 +657,7 @@ class KeyPressHandlerTest : SystemCallMocker() {
             keyManager,
             keyConfiguration,
             keySessionManager,
-            monitorManager,
+            screenManager,
             windowCoordinator,
             windowFocusHandler
         )

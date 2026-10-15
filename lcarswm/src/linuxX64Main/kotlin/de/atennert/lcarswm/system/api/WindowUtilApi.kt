@@ -1,6 +1,7 @@
 package de.atennert.lcarswm.system.api
 
 import gtk.*
+import gtk.Screen as XScreen
 import kotlinx.cinterop.*
 
 /**
@@ -15,7 +16,7 @@ interface WindowUtilApi {
 
     fun closeDisplay(): Int
 
-    fun defaultScreenOfDisplay(): CPointer<Screen>?
+    fun defaultScreenOfDisplay(): CPointer<XScreen>?
 
     fun defaultScreenNumber(): Int
 

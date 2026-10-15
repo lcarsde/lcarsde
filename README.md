@@ -27,7 +27,7 @@ mimics the LCARS interface.
     * Associate child screens with their parents
     * Identify and handle popups as popups
     * Center popups and adjust the frame to their size
-    * Monitors
+    * Screens
         * Merge overlaying screens of the same size
         * If screens have different sizes, the higher one draws
     * check for XDG-path variables and have a fallback
