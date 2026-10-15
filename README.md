@@ -1,5 +1,8 @@
 # lcarsde
 
+> [!WARNING]  
+> THIS PROJECT IS CURRENTLY UNMAINTAINED!
+
 LCARS Desktop Environment, official project name lcarsde, or for logos also LCARS DE, is a desktop environment that
 mimics the LCARS interface.
 
